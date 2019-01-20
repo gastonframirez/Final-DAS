@@ -2,7 +2,7 @@
     <wb-module deploy-name="ComercioRest">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <property name="context-root" value="ComercioRest"/>
         <property name="java-output-path" value="/ComercioRest/build/classes"/>
+        <property name="context-root" value="ComercioRest"/>
     </wb-module>
 </project-modules>

@@ -68,6 +68,7 @@ create table ofertas
     fecha_fin           DATETIME        not null,
     precio_oferta       FLOAT           not null,
     id_producto         integer         not null,
+    url_oferta          varchar(500)    not null,
     habilitada          BIT             not null        default 0,
 
     constraint pk__oferta__end primary key (id_oferta),
@@ -141,7 +142,7 @@ go
 create procedure getOfertas
 as
 BEGIN
-    SELECT fecha_inicio, fecha_fin, precio_oferta, modelo 
+    SELECT fecha_inicio, fecha_fin, precio_oferta, modelo, url_oferta, image_url 
         FROM ofertas
             JOIN productos
             ON productos.id_producto = ofertas.id_producto

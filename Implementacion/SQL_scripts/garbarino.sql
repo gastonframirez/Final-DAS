@@ -16,5 +16,5 @@ INSERT INTO productos (nombre, id_categoria, id_marca, modelo, image_url, precio
     VALUES ('Smart TV Samsung 50 " 4K Ultra HD UN50MU6100GCDF', 1, 1, 'UN50MU6100GCDF', '', '32999.00');
 
 ------------------ ofertas
-INSERT into ofertas (fecha_inicio, fecha_fin, precio_oferta, id_producto, habilitada)
-    VALUES ('2019-01-19', '2019-01-31', '25999.99', 4, 1);
+INSERT into ofertas (fecha_inicio, fecha_fin, precio_oferta, id_producto, url_oferta, habilitada)
+    VALUES ('2019-01-19', '2019-01-31', '25999.99', 4,'https://www.garbarino.com/producto/smart-tv-lg-43-full-hd-43lk5700psc/d25a2b92af', 1);

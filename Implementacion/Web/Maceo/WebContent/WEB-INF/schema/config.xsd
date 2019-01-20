@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:element name="config">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="global-forwards"  minOccurs="0" maxOccurs="1" />
+                <xsd:element ref="alias-mappings"   minOccurs="0" maxOccurs="1" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="global-forwards">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="forward" minOccurs="0" maxOccurs="unbounded" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="alias-mappings">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="alias" minOccurs="0" maxOccurs="unbounded" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="alias">
+        <xsd:complexType>
+            <xsd:attribute name="name" type="xsd:string" use="required" />
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="forward">
+        <xsd:complexType>
+            <xsd:attribute name="name"     type="xsd:string"  use="required" />
+            <xsd:attribute name="path"     type="xsd:string"  use="required" />
+            <xsd:attribute name="redirect" type="xsd:boolean" use="optional" />
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>

@@ -21247,3 +21247,11 @@ dl li {
   display: inline-block;
   font-weight: bolder;
 }
+.status-dot{
+  height: 8px;
+  width: 8px;
+  position: relative;
+  border-radius: 100%;
+  display: inline-block;
+  margin-right: 5px;
+}

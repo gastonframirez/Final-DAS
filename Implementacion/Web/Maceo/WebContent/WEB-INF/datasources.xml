@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	         xsi:noNamespaceSchemaLocation="./schema/datasources.xsd">
+    <datasource id="default"
+                driver="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+                url="jdbc:sqlserver://localhost;databaseName=maceo;characterEncoding=ISO-8859-1"
+                username="sa"
+                password="FinalDAS2019!" />
+</datasources>

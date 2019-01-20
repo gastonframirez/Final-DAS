@@ -18,7 +18,8 @@ public class MSOfertasDao extends DaoImpl {
     	form.setItem("fechaFin", result.getString("fecha_fin"));
     	form.setItem("precioOferta",  String.valueOf(result.getFloat("precio_oferta")));
     	form.setItem("modeloProducto", result.getString("modelo"));
-        
+    	form.setItem("urlOferta", result.getString("url_oferta"));
+    	form.setItem("imageUrl", result.getString("image_url"));
         return form;
 	}
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xsi:noNamespaceSchemaLocation="../schema/actions.xsd">
+    <form-beans>
+    </form-beans>
+    <action-mappings>
+        <action path="/StyleSheet.do" type="StyleSheetAction" validate="false" noforward="true" />
+        <action path="/Javascript.do" type="JavascriptAction" validate="false" noforward="true" />
+        <action path="/VendorStylesheet.do" type="VendorStylesheetAction" validate="false" noforward="true" />
+    </action-mappings>
+</actions>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd">
+<urlrewrite>
+    <rule>
+        <from>([^/]+)/([^/]+\.do)/(.*)$</from>
+        <to>/index.jsp?uri=/$1/$2&amp;$3</to>
+    </rule>
+    <rule>
+        <from>([^/]+)/([^/]+\.do)$</from>
+        <to>/index.jsp?uri=/$1/$2</to>
+    </rule>
+    <rule>
+        <from>([^/]+)/$</from>
+        <to>/index.jsp?uri=/$1</to>
+    </rule>
+</urlrewrite>

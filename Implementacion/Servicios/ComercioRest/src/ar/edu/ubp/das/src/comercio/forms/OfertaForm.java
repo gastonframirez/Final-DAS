@@ -8,7 +8,8 @@ public class OfertaForm extends DynaActionForm {
 	private String fechaFin;
 	private float precioOferta;
 	private String modeloProducto;
-	
+	private String urlOferta;
+	private String imageUrl;
 	
 	public String getFechaInicio() {
 		return fechaInicio;
@@ -34,4 +35,17 @@ public class OfertaForm extends DynaActionForm {
 	public void setModeloProducto(String modeloProducto) {
 		this.modeloProducto = modeloProducto;
 	}
+	public String getUrlOferta() {
+		return urlOferta;
+	}
+	public void setUrlOferta(String urlOferta) {
+		this.urlOferta = urlOferta;
+	}
+	public String getImageUrl() {
+		return imageUrl;
+	}
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+	
 }

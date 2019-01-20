@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>Maceo</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  <context-param>
+    <param-name>fwk.packages</param-name>
+    <param-value>ar.edu.ubp.das.mvc.</param-value>
+  </context-param>
+  <context-param>
+    <param-name>src.packages</param-name>
+    <param-value>ar.edu.ubp.das.src.</param-value>
+  </context-param>
+  <context-param>
+    <param-name>templates.path</param-name>
+    <param-value>/templates</param-value>
+  </context-param>
+  <context-param>
+    <param-name>action.default.path</param-name>
+    <param-value>/users/Home.do</param-value>
+  </context-param>
+  <filter>
+    <filter-name>UrlRewriteFilter</filter-name>
+    <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>UrlRewriteFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+  </filter-mapping>
+  <error-page>
+    <exception-type>javax.servlet.ServletException</exception-type>
+    <location>/ExceptionHandler</location>
+  </error-page>
+  <error-page>
+    <exception-type>java.lang.RuntimeException</exception-type>
+    <location>/ExceptionHandler</location>
+  </error-page>
+</web-app>

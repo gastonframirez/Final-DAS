@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	    xsi:noNamespaceSchemaLocation="./schema/config.xsd">
+    <global-forwards>
+        <forward name="failure"     path="/util/failure.jsp" />
+        <forward name="information" path="/util/information.jsp" />
+        <forward name="success"     path="/util/success.jsp" />
+        <forward name="warning"     path="/util/warning.jsp" />
+    </global-forwards>
+    <alias-mappings>
+    
+        <!-- A -->
+        <!-- B -->
+        <!-- C -->
+        <!-- D -->
+        <!-- E -->
+        <!-- F -->
+        <!-- G -->
+        <!-- H -->
+        <!-- I -->
+        <!-- J -->
+        <!-- K -->
+        <!-- L -->
+        <!-- M -->
+        <!-- N -->
+        <!-- O -->
+        <!-- P -->
+        <!-- Q -->
+        <!-- R -->
+        <!-- S -->
+        <!-- T -->
+        
+        <!-- U -->
+        <alias name="util" />
+        <alias name="users"/>
+        <!-- V -->
+        <!-- W -->
+        <!-- X -->
+        <!-- Y -->
+        <!-- Z -->
+    </alias-mappings>
+</config>
