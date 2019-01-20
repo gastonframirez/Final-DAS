@@ -10,5 +10,8 @@
         <action path="/Login.do" type="LoginAction">
             <forward name="success" path="/users/login.jsp"/>
         </action>
+        <action path="/Registrar.do" type="RegistrarAction">
+            <forward name="success" path="/users/registrar.jsp"/>
+        </action>
     </action-mappings>
 </actions>
