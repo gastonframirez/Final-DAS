@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Maceo - Asistente de Compras</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="vendors/iconfonts/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="images/favicon.png" />
+</head>
+<body>
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+        <a class="navbar-brand brand-logo" href="index.html"><img src="images/logo.svg" alt="logo"/></a>
+        <a class="navbar-brand brand-logo-mini" href="index.html"><img src="images/logo-mini.svg" alt="logo"/></a>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-stretch">
+        <div class="search-field d-none d-md-block">
+        </div>
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+              <div class="nav-profile-text">
+                <p class="mb-1 text-black">Gaston Ramirez</p>
+              </div>
+            </a>
+            <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
+              <a class="dropdown-item" href="user_update.html">
+                <i class="mdi mdi-cached mr-2 text-success"></i>
+                Configuración
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">
+                <i class="mdi mdi-logout mr-2 text-primary"></i>
+                Salir
+              </a>
+            </div>
+          </li>
+          
+          <li class="nav-item dropdown">
+            <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
+              <i class="mdi mdi-flag"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
+                  <h6 class="preview-subject font-weight-normal mb-1">English</h6>
+                </div>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
+                  <h6 class="preview-subject font-weight-normal mb-1">Espa&ntilde;ol</h6>
+                </div>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item nav-logout d-none d-lg-block">
+            <a class="nav-link" href="#">
+              <i class="mdi mdi-power"></i>
+            </a>
+          </li>
+         
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+          <span class="mdi mdi-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item border-top">
+            <a class="nav-link" href="index.html">
+              <span class="menu-title">Home</span>
+              <i class="mdi mdi-home menu-icon"></i>
+            </a>
+          </li>
+          <li class="nav-item border-bottom">
+            <a class="nav-link" href="comercios.html">
+              <span class="menu-title">Listado de Comercios</span>
+              <i class="mdi mdi-format-list-numbers menu-icon"></i>
+            </a>
+          </li>
+                  
+          <li class="nav-item sidebar-actions">
+            <span class="nav-link">
+              <a href="add_comercio.html" class="btn btn-block btn-md btn-gradient-primary mt-3">+ Agregar comercio</a>
+            </span>
+          </li>
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="page-header">
+            <h3 class="page-title">
+              <span class="page-title-icon bg-gradient-primary text-white mr-2">
+                <i class="mdi mdi-home"></i>                 
+              </span>
+              Home
+            </h3>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-4 stretch-card grid-margin">
+              <div class="card bg-gradient-danger card-img-holder text-white">
+                <div class="card-body">
+                  <img src="images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image"/>
+                  <h4 class="font-weight-normal mb-3">Total Transacciones
+                    <i class="mdi mdi-coin mdi-24px float-right"></i>
+                  </h4>
+                  <h2 class="mb-5">$ 15,0000</h2>
+                  <h6 class="card-text">Increased by 60%</h6>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 stretch-card grid-margin">
+              <div class="card bg-gradient-info card-img-holder text-white">
+                <div class="card-body">
+                  <img src="images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image"/>                  
+                  <h4 class="font-weight-normal mb-3">Ofertas Activas
+                    <i class="mdi mdi-sale mdi-24px float-right"></i>
+                  </h4>
+                  <h2 class="mb-5">45,6334</h2>
+                  <h6 class="card-text">Decreased by 10%</h6>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 stretch-card grid-margin">
+              <div class="card bg-gradient-success card-img-holder text-white">
+                <div class="card-body">
+                  <img src="images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image"/>                                    
+                  <h4 class="font-weight-normal mb-3">Nuevos usuarios (mes)
+                    <i class="mdi mdi-account-multiple mdi-24px float-right"></i>
+                  </h4>
+                  <h2 class="mb-5">95,5741</h2>
+                  <h6 class="card-text">Increased by 5%</h6>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Comercios Adheridos</h4>
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th class="text-left">
+                            Comercio
+                          </th>
+                          <th class="text-center">
+                            Estado
+                          </th>
+                          <th class="text-center">
+                            Ofertas Activas
+                          </th>
+                          <th class="text-center">
+                            Comisión mes (actual)
+                          </th>
+                          <th>
+
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="text-left">
+                            <img src="images/faces/face1.jpg" class="mr-2" alt="image">
+                            Fravega
+                          </td>
+                          <td class="text-center">
+                            <label class="badge badge-gradient-success">ACTIVO</label>
+                          </td>
+                          <td class="text-center">
+                            5
+                          </td>
+                          <td class="text-center">
+                            $1500
+                          </td>
+                          <td class="text-right">
+                            <a href="comercio.html" class="btn btn-sm btn-gradient-info btn-rounded">Ver estad&iacute;sticas</a>
+                            <a href="comercio_config.html" class="btn btn-sm btn-gradient-light btn-rounded"><i class="mdi mdi-settings"></i></a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="text-left">
+                            <img src="images/faces/face2.jpg" class="mr-2" alt="image">
+                            Garbarino
+                          </td>
+                          <td class="text-center">
+                            <label class="badge badge-gradient-success">ACTIVO</label>
+                          </td>
+                          <td class="text-center">
+                            2
+                          </td>
+                          <td class="text-center">
+                            $500
+                          </td>
+                          <td class="text-right">
+                              <a href="comercio.html" class="btn btn-sm btn-gradient-info btn-rounded">Ver estad&iacute;sticas</a>
+                              <a href="comercio_config.html" class="btn btn-sm btn-gradient-light btn-rounded"><i class="mdi mdi-settings"></i></a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="text-left">
+                            <img src="images/faces/face3.jpg" class="mr-2" alt="image">
+                            Compumundo
+                          </td>
+                          <td class="text-center">
+                            <label class="badge badge-gradient-secondary">DESHABILITADO</label>
+                          </td>
+                          <td class="text-center">
+                            0
+                          </td>
+                          <td class="text-center">
+                            $100
+                          </td>
+                          <td class="text-right">
+                              <a href="comercio.html" class="btn btn-sm btn-gradient-info btn-rounded">Ver estad&iacute;sticas</a>
+                              <a href="comercio_config.html" class="btn btn-sm btn-gradient-light btn-rounded"><i class="mdi mdi-settings"></i></a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="text-left">
+                            <img src="images/faces/face4.jpg" class="mr-2" alt="image">
+                            Megatone
+                          </td>
+                          <td class="text-center">
+                            <label class="badge badge-gradient-success">ACTIVO</label>
+                          </td>
+                          <td class="text-center">
+                            1
+                          </td>
+                          <td class="text-center">
+                            $230,26
+                          </td>
+                          <td class="text-right">
+                              <a href="comercio.html" class="btn btn-sm btn-gradient-info btn-rounded">Ver estad&iacute;sticas</a>
+                              <a href="comercio_config.html" class="btn btn-sm btn-gradient-light btn-rounded"><i class="mdi mdi-settings"></i></a>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-7 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <div class="clearfix">
+                    <h4 class="card-title float-left">Usuarios por mes</h4>
+                    <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>                                     
+                  </div>
+                  <canvas id="visit-sale-chart" class="mt-4"></canvas>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-5 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Acciones de usuarios</h4>
+                  <canvas id="traffic-chart"></canvas>
+                  <div id="traffic-chart-legend" class="rounded-legend legend-vertical legend-bottom-left pt-4"></div>                                                      
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+        <footer class="footer">
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2017 <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap Dash</a>. All rights reserved.</span>
+            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
+          </div>
+        </footer>
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+
+  <!-- plugins:js -->
+  <script src="vendors/js/vendor.bundle.base.js"></script>
+  <script src="vendors/js/vendor.bundle.addons.js"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page-->
+  <!-- End plugin js for this page-->
+  <!-- inject:js -->
+  <script src="js/off-canvas.js"></script>
+  <script src="js/misc.js"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="js/dashboard.js"></script>
+  <!-- End custom js for this page-->
+</body>
+
+</html>

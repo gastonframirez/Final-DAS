@@ -1,6 +1,9 @@
 ---------------------------------------------------------------------------------------------- DAS Final
-use asistente_DAS
-go
+-- create database XXXX
+-- GO
+
+-- use garbarino
+-- go
 
 
 ---------------------------------------------------------------------------------------------- Dropping tables
@@ -42,10 +45,11 @@ create table productos
 (
     id_producto         integer         not null        identity (1,1),
     nombre              varchar (255)   not null,
-    marca               varchar (255)   not null,
     modelo              varchar (255)   not null,
     id_categoria        smallint        not null,
     id_marca            smallint        not null,
+    precio              float           not null,
+    image_url           varchar (500)   not null,
 
     constraint pk__producto__end primary key (id_producto),
     constraint fk__productos_1__end foreign key (id_categoria)
@@ -60,41 +64,38 @@ go
 create table ofertas
 (
     id_oferta           smallint        not null        identity (1,1),
-    id_comercio         smallint        not null,
-    image_url           varchar (500)   not null,
     fecha_inicio        DATETIME        not null,
     fecha_fin           DATETIME        not null,
+    precio_oferta       FLOAT           not null,
+    id_producto         integer         not null,
     habilitada          BIT             not null        default 0,
 
-    constraint pk__oferta__end primary key (id_oferta, id_comercio),
-    constraint fk__oferta__end foreign key (id_comercio)
-        references comercios (id_comercio)
+    constraint pk__oferta__end primary key (id_oferta),
+    constraint fk__oferta_producto__end foreign key (id_producto)
+        references productos (id_producto)
 )
 go
 
 ----------------------------------------------------------------------------------------------
+
 create table transacciones
 (
     id_transaccion      integer         not null        identity (1,1),
     fecha               DATETIME        not null        default getdate(),
     id_producto         integer         not null,
-    id_tipo_transaccion SMALLINT        not null,
-    id_comercio         SMALLINT        not null,
-    id_cliente          INTEGER         not null,
-    id_oferta           integer,
-    pending             bit             not NULL    default 0,
+    id_oferta           smallint,
+    tipo_transaccion  VARCHAR(100)    not null,
+    nombre_cliente      VARCHAR(200)    not null,
+    apellido_cliente    varchar (200)   not null,
+    email_cliente       varchar (500)   not null,
+    dni                 integer         not null,
+    precio_producto     FLOAT           not null,
 
     constraint pk__transaccion__end primary key (id_transaccion),
-    constraint fk__transacciones_1__end foreign key (id_producto)
-        references productos (id_producto),
-    constraint fk__transacciones_2__end foreign key (id_tipo_transaccion)
-        references tipo_transacciones (id_tipo_transaccion),
-    constraint fk__transacciones_3__end foreign key (id_comercio)
-        references comercios (id_comercio),
-    constraint fk__transacciones_4__end foreign key (id_cliente)
-        references clientes (id_cliente),
-    constraint fk__transacciones_5__end foreign key (id_oferta)
-        references ofertas (id_oferta)
+    constraint fk__transaccion_producto__end foreign key (id_producto)
+        references productos(id_producto),
+    constraint fk__transaccion_oferta__end foreign key (id_oferta)
+        references ofertas(id_oferta)
 )
 go
 
@@ -106,7 +107,7 @@ create table logs
     fecha               date            not null	default getdate(),
     descripcion         varchar (500)   not null,
 
-    constraint pk__log_errores__end primary key (id_error)
+    constraint pk__logs__end primary key (id_log)
 )
 go
 
@@ -115,20 +116,85 @@ go
 
 
 ---------------------------------------------------------------------------------------------- Guardar log
-drop procedure save_log
+-- drop procedure save_log
+-- go
+
+-- create procedure save_log
+-- (
+--     @descripcion    varchar(500)
+-- )
+-- as
+-- begin
+
+--     insert into logs(descripcion)
+--     values(@descripcion)
+    
+-- end
 go
 
-create procedure save_log
+
+---------------------------------------------------------------------------------------------- Get Ofertas
+drop procedure getOfertas
+go
+
+
+create procedure getOfertas
+as
+BEGIN
+    SELECT fecha_inicio, fecha_fin, precio_oferta, modelo 
+        FROM ofertas
+            JOIN productos
+            ON productos.id_producto = ofertas.id_producto
+        WHERE ofertas.habilitada = 1
+
+END
+
+EXECUTE getOfertas
+
+---------------------------------------------------------------------------------------------- Save Transaccion
+drop procedure saveTransaccion
+go
+
+create procedure saveTransaccion
 (
-    @descripcion    varchar(500)
+    @fechaTransaccion   varchar(100),
+    @nombreCliente      varchar (200),
+    @apellidoCliente    varchar (200),
+    @emailCliente       varchar (500),
+    @dniCliente         integer,
+    @tipoTransaccion    varchar (2),
+    @modeloProducto     varchar (500),
+    @precioProducto     float,
+    @idOferta           integer
 )
 as
-begin
+BEGIN
+    declare @idProducto integer
 
-    insert into logs(descripcion)
-    values(@descripcion)
+    select @idProducto = id_producto
+    from productos
+    where modelo = @modeloProducto
+
+    insert into transacciones (fecha,
+                                id_producto,
+                                id_oferta,
+                                tipo_transaccion,
+                                nombre_cliente,
+                                apellido_cliente,
+                                email_cliente,
+                                dni,
+                                precio_producto)
+    values (@fechaTransaccion,
+            @idProducto,
+            @idOferta,
+            @tipoTransaccion,
+            @nombreCliente,
+            @apellidoCliente,
+            @emailCliente,
+            @dniCliente,
+            @precioProducto)
+
     
-end
-go
+END
 
-
+EXECUTE getOfertas

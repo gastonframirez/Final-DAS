@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Maceo - Editar el comercio</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="vendors/iconfonts/mdi/css/materialdesignicons.min.css">
+  <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
+  <!-- endinject -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="images/favicon.png" />
+  <link rel="stylesheet" href="vendors/dropify/dropify.min.css">
+</head>
+
+<body>
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+        <a class="navbar-brand brand-logo" href="index.html"><img src="images/logo.svg" alt="logo"/></a>
+        <a class="navbar-brand brand-logo-mini" href="index.html"><img src="images/logo-mini.svg" alt="logo"/></a>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-stretch">
+        <div class="search-field d-none d-md-block">
+        </div>
+        <ul class="navbar-nav navbar-nav-right">
+          <li class="nav-item nav-profile dropdown">
+            <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+              <div class="nav-profile-text">
+                <p class="mb-1 text-black">Gaston Ramirez</p>
+              </div>
+            </a>
+            <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
+              <a class="dropdown-item" href="user_update.html">
+                <i class="mdi mdi-cached mr-2 text-success"></i>
+                Configuración
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">
+                <i class="mdi mdi-logout mr-2 text-primary"></i>
+                Salir
+              </a>
+            </div>
+          </li>
+          
+          <li class="nav-item dropdown">
+            <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
+              <i class="mdi mdi-flag"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="notificationDropdown">
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
+                  <h6 class="preview-subject font-weight-normal mb-1">English</h6>
+                </div>
+              </a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item preview-item">
+                <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
+                  <h6 class="preview-subject font-weight-normal mb-1">Espa&ntilde;ol</h6>
+                </div>
+              </a>
+            </div>
+          </li>
+          <li class="nav-item nav-logout d-none d-lg-block">
+            <a class="nav-link" href="#">
+              <i class="mdi mdi-power"></i>
+            </a>
+          </li>
+         
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+          <span class="mdi mdi-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item border-top">
+            <a class="nav-link" href="index.html">
+              <span class="menu-title">Home</span>
+              <i class="mdi mdi-home menu-icon"></i>
+            </a>
+          </li>
+          <li class="nav-item border-bottom">
+            <a class="nav-link" href="comercios.html">
+              <span class="menu-title">Listado de Comercios</span>
+              <i class="mdi mdi-format-list-numbers menu-icon"></i>
+            </a>
+          </li>
+                  
+          <li class="nav-item sidebar-actions">
+            <span class="nav-link">
+              <a href="add_comercio.html" class="btn btn-block btn-md btn-gradient-primary mt-3">+ Agregar comercio</a>
+            </span>
+          </li>
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="main-panel">        
+        <div class="content-wrapper">
+          <div class="page-header">
+            <h3 class="page-title">
+              <span class="page-title-icon bg-gradient-primary text-white mr-2">
+                <i class="mdi mdi-settings"></i>                 
+              </span>
+              NOMBRE DEL COMERCIO
+            </h3>
+            <nav aria-label="breadcrumb">
+                <label class="form-switch">
+                    <span>Habilitado</span>
+                    <input type="checkbox" checked="checked">
+                    <i></i>
+                  </label>
+              <a href="#" class="btn btn-success btn-fw">Guardar</a>
+            </nav>
+          </div>
+          <div class="row">
+            
+            <div class="col-12 grid-margin">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Datos del comercio</h4>
+                  <form class="form-sample">
+                    <p class="card-description">
+                      Datos impositivos
+                    </p>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Raz&oacute;n Social</label>
+                          <div class="col-sm-9">
+                            <input type="text" class="form-control"/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">CUIT</label>
+                          <div class="col-sm-9">
+                            <input type="text" class="form-control" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <p class="card-description">
+                      Direcci&oacute;n
+                    </p>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Direcci&oacute;n</label>
+                          <div class="col-sm-9">
+                            <input type="text" class="form-control" />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Provincia</label>
+                          <div class="col-sm-9">
+                              <select class="form-control" id="exampleFormControlSelect2">
+                                  <option>1</option>
+                                  <option>2</option>
+                                  <option>3</option>
+                                  <option>4</option>
+                                  <option>5</option>
+                                </select>
+                          </div>
+                        </div>
+                      </div>
+                      
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">CP</label>
+                          <div class="col-sm-9">
+                            <input type="text" class="form-control" />
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Ciudad</label>
+                          <div class="col-sm-9">
+                              <select class="form-control" id="exampleFormControlSelect3">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                              </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                          <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Tel&eacute;fono</label>
+                            <div class="col-sm-9">
+                              <input type="phone" class="form-control"/>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                    
+                      <div class="col-md-12">
+                        <label class="col-sm-3 col-form-label">Logo</label>
+                        <input type="file" class="dropify">
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Configuración del  <span class="text-primary">web service</span></h4>
+                  <p class="card-description">
+                    Datos de conexión al servicio de notificaci&oacute;n de transacciones provisto por el comercio
+                  </p>
+                  <div class="row">
+                      <div class="col-md-8">
+                        <div class="form-group row">
+                          <label class="col-sm-2 col-form-label">URL</label>
+                          <div class="col-sm-10">
+                            <input type="text" class="form-control"/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Puerto</label>
+                          <div class="col-sm-9">
+                            <input type="text" class="form-control" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <div class="row">
+                    <div class="col-md-8">
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Funci&oacute;n</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control"/>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="card-description">
+                    Datos de conexión al servicio de obtenci&oacute; de ofertas provisto por el comercio
+                  </p>
+                  <div class="row">
+                      <div class="col-md-8">
+                        <div class="form-group row">
+                          <label class="col-sm-2 col-form-label">URL</label>
+                          <div class="col-sm-10">
+                            <input type="text" class="form-control"/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group row">
+                          <label class="col-sm-3 col-form-label">Puerto</label>
+                          <div class="col-sm-9">
+                            <input type="text" class="form-control" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <div class="row">
+                    <div class="col-md-8">
+                      <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Funci&oacute;n</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control"/>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <h4 class="card-title">Configuración de <span class="text-success">Comisiones</span></h4>
+                  <div class="form-group">
+                    <label for="exampleInputUsername1">Por click en producto:</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text bg-gradient-primary text-white">$</span>
+                      </div>
+                      <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                      <label for="exampleInputUsername1">Por click en oferta:</label>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text bg-gradient-primary text-white">$</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 grid-margin">
+                <div class="card">
+                  <div class="card-body">
+                    <h4 class="card-title" style="text-transform:initial">Configuración para <span class="text-danger">scraping</span></h4>
+                    <form class="form-sample">
+                      <p class="card-description">
+                        URLs para obtener los productos de las distintas categor&iacute;as
+                      </p>
+                      <div class="form-group row">
+                        <label for="exampleInputUsername2" class="col-sm-3 col-form-label">URL para Categoria #1</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" id="exampleInputUsername2" placeholder="Username">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="exampleInputUsername2" class="col-sm-3 col-form-label">URL para Categoria #2</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" id="exampleInputUsername2" placeholder="Username">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="exampleInputUsername2" class="col-sm-3 col-form-label">URL para Categoria #3</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" id="exampleInputUsername2" placeholder="Username">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="exampleInputUsername2" class="col-sm-3 col-form-label">URL para Categoria #4</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" id="exampleInputUsername2" placeholder="Username">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="exampleInputUsername2" class="col-sm-3 col-form-label">URL para Categoria #5</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" id="exampleInputUsername2" placeholder="Username">
+                        </div>
+                      </div>
+                      
+                    </form>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-12 text-center mt-3">
+                    <a href="add_comercio.html" class="btn btn-danger btn-lg mr-2">Eliminar</a>
+                    <a href="add_comercio.html" class="btn btn-success btn-lg">Guardar</a>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+        <!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+        <footer class="footer">
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2017 <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap Dash</a>. All rights reserved.</span>
+            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
+          </div>
+        </footer>
+        <!-- partial -->
+      </div>
+      <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+  <!-- plugins:js -->
+  <script src="vendors/js/vendor.bundle.base.js"></script>
+  <script src="vendors/js/vendor.bundle.addons.js"></script>
+  <script src="vendors/dropify/dropify.min.js"></script>
+  <!-- endinject -->
+  <!-- inject:js -->
+  <script src="js/off-canvas.js"></script>
+  <script src="js/misc.js"></script>
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="js/file-upload.js"></script>
+  <!-- End custom js for this page-->
+  <script>
+      $(document).ready(function(){
+          // Basic
+          $('.dropify').dropify();
+      });
+  </script>
+</body>
+
+</html>
