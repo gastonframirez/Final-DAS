@@ -29,7 +29,7 @@ public class OfertasWS {
 			DynaActionForm daf = new DynaActionForm();
 
 			ofertas = dao.select(daf);
-			System.out.print("ACA4");
+
 			LinkedList<Map<String,Object>> ofertasForJson = new LinkedList<Map<String,Object>>();
 			
 			for( DynaActionForm c : ofertas ) {
