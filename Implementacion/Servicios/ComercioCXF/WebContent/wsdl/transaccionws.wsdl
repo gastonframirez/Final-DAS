@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions name="TransaccionWSService" targetNamespace="http://ws.comercio.src.das.ubp.edu.ar/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ws.comercio.src.das.ubp.edu.ar/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.comercio.src.das.ubp.edu.ar/" version="1.0" xmlns:tns="http://ws.comercio.src.das.ubp.edu.ar/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="insertTransaccion" type="tns:insertTransaccion"/>
+
+  <xs:element name="insertTransaccionResponse" type="tns:insertTransaccionResponse"/>
+
+  <xs:complexType name="insertTransaccion">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg1" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg2" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg3" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg4" type="xs:int"/>
+      <xs:element minOccurs="0" name="arg5" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg6" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg7" type="xs:int"/>
+      <xs:element minOccurs="0" name="arg8" type="xs:float"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="insertTransaccionResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="insertTransaccionResponse">
+    <wsdl:part name="parameters" element="tns:insertTransaccionResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="insertTransaccion">
+    <wsdl:part name="parameters" element="tns:insertTransaccion">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="TransaccionWS">
+    <wsdl:operation name="insertTransaccion">
+      <wsdl:input name="insertTransaccion" message="tns:insertTransaccion">
+    </wsdl:input>
+      <wsdl:output name="insertTransaccionResponse" message="tns:insertTransaccionResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="TransaccionWSServiceSoapBinding" type="tns:TransaccionWS">
+    <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="insertTransaccion">
+      <soap12:operation soapAction="urn:InsertTransaccion" style="document"/>
+      <wsdl:input name="insertTransaccion">
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="insertTransaccionResponse">
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="TransaccionWSService">
+    <wsdl:port name="TransaccionWSPort" binding="tns:TransaccionWSServiceSoapBinding">
+      <soap12:address location="http://localhost:8080/ComercioCXF/services"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
