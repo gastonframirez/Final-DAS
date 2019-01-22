@@ -21088,7 +21088,7 @@ dl li {
   width: 100%;
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: contain;
   height: 75px;
 }
 .client-home .ofertas-comercios .ListPrice,
@@ -21158,6 +21158,16 @@ dl li {
   height: 200px;
   display: inline-block;
   margin-bottom: 10px;
+  
+  transition-timing-function: ease;
+  transition-timing-function: cubic-bezier(1, 0.25, 0.1, 0.25);
+  transition: 0.5s;
+}
+.client-home .categoria-home-container .categoria-home-imagen:hover{
+  transform: scale(1.05);
+  transition-timing-function: ease;
+  transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+  transition: 0.5s;
 }
 .client-home .categoria-home-container figure{
   display:block;
@@ -21169,6 +21179,16 @@ dl li {
   margin-right: 10px;
   background: #DDD;
   line-height: 1.7em;
+  border: 0px solid;
+  transition-timing-function: ease;
+  transition-timing-function: cubic-bezier(1, 0.25, 0.1, 0.25);
+  transition: 0.5s;
+}
+.client-home .categoria-home-container .categoria-home-imagen:hover figure{
+	border: 2px solid;
+	transition-timing-function: ease;
+	transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
+	transition: 0.5s;
 }
 
 .client-home .categoria-home-container figure img{
@@ -21184,7 +21204,9 @@ dl li {
   padding: 10px;
   padding-bottom: 20px;
 }
-
+.client-home .card-body.producto img{
+	width: 100%;
+}
 .client-home .producto-precios{
   border-top: 1px solid #DDD;
   background-color: #DDD;
@@ -21197,6 +21219,9 @@ dl li {
 
 .client-home .producto-info-compra{
   float: left;
+}
+.client-home .producto-info-compra .img-comercio img{
+	height: 35px;
 }
 .client-home .btn-comprar-group{
   float: right;
@@ -21213,50 +21238,50 @@ dl li {
   font-style: italic;
 }
 
-.client-home.client-category .content-wrapper{
+.client-home .client-category .content-wrapper{
   padding-bottom: 100px;
 }
-.client-home.client-category .buying-options .dropdown-item{
+.client-home .client-category .buying-options .dropdown-item{
   padding: 0;
 }
-.client-home.client-category .buying-options.dropdown-menu{
+.client-home .client-category .buying-options.dropdown-menu{
   padding-top: 0 !important;
 } 
-.client-home.client-category .buying-options .dropdown-header{
+.client-home .client-category .buying-options .dropdown-header{
   /* padding: 0; */
   background-color: #ebedf2;
   border-bottom: 1px solid #DDD;
 }
 
-.client-home.client-category .buying-options .producto-info-compra{
+.client-home .client-category .buying-options .producto-info-compra{
   padding: 5px 20px;
   width: 100%;
   border-bottom: 1px solid #ebedf2;
 }
-.client-home.client-category .buying-options .dropdown-item:last-child .producto-info-compra{
+.client-home .client-category .buying-options .dropdown-item:last-child .producto-info-compra{
   border-bottom: none;
 }
-.client-home.client-category .buying-options .producto-info-compra .precio-lista{
+.client-home .client-category .buying-options .producto-info-compra .precio-lista{
   font-size: 0.9em;
 }
-.client-home.client-category .producto-info-compra .precio-lista.con-oferta{
+.client-home .client-category .producto-info-compra .precio-lista.con-oferta{
   text-decoration: line-through;
   color: #999;
   display: inline-block;
   font-size:1em;
 }
-.client-home.client-category .producto-info-compra .precio-oferta{
+.client-home .client-category .producto-info-compra .precio-oferta{
   display: inline-block;
   font-weight: bolder;
 }
 
-.client-home.client-category .buying-options .producto-info-compra .precio-lista.con-oferta{
+.client-home .client-category .buying-options .producto-info-compra .precio-lista.con-oferta{
   text-decoration: line-through;
   color: #999;
   display: inline-block;
   font-size:0.8em;
 }
-.client-home.client-category .buying-options .producto-info-compra .precio-oferta{
+.client-home .client-category .buying-options .producto-info-compra .precio-oferta{
   display: inline-block;
   font-weight: bolder;
 }
