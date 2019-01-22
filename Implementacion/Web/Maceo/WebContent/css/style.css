@@ -21084,6 +21084,13 @@ dl li {
   line-height: .85;
   letter-spacing: -2.9px;
 }
+.client-home .ofertas-comercios .comercioLogo {
+  width: 100%;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 75px;
+}
 .client-home .ofertas-comercios .ListPrice,
 .client-home .ofertas-comercios .BestPrice{
   display: inline-block;
@@ -21131,16 +21138,20 @@ dl li {
   bottom: 0;
   top: auto;
 }
-
+.client-home .sadFace{
+	max-width: 150px;
+	max-height: 150px;
+}
 .client-home .categoria-home-container{
   text-align: center;
   display: inline-block;
-  margin: 0 20px;
+  margin: 5px 20px;
 }
 .cat-container{
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
 }
 .client-home .categoria-home-container .categoria-home-imagen{
   width:200px;
@@ -21165,6 +21176,8 @@ dl li {
  width: 150px;
  height: auto;
  margin-top: 20px;
+ mix-blend-mode: multiply;
+
 }
 
 .client-home .card-body.producto{
