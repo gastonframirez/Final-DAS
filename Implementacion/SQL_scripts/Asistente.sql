@@ -1,56 +1,119 @@
 ---------------------------------------------------------------------------------------------- DAS Final
-use asistente_DAS
+use maceo
 go
 
 
 ---------------------------------------------------------------------------------------------- Dropping tables
-drop table logs
-drop table administradores
-drop table servicios
-drop table tecnologias
-drop table ult_actualizacion
-drop table comisiones_tipo_transacciones
-drop table transacciones
-drop table clientes
-drop table tipo_transacciones
-drop table producto_comercio
-drop table ofertas
-drop table productos
-drop table categorias_productos
-drop table comercios
+-- drop table logs
+-- drop table administradores
+-- drop table servicios
+-- drop table tecnologias
+-- drop table ult_actualizacion
+-- drop table comisiones_tipo_transacciones
+-- drop table transacciones
+-- drop table usuarios
+-- drop table tipo_transacciones
+-- drop table producto_comercio
+-- drop table scraper_categoria
+-- drop table ofertas
+-- drop table productos
+-- drop table marcas
+-- drop table categorias_productos
+-- drop table comercios
+-- drop table idiomas
 go
 
 ----------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------- Create tables
 
-create table comercio
+create table idiomas
+(
+	id_idioma 			smallint		not null 		identity(1,1),
+	nombre				varchar (100) 	not NULl,
+	habilitado			BIT				not null	default 0,
+
+	constraint pk__idioma__end primary key (id_idioma)
+)
+go
+-- insert into idiomas values ('es', 1)
+-- insert into idiomas	values	('en', 1)
+
+create table idiomas_idiomas
+(
+	id_idioma 			smallint		not null,
+	id_traduccion		smallint 	not NULl,
+	traduccion			varchar (100)
+
+	constraint pk__idioma_idioma__end primary key (id_idioma, id_traduccion)
+)
+go
+-- insert into idiomas_idiomas values (1, 1, 'Español')
+-- insert into idiomas_idiomas values (1, 2, 'Inglés')
+-- insert into idiomas_idiomas values (2, 1, 'Spanish')
+-- insert into idiomas_idiomas values (2, 2, 'English')
+----------------------------------------------------------------------------------------------
+create table comercios
 (
     id_comercio         smallint        not null        identity (1,1),
     razon_social        varchar (50)    not null,
     cuit                varchar (14)    not null,
     direccion           varchar (255)   not null,
+	nombre_publico		varchar (255) 	not null,
     telefono            varchar (20)    not null,
     logo_url            varchar (500)   not null,
     habilitado          bit             not null        default 0, -- 0: False, 1: True
     
     
-    constraint pk__comercio__end primary key (id_concesionaria),
+    constraint pk__comercio__end primary key (id_comercio),
     constraint uq__comercio__1__end unique (razon_social),
     constraint uq__comercio__2__end unique (cuit)
 )
 go
-
+-- insert into comercios values ('Garbarino S.A', '20111121114', 'Blah 1234, cordoba, argentina', 'Garbarino', '1231223', 'https://www.postularse.com/media/pictures/company_1899_profile_200x150.png',
+-- 1)
+-- insert into comercios values ('Compumundo S.A', '20111111114', 'Blah 1234, cordoba, argentina', 'Compumundo', '1231223', 'https://dj4i04i24axgu.cloudfront.net/normi/statics/0.1.048/compumundo/images/experiencia-compumundo.png',
+-- 1)
 ----------------------------------------------------------------------------------------------
 create table categorias_productos
 (
     id_categoria        smallint        not null        identity (1,1),
     nombre              varchar (255)   not null,
     image_url           varchar (500)   not null,
+	habilitado          bit             not null        default 0, -- 0: False, 1: True
     
     constraint pk__categorias_productos__end primary key (id_categoria)
 )
 go
 
+-- insert into categorias_productos values ('TVs', 'https://d34zlyc2cp9zm7.cloudfront.net/products/1779250837a13543779bc1f31d5c9b192475d0742a58a898f2b415923137e236.webp_500', 1)
+-- insert into categorias_productos values ('Heladeras', 'https://d34zlyc2cp9zm7.cloudfront.net/products/220bf235108326e00d9b634d248ebb295050c9730db9cf05a52ac3b2fc895abb.webp_500', 1)
+
+----------------------------------------------------------------------------------------------
+-- drop table categorias_idiomas
+create table categorias_idiomas
+(
+    id_categoria        smallint        not null,
+    id_idioma           SMALLINT	    not null,
+    nombre             varchar (500)   not null,
+    
+    constraint pk__categorias_idiomas__end primary key (id_categoria, id_idioma)
+)
+
+insert into categorias_idiomas values (1, 1, 'Televisores')
+insert into categorias_idiomas values (1, 2, 'TVs')
+insert into categorias_idiomas values (2, 1, 'Heladeras')
+insert into categorias_idiomas values (2, 2, 'Fridges')
+----------------------------------------------------------------------------------------------
+create table marcas
+(
+    id_marca        	smallint        not null        identity (1,1),
+    nombre              varchar (255)   not null 		unique,
+    
+    constraint pk__marca__end primary key (id_marca)
+)
+go
+
+-- insert into marcas values ('LG');
 ----------------------------------------------------------------------------------------------
 create table productos
 (
@@ -67,14 +130,18 @@ create table productos
 )
 go
 
+-- insert into productos values ('Smart TV LG 43 " Full HD 43LK5700PSC', 1, '43LK5700PSC', 1)
 ----------------------------------------------------------------------------------------------
 create table ofertas
 (
-    id_oferta           smallint        not null        identity (1,1),
+    id_oferta           integer        not null        identity (1,1),
     id_comercio         smallint        not null,
     image_url           varchar (500)   not null,
     fecha_inicio        DATETIME        not null,
     fecha_fin           DATETIME        not null,
+	url_oferta			varchar (500)	not null,
+	precio_oferta		FLOAT			not null,
+	id_producto			integer			not null,
     habilitada          BIT             not null        default 0,
 
     constraint pk__oferta__end primary key (id_oferta, id_comercio),
@@ -83,6 +150,8 @@ create table ofertas
 )
 go
 
+-- insert into ofertas values (1, 'https://d34zlyc2cp9zm7.cloudfront.net/products/1779250837a13543779bc1f31d5c9b192475d0742a58a898f2b415923137e236.webp_500',
+--  '2019-01-19 00:00:00', '2019-01-31 23:59:59', 'https://www.compumundo.com.ar/producto/smart-tv-lg-43-full-hd-43lk5700psc/3c66884d00', 12999, 1,1)
 ----------------------------------------------------------------------------------------------
 create table producto_comercio
 (
@@ -102,41 +171,56 @@ create table producto_comercio
 )
 go
 
+-- insert into producto_comercio values (1, 1, 20999, 'https://www.compumundo.com.ar/producto/smart-tv-lg-43-full-hd-43lk5700psc/3c66884d00',
+-- '2019-01-20 19:00:00', 'https://d34zlyc2cp9zm7.cloudfront.net/products/1779250837a13543779bc1f31d5c9b192475d0742a58a898f2b415923137e236.webp_1000',
+-- 1)
+
 ----------------------------------------------------------------------------------------------
 create table tipo_transacciones
 (
     id_tipo             SMALLINT        not null,
-    id_comercio         SMALLINT        not null,
     nombre              varchar (250)   not null,
 
-    constraint pk__tipo_transacciones__end primary key (id_tipo, id_comercio),
-    constraint fk__tipo_transacciones__end foreign key (id_comercio)
-        references comercios (id_comercio)
+    constraint pk__tipo_transacciones__end primary key (id_tipo),
 )
 go
 
 ----------------------------------------------------------------------------------------------
-create table clientes
+create table usuarios
 (
-    id_cliente          integer         not null        identity (1,1),
+    id_usuario          integer         not null        identity (1,1),
     usuario             varchar (50) not null,
     nombre              varchar (200)   not null,
     apellido            varchar (200)   not null,
     email               varchar (500)   not null,
-    cliente_password    varchar (500)   not null,
+    usuario_password    varchar (500)   not null,
     dni                 integer         not null,
     fecha_registro      DATETIME        not null        default getdate(),
-    intentos_fallidos   tinyint      not null   default 0,
-    bloqueado           char (1)     not null   default 'n',
+	isAdmin				BIT			 	not NULL		default 0,
     
-    constraint pk__cliente__end primary key (id_cliente),
-    constraint uq__cliente_1__end unique (usuario),
-    constraint uq__cliente_2__end unique (dni),
-    constraint uq__cliente_3__end unique (email),
-    constraint ch__cliente_intentos_fallidos__end check (intentos_fallidos >= 0),
-    constraint ch__cliente_1__end check (bloqueado in (1, 0) ) -- si, no
+    constraint pk__usuario__end primary key (id_usuario),
+    constraint uq__usuario_1__end unique (usuario),
+    constraint uq__usuario_2__end unique (dni),
+    constraint uq__usuario_3__end unique (email)
 )
 go
+
+----------------------------------------------------------------------------------------------
+create table administradores
+(
+    id_administrador    smallint     not null  identity (1,1),
+    id_usuario          INTEGER		 not null,
+    intentos_fallidos   tinyint      not null   default 0,
+    bloqueado           BIT          not null   default 0,
+
+    constraint pk__administradores__end primary key (id_administrador),
+	constraint fk__administradores_user__end foreign key (id_usuario)
+		references usuarios	(id_usuario),
+    constraint ch__intentos_fallidos__end check (intentos_fallidos >= 0),
+    constraint ch__administradores__1__end check (bloqueado in (1, 0) ) -- si, no
+)
+go
+
 
 ----------------------------------------------------------------------------------------------
 create table transacciones
@@ -146,7 +230,7 @@ create table transacciones
     id_producto         integer         not null,
     id_tipo_transaccion SMALLINT        not null,
     id_comercio         SMALLINT        not null,
-    id_cliente          INTEGER         not null,
+    id_usuario          INTEGER         not null,
     id_oferta           integer,
     pending             bit             not NULL    default 0,
 
@@ -154,13 +238,13 @@ create table transacciones
     constraint fk__transacciones_1__end foreign key (id_producto)
         references productos (id_producto),
     constraint fk__transacciones_2__end foreign key (id_tipo_transaccion)
-        references tipo_transacciones (id_tipo_transaccion),
+        references tipo_transacciones (id_tipo),
     constraint fk__transacciones_3__end foreign key (id_comercio)
         references comercios (id_comercio),
-    constraint fk__transacciones_4__end foreign key (id_cliente)
-        references clientes (id_cliente),
-    constraint fk__transacciones_5__end foreign key (id_oferta)
-        references ofertas (id_oferta)
+    constraint fk__transacciones_4__end foreign key (id_usuario)
+        references usuarios (id_usuario),
+    constraint fk__transacciones_5__end foreign key (id_oferta, id_comercio)
+        references ofertas (id_oferta, id_comercio)
 )
 go
 
@@ -176,7 +260,7 @@ create table comisiones_tipo_transacciones
 
     constraint pk__comision__end primary key (id_comision, id_tipo, id_comercio),
     constraint fk__comision_1__end foreign key (id_tipo)
-        references tipo_transacciones (id_tipo_transaccion),
+        references tipo_transacciones (id_tipo),
     constraint fk__comision_2__end foreign key (id_comercio)
         references comercios (id_comercio)
 )
@@ -228,264 +312,27 @@ create table servicios
 go
 
 ----------------------------------------------------------------------------------------------
-create table administradores
-(
-    id_administrador    smallint     not null  identity (1,1),
-    usuario             varchar (50) not null,
-    admin_password      varchar (50) not null,
-    dni                 integer      not null,
-    email                varchar (50) not null,
-    nombre              varchar (50) not null,
-    apellido            varchar (50) not null,
-    intentos_fallidos   tinyint      not null   default 0,
-    bloqueado           BIT          not null   default 0,
-
-    constraint pk__administradores__end primary key (id_administrador),
-    constraint uq__administradores__1__end unique (usuario),
-    constraint uq__administradores__2__end unique (dni),
-    constraint uq__administradores__3__end unique (email),
-    constraint ch__intentos_fallidos__end check (intentos_fallidos >= 0),
-    constraint ch__administradores__1__end check (bloqueado in (1, 0) ) -- si, no
-)
-go
-
-----------------------------------------------------------------------------------------------
 create table logs
 (
     id_log              integer         not null    identity (1,1),
     fecha               date            not null	default getdate(),
     descripcion         varchar (500)   not null,
 
-    constraint pk__log_errores__end primary key (id_error)
+    constraint pk__log_errores__end primary key (id_log)
 )
 go
 
 ----------------------------------------------------------------------------------------------
-
-create table provincias
+create table scraper_categoria
 (
-    id_provincia    tinyint         not null    identity (1,1),
-    nombre          varchar (50)    not null,
+	id_comercio			SMALLINT		not NULL,
+	id_categoria		smallint 		not null,
+	url_scrapping		varchar (500) 	not null,
 
-    constraint pk__provincias__end primary key (id_provincia),
-    constraint uq__provincias__end unique (nombre)
+	constraint pk__scraper_categoria__end PRIMARY key (id_comercio, id_categoria)
 )
 go
 
-----------------------------------------------------------------------------------------------
-
-delete from provincias
-go
-
-insert into provincias (nombre)
-values
-	('Buenos Aires'),
-	('Catamarca'),
-	('Chaco'),
-	('Chubut'),
-	('Cordoba'),
-	('Corrientes'),
-	('Entre Rios'),
-	('Formosa'),
-	('Jujuy'),
-	('La Pampa'),
-	('La Rioja'),
-	('Mendoza'),
-	('Misiones'),
-	('Neuquen'),
-	('Rio Negro'),
-	('Salta'),
-	('San Juan'),
-	('San Luis'),
-	('Santa Cruz'),
-	('Santa Fe'),
-	('Santiago del Estero'),
-	('Tierra del Fuego'),
-	('Tucuman')
-go
-
-----------------------------------------------------------------------------------------------
-create table localidades
-(
-    id_provincia    tinyint         not null,
-    id_localidad    smallint        not null,
-    nombre          varchar (50)    not null,
-
-    constraint pk__localidades__end primary key (id_provincia, id_localidad),
-    constraint fk__localidades__provincias__1__end foreign key (id_provincia)
-        references provincias (id_provincia),
-    constraint uq__localidades__1__end unique (id_provincia, nombre)
-)
-go
-
------------------------------------------------------------------------
-
-delete from localidades
-go
-
-insert into localidades (id_provincia,id_localidad,nombre)
-values
-	(1,1,'25 de Mayo'),
-	(1,2,'9 de Julio'),
-	(1,3,'Adolfo Alsina'),
-	(1,4,'Adolfo Gonzales Chaves'),
-	(1,5,'Alberti'),
-	(1,6,'Almirante Brown'),
-	(1,7,'Arrecifes'),
-	(1,8,'Avellaneda'),
-	(1,9,'Ayacucho'),
-	(1,10,'Azul'),
-	(1,11,'Bahia Blanca'),
-	(1,12,'Balcarce'),
-	(1,13,'Baradero'),
-	(1,14,'Benito Juarez'),
-	(1,15,'Berazategui'),
-	(1,16,'Berisso'),
-	(1,17,'Bolivar'),
-	(1,18,'Bragado'),
-	(1,19,'Brandsen'),
-	(1,20,'Ca�uelas'),
-	(1,21,'Campana'),
-	(1,22,'Capitan Sarmiento'),
-	(1,23,'Carlos Casares'),
-	(1,24,'Carlos Tejedor'),
-	(1,25,'Carmen de Areco'),
-	(1,26,'Castelli'),
-	(1,27,'Chacabuco'),
-	(1,28,'Chascomus'),
-	(1,29,'Chivilcoy'),
-	(1,30,'Colon'),
-	(1,31,'Coronel de Marina L. Rosales'),
-	(1,32,'Coronel Dorrego'),
-	(1,33,'Coronel Pringles'),
-	(1,34,'Coronel Suarez'),
-	(1,35,'Daireaux'),
-	(1,36,'Dolores'),
-	(1,37,'Ensenada'),
-	(1,38,'Escobar'),
-	(1,39,'Esteban Echeverria'),
-	(1,40,'Exaltacion de la Cruz'),
-	(1,41,'Ezeiza'),
-	(1,42,'Florencio Varela'),
-	(1,43,'Florentino Ameghino'),
-	(1,44,'General Alvarado'),
-	(1,45,'General Alvear'),
-	(1,46,'General Arenales'),
-	(1,47,'General Belgrano'),
-	(1,48,'General Guido'),
-	(1,49,'General Juan Madariaga'),
-	(1,50,'General La Madrid'),
-	(1,51,'General Las Heras'),
-	(1,52,'General Lavalle'),
-	(1,53,'General Paz'),
-	(1,54,'General Pinto'),
-	(1,55,'General Pueyrredon'),
-	(1,56,'General Rodriguez'),
-	(1,57,'General San Martin'),
-	(1,58,'General Viamonte'),
-	(1,59,'General Villegas'),
-	(1,60,'Guamini'),
-	(1,61,'Hipolito Yrigoyen'),
-	(1,62,'Hurlingham'),
-	(1,63,'Ituzaingo'),
-	(1,64,'Jose C. Paz'),
-	(1,65,'Junin'),
-	(1,66,'La Costa'),
-	(1,67,'La Matanza'),
-	(1,68,'La Plata'),
-	(1,69,'Lanus'),
-	(1,70,'Laprida'),
-	(1,71,'Las Flores'),
-	(1,72,'Leandro N. Alem'),
-	(1,73,'Lincoln'),
-	(1,74,'Loberia'),
-	(1,75,'Lobos'),
-	(1,76,'Lomas de Zamora'),
-	(1,77,'Lujan'),
-	(1,78,'Magdalena'),
-	(1,79,'Maipu'),
-	(1,80,'Malvinas Argentinas'),
-	(1,81,'Mar Chiquita'),
-	(1,82,'Marcos Paz'),
-	(1,83,'Mercedes'),
-	(1,84,'Merlo'),
-	(1,85,'Monte'),
-	(1,86,'Monte Hermoso'),
-	(1,87,'Moron'),
-	(1,88,'Moreno'),
-	(1,89,'Navarro'),
-	(1,90,'Necochea'),
-	(1,91,'Olavarria'),
-	(1,92,'Patagones'),
-	(1,93,'Pehuajo'),
-	(1,94,'Pellegrini'),
-	(1,95,'Pergamino'),
-	(1,96,'Pila'),
-	(1,97,'Pilar'),
-	(1,98,'Pinamar'),
-	(1,99,'Presidente Peron'),
-	(1,100,'Puan'),
-	(1,101,'Punta Indio'),
-	(1,102,'Quilmes'),
-	(1,103,'Ramallo'),
-	(1,104,'Rauch'),
-	(1,105,'Rivadavia'),
-	(1,106,'Rojas'),
-	(1,107,'Roque Perez'),
-	(1,108,'Saavedra'),
-	(1,109,'Saladillo'),
-	(1,110,'Salliquelo'),
-	(1,111,'Salto'),
-	(1,112,'San Andres de Giles'),
-	(1,113,'San Antonio de Areco'),
-	(1,114,'San Cayetano'),
-	(1,115,'San Fernando'),
-	(1,116,'San Isidro'),
-	(1,117,'San Miguel'),
-	(1,118,'San Nicolas'),
-	(1,119,'San Pedro'),
-	(1,120,'San Vicente'),
-	(1,121,'Suipacha'),
-	(1,122,'Tandil'),
-	(1,123,'Tapalque'),
-	(1,124,'Tigre'),
-	(1,125,'Tordillo'),
-	(1,126,'Tornquist'),
-	(1,127,'Trenque Lauquen'),
-	(1,128,'Tres Arroyos'),
-	(1,129,'Tres de Febrero'),
-	(1,130,'Tres Lomas'),
-	(1,131,'Vicente Lopez'),
-	(1,132,'Villa Gesell'),
-	(1,133,'Villarino'),
-	(1,134,'Zarate'),
-	(5,1,'Calamuchita'),
-	(5,2,'Capital'),
-	(5,3,'Colon'),
-	(5,4,'Cruz del Eje'),
-	(5,5,'General Roca'),
-	(5,6,'General San Martin'),
-	(5,7,'Ischilin'),
-	(5,8,'Juarez Celman'),
-	(5,9,'Marcos Juarez'),
-	(5,10,'Minas'),
-	(5,11,'Pocho'),
-	(5,12,'Presidente Roque Saenz Pe�a'),
-	(5,13,'Punilla'),
-	(5,14,'Rio Cuarto'),
-	(5,15,'Rio Primero'),
-	(5,16,'Rio Seco'),
-	(5,17,'Rio Segundo'),
-	(5,18,'San Alberto'),
-	(5,19,'San Javier'),
-	(5,20,'San Justo'),
-	(5,21,'Santa Maria'),
-	(5,22,'Sobremonte'),
-	(5,23,'Tercero Arriba'),
-	(5,24,'Totoral'),
-	(5,25,'Tulumba'),
-	(5,26,'Union')
-go
 
 ----------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------- Create procedures
@@ -507,5 +354,134 @@ begin
     
 end
 go
+
+---------------------------------------------------------------------------------------------- Check Administrador
+
+---------------------------------------------------------------------------------------------- Validar User
+
+---------------------------------------------------------------------------------------------- Registrar User
+
+---------------------------------------------------------------------------------------------- Registrar Administrador
+
+---------------------------------------------------------------------------------------------- Obtener Lista de Comercios
+drop procedure getComercios
+go
+
+create procedure getComercios
+as
+begin
+    SELECT * FROM comercios WHERE habilitado = 1
+end
+go
+
+-- execute getComercios
+
+---------------------------------------------------------------------------------------------- Obtener Comercio
+
+---------------------------------------------------------------------------------------------- Guardar Comercio
+
+---------------------------------------------------------------------------------------------- Editar Comercio
+
+---------------------------------------------------------------------------------------------- Obtener Lista de Categorias
+drop procedure getCategorias
+go
+
+create procedure getCategorias
+as
+begin
+    SELECT cp.id_categoria, ci.nombre, image_url, cp.habilitado, idi.nombre as lang FROM categorias_productos cp
+	JOIN categorias_idiomas ci
+		ON cp.id_categoria = ci.id_categoria
+	JOIN idiomas idi
+		ON ci.id_idioma = idi.id_idioma
+	WHERE cp.habilitado = 1
+end
+go
+
+-- execute getCategorias
+
+
+---------------------------------------------------------------------------------------------- Guardar Categoria
+
+---------------------------------------------------------------------------------------------- Editar Categoria
+
+---------------------------------------------------------------------------------------------- Obtener Lista de Productos x categoria
+drop procedure getProductos
+go
+
+create procedure getProductos
+(
+	@categoria	smallint
+)
+as
+begin
+    SELECT * 
+	FROM productos prod
+	JOIN producto_comercio prodc
+		ON prodc.id_producto = prod.id_producto
+	WHERE prodc.habilitado = 1
+	AND prod.id_categoria = @categoria
+
+end
+go
+execute getProductos @categoria = 1
+---------------------------------------------------------------------------------------------- Guardar Producto
+
+---------------------------------------------------------------------------------------------- Update Producto
+
+---------------------------------------------------------------------------------------------- Obtener Ofertas
+drop procedure getOfertas
+go
+
+create procedure getOfertas
+as
+begin
+    SELECT id_oferta, ofe.image_url as oferta_img_url, fecha_fin, fecha_inicio, url_oferta, precio as precio_normal, precio_oferta, prod.id_producto, ofe.id_comercio, logo_url as comercio_logo_url, nombre
+	FROM ofertas ofe
+	JOIN comercios com
+		ON ofe.id_comercio = com.id_comercio
+	JOIN productos prod
+		ON ofe.id_producto = prod.id_producto
+	JOIN producto_comercio pc
+		ON pc.id_comercio = ofe.id_comercio
+		AND pc.id_producto = ofe.id_producto
+	WHERE habilitada = 1
+		
+end
+go
+
+-- EXECUTE getOfertas
+
+---------------------------------------------------------------------------------------------- Obtener Comision
+drop procedure getComision
+go
+
+create procedure getComision
+(
+	@tipo    smallint,
+	@fecha_inicio	datetime,
+	@fecha_fin		datetime,
+	@comercio		smallint
+)
+as
+begin
+   
+end
+go
+
+---------------------------------------------------------------------------------------------- Obtener Estadistica:
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
