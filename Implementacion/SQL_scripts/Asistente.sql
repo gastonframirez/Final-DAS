@@ -174,6 +174,10 @@ go
 -- insert into producto_comercio values (1, 1, 20999, 'https://www.compumundo.com.ar/producto/smart-tv-lg-43-full-hd-43lk5700psc/3c66884d00',
 -- '2019-01-20 19:00:00', 'https://d34zlyc2cp9zm7.cloudfront.net/products/1779250837a13543779bc1f31d5c9b192475d0742a58a898f2b415923137e236.webp_1000',
 -- 1)
+-- insert into producto_comercio values (1, 1, 21999, 'https://www.compumundo.com.ar/producto/smart-tv-lg-43-full-hd-43lk5700psc/3c66884d00',
+-- '2019-01-20 19:00:00', 'https://d34zlyc2cp9zm7.cloudfront.net/products/1779250837a13543779bc1f31d5c9b192475d0742a58a898f2b415923137e236.webp_1000',
+-- 1)
+
 
 ----------------------------------------------------------------------------------------------
 create table tipo_transacciones
@@ -370,13 +374,54 @@ go
 create procedure getComercios
 as
 begin
-    SELECT * FROM comercios WHERE habilitado = 1
+    SELECT * FROM comercios
 end
 go
 
 -- execute getComercios
 
----------------------------------------------------------------------------------------------- Obtener Comercio
+---------------------------------------------------------------------------------------------- Obtener Datos de Comercio
+drop procedure getDatosComercio
+go
+
+create procedure getDatosComercio
+(
+	@idComercio smallint
+)
+as
+begin
+    SELECT co.id_comercio, razon_social, cuit, direccion, telefono, habilitado, logo_url, ua.fecha_productos, ua.fecha_ofertas
+	FROM comercios co
+	LEFT JOIN ult_actualizacion ua
+		ON ua.id_comercio = co.id_comercio
+	WHERE co.id_comercio = @idComercio
+end
+go
+
+EXECUTE getDatosComercio @idComercio=3
+
+---------------------------------------------------------------------------------------------- Obtener Datos de Comercio: Precio Comision
+drop procedure getValoresComisionesComercio
+go
+
+create procedure getValoresComisionesComercio
+(
+	@idComercio smallint
+)
+as
+begin
+    SELECT comi.nombre, fecha_inicio, fecha_fin, valor, co.id_comercio
+	FROM comercios co
+	RIGHT JOIN (SELECT nombre, fecha_inicio, fecha_fin, valor, id_comercio FROM comisiones_tipo_transacciones ctt
+				JOIN tipo_transacciones tt
+					ON tt.nombre = ctt.id_tipo
+				WHERE ctt.id_comercio = @idComercio) comi
+		ON comi.id_comercio = co.id_comercio
+	WHERE co.id_comercio = @idComercio
+end
+go
+
+EXECUTE getValoresComisionesComercio @idComercio=3
 
 ---------------------------------------------------------------------------------------------- Guardar Comercio
 
@@ -415,20 +460,44 @@ create procedure getProductos
 )
 as
 begin
-    SELECT * 
+    SELECT prod.id_producto, nombre, modelo, precio, url_producto, fecha_actualizado, image_url, logo_url
 	FROM productos prod
 	JOIN producto_comercio prodc
 		ON prodc.id_producto = prod.id_producto
+	JOIN comercios co
+		ON prodc.id_comercio = co.id_comercio
 	WHERE prodc.habilitado = 1
 	AND prod.id_categoria = @categoria
+	ORDER BY prodc.precio, prod.modelo
 
 end
 go
 execute getProductos @categoria = 1
+
 ---------------------------------------------------------------------------------------------- Guardar Producto
+drop procedure guardarProducto
+go
+
+create procedure guardarProducto
+(
+	@nombre            	varchar(255),
+    @marca            	varchar(255),
+    @modelo            	varchar(255),
+    @id_categoria      	smallint,
+	@id_comercio		SMALLINT,
+	@precio				float,
+	@url_producto		varchar (500),
+	@image_url           varchar (500)
+)
+as
+BEGIN
+-- Insertar producto en productos y luego obtener el id del producto e insertar el resto de la info en producto_comercio. Poner habilitado = 1 en ambas tablas
+END
+go
 
 ---------------------------------------------------------------------------------------------- Update Producto
-
+-- Ver como hacer aca con los productos que tienen que ser deshabilitados..
+-- Quizas puedo correr el scrapper, y si el producto no aparece en ninguna página, lo deshabilito
 ---------------------------------------------------------------------------------------------- Obtener Ofertas
 drop procedure getOfertas
 go
@@ -452,11 +521,27 @@ go
 
 -- EXECUTE getOfertas
 
----------------------------------------------------------------------------------------------- Obtener Comision
-drop procedure getComision
+---------------------------------------------------------------------------------------------- Obtener Comision Total
+drop procedure getComisiones
 go
 
-create procedure getComision
+create procedure getComisiones
+(
+	@fecha_inicio	datetime,
+	@fecha_fin		datetime,
+	@comercio		smallint
+)
+as
+begin
+	-- Seleccionar la suma de la multiplicacion de todas las comisiones entre fi y ff de ese comercio con el valor correspondiente por tipo de comision
+end
+go
+
+---------------------------------------------------------------------------------------------- Obtener Comision
+drop procedure getComisionPorTipo
+go
+
+create procedure getComisionPorTipo
 (
 	@tipo    smallint,
 	@fecha_inicio	datetime,
@@ -465,7 +550,7 @@ create procedure getComision
 )
 as
 begin
-   
+   -- Seleccionar la suma de la multiplicacion de todas las comisiones del tipo entre fi y ff de ese comercio con el valor correspondiente del tipo
 end
 go
 
