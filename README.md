@@ -55,4 +55,5 @@ Se realizará un cruce de información entre la documentación entregada y el so
 Posteriormente, una vez finalizada la revisión del software, se asignará una tarea de modificación sobre el programa o la definición de un caso a resolver en el momento que puedo o no haber sido contemplado en el caso de estudio y puedo o no corresponderse con el proyecto.
 
 
-# cdnDAS
+# CDN
+Los logos de los comercios se van a encontrar en https://github.com/gastonframirez/cdnDAS
