@@ -35,4 +35,9 @@
 			<type>java.lang.String</type>
 		</attribute>
 	</tag>	
+	<tag>
+		<name>footer</name>
+		<tag-class>ar.edu.ubp.das.src.tags.FooterTagHandler</tag-class>
+		<body-content>empty</body-content>
+	</tag>	
 </taglib>

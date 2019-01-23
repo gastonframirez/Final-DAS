@@ -1,4 +1,4 @@
-package ar.edu.ubp.das.src.users.forms;
+package ar.edu.ubp.das.src.productos.forms;
 
 import java.util.LinkedList;
 

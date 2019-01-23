@@ -1,4 +1,4 @@
-package ar.edu.ubp.das.src.users.daos;
+package ar.edu.ubp.das.src.productos.daos;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -7,7 +7,7 @@ import java.util.List;
 
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.db.DaoImpl;
-import ar.edu.ubp.das.src.users.forms.OfertasForm;
+import ar.edu.ubp.das.src.productos.forms.OfertasForm;
 
 public class MSOfertasDao extends DaoImpl {
 

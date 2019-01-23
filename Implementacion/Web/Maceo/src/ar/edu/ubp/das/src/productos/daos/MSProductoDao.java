@@ -1,4 +1,4 @@
-package ar.edu.ubp.das.src.users.daos;
+package ar.edu.ubp.das.src.productos.daos;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,7 +8,7 @@ import java.util.List;
 
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.db.DaoImpl;
-import ar.edu.ubp.das.src.users.forms.ProductoForm;
+import ar.edu.ubp.das.src.productos.forms.ProductoForm;
 
 public class MSProductoDao extends DaoImpl {
 
@@ -40,7 +40,6 @@ public class MSProductoDao extends DaoImpl {
 	public List<DynaActionForm> select(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
 		
-		this.connect();
 				
 		List<DynaActionForm>  productos = new LinkedList<DynaActionForm>();
     	LinkedList<ProductoForm> productosAlternativos;

@@ -2,14 +2,15 @@ package ar.edu.ubp.das.src.users.daos;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.LinkedList;
 import java.util.List;
 
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.db.DaoImpl;
-import ar.edu.ubp.das.src.users.forms.CategoriasForm;
+import ar.edu.ubp.das.src.productos.forms.OfertasForm;
 
-public class MSCategoriasDao extends DaoImpl {
+public class MSUserDao extends DaoImpl {
 
 	@Override
 	public DynaActionForm make(ResultSet result) throws SQLException {
@@ -20,7 +21,36 @@ public class MSCategoriasDao extends DaoImpl {
 	@Override
 	public void insert(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
+	
+		try {
+        	this.connectWAutoFalse();
 
+    		this.setProcedure("dbo.registerUser(?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+    		this.setParameter(1, form.getItem("nombreUsuario"));
+    		this.setParameter(2, form.getItem("nombre"));
+    		this.setParameter(3, form.getItem("apellido"));
+    		this.setParameter(4, form.getItem("email"));
+    		
+    		//ENCRIPTAR PASS ACA
+    		String password = form.getItem("password");
+    		
+    		this.setParameter(5, password);
+    		this.setParameter(6, form.getItem("dni"));
+
+    		this.getStatement().execute();		
+     	
+			this.commit();
+			
+		} catch (SQLException e) {
+			this.rollback();
+			throw e;
+		}finally {
+			this.autoCommit(true);
+			this.disconnect();
+		}
+		this.disconnect();
+		
 	}
 
 	@Override
@@ -38,28 +68,7 @@ public class MSCategoriasDao extends DaoImpl {
 	@Override
 	public List<DynaActionForm> select(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
-		this.connect();
-		
-		this.setProcedure("dbo.getCategorias", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-
-    	List<DynaActionForm> categorias = new LinkedList<DynaActionForm>();
-    	
-    	CategoriasForm categoria;
-    	
-    	ResultSet result = this.getStatement().executeQuery();
-  
-        while(result.next()) {
-        	categoria = new CategoriasForm();
-        	categoria.setIdCategoria(result.getInt("id_categoria"));
-        	categoria.setImageURL(result.getString("image_url"));
-        	categoria.setNombre(result.getString("nombre"));
-        	categoria.setLang(result.getString("lang"));
-            categorias.add(categoria);
-        }
-        
-		this.disconnect();
-		
-		return categorias;
+		return null;
 	}
 
 	@Override

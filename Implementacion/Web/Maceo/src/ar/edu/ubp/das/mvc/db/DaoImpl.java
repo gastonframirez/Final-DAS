@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.config.DatasourceConfig;
@@ -55,6 +56,31 @@ public abstract class DaoImpl implements Dao {
         catch(SQLException ex) {
             throw new SQLException("TEXT.LOGINDATA_NULO");
         }
+    }
+    public void connectWAutoFalse() throws SQLException {
+        try {
+        	Class.forName(this.datasource.getDriver()).newInstance();
+            this.connection = DriverManager.getConnection(this.datasource.getUrl(), this.datasource.getUsername(), this.datasource.getPassword());
+            
+            this.connection.setAutoCommit(false);
+        }
+        catch(InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
+            throw new SQLException(ex.getMessage());
+        }
+        catch(SQLException ex) {
+            throw new SQLException(ex.getMessage());
+        }
+    }
+    
+    public void rollback() throws SQLException {
+    	this.connection.rollback();
+    }
+    public void commit() throws SQLException{
+    	this.connection.commit();
+    }
+    
+    public void autoCommit(boolean ac) throws SQLException{
+    	this.connection.setAutoCommit(ac);
     }
     
     public void disconnect() throws SQLException {

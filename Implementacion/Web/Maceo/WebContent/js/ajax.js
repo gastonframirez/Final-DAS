@@ -46,7 +46,7 @@ var users = {
 		            'idCategoria': idCategoria
 		    };
         $.ajax({
-            url: "/Maceo/users/Productos.do",
+            url: "/Maceo/productos/Productos.do",
             type: "post",
             data: values,
             error: function(hr){
