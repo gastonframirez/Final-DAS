@@ -41,7 +41,7 @@ go
 create table idiomas_idiomas
 (
 	id_idioma 			smallint		not null,
-	id_traduccion		smallint 	not NULl,
+	id_traduccion		smallint 		not NULl 		identity(1,1),
 	traduccion			varchar (100)
 
 	constraint pk__idioma_idioma__end primary key (id_idioma, id_traduccion)
@@ -193,7 +193,7 @@ go
 create table usuarios
 (
     id_usuario          integer         not null        identity (1,1),
-    usuario             varchar (50) not null,
+    usuario             varchar (255) not null,
     nombre              varchar (200)   not null,
     apellido            varchar (200)   not null,
     email               varchar (500)   not null,
@@ -360,12 +360,147 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Check Administrador
+drop procedure isAdmin
+go
+
+create procedure isAdmin
+(
+	@nombreusuario	varchar (255)
+)
+as
+begin
+    SELECT isAdmin 
+	FROM usuarios
+	WHERE usuario = @nombreusuario
+end
+go
 
 ---------------------------------------------------------------------------------------------- Validar User
+drop procedure validateLogin
+go
 
+create procedure validateLogin
+(
+	@nombreusuario	varchar (255),
+	@password		varchar (255)
+)
+as
+begin
+    SELECT usuario 
+	FROM usuarios
+	WHERE usuario = @nombreusuario
+	AND usuario_password = @password
+end
+go
+
+---------------------------------------------------------------------------------------------- Aumentar intentos Adminn
+drop procedure increaseAdminAttempts
+go
+
+create procedure increaseAdminAttempts
+(
+	@nombreusuario	varchar (255)
+)
+as
+begin
+	declare @idUsuario smallint;
+	SET @idUsuario = (SELECT id_usuario from usuarios where usuario = @nombreusuario);
+
+	UPDATE administradores
+	SET intentos_fallidos = (SELECT intentos_fallidos from administradores a WHERE a.id_usuario = @idUsuario) + 1
+	WHERE id_usuario = @idUsuario
+	-- HACER TRIGGER EN UPDATE, SI PASO DE 5, BLOQUEO. ADEMAS, AGREGAR COLUMNNA date_blocked
+end
+go
+
+---------------------------------------------------------------------------------------------- Aumentar intentos Adminn
+drop procedure unlockBlockedAdmin
+go
+
+create procedure unlockBlockedAdmin
+(
+	@nombreusuario	varchar (255)
+)
+as
+begin
+	declare @idUsuario smallint;
+	SET @idUsuario = (SELECT id_usuario from usuarios where usuario = @nombreusuario);
+
+	UPDATE administradores
+	SET intentos_fallidos = 0, bloqueado = 0
+	WHERE id_usuario = @idUsuario
+end
+go
 ---------------------------------------------------------------------------------------------- Registrar User
+drop procedure registerUser
+go
 
+create procedure registerUser
+(
+    @nombreusuario      	varchar (255),
+    @nombre             	varchar (200),
+    @apellido           	varchar (200),
+    @email               	varchar (500),
+    @usuario_password    	varchar (500),
+    @dni                 	integer
+)
+as
+begin
+    INSERT into usuarios (usuario, nombre, apellido, email, usuario_password, dni)
+	VALUES (@nombreusuario, @nombre, @apellido, @email, @usuario_password, @dni)
+end
+go
+
+---------------------------------------------------------------------------------------------- Registrar User para Admin
+drop procedure registerAdminUser
+go
+
+create procedure registerAdminUser
+(
+    @nombreusuario      	varchar (255),
+    @nombre             	varchar (200),
+    @apellido           	varchar (200),
+    @email               	varchar (500),
+    @usuario_password    	varchar (500),
+    @dni                 	integer,
+	@id_usuario				INTEGER		OUTPUT		
+)
+as
+begin
+    INSERT into usuarios (usuario, nombre, apellido, email, usuario_password, dni, isAdmin)
+	VALUES (@nombreusuario, @nombre, @apellido, @email, @usuario_password, @dni, 1)
+
+	SET @id_usuario = (SELECT MAX(id_usuario)
+					  FROM usuarios
+					  WHERE usuario = @nombreusuario);
+end
+go
+
+-- SELECT * FROM usuarios us
+-- JOIN administradores ad
+-- ON us.id_usuario = ad.id_usuario
 ---------------------------------------------------------------------------------------------- Registrar Administrador
+drop procedure registerAdminData
+go
+
+create procedure registerAdminData
+(
+    @nombreusuarioAdmin      	varchar (255),
+    @nombreAdmin             	varchar (200),
+    @apellidoAdmin           	varchar (200),
+    @emailAdmin               	varchar (500),
+    @usuario_passwordAdmin    	varchar (500),
+    @dniAdmin                 	integer
+)
+as
+begin
+	Declare @tablevar table(id_usuario INTEGER)
+	insert into @tablevar(id_usuario) exec registerAdminUser @nombre = @nombreAdmin, @nombreusuario = @nombreusuarioAdmin, @apellido = @apellidoAdmin,
+		@email = @emailAdmin, @usuario_password = @usuario_passwordAdmin, @dni = @dniAdmin
+	insert into administradores values ((SELECT id_usuario FROM @tablevar), 0, 0)
+end
+go
+
 
 ---------------------------------------------------------------------------------------------- Obtener Lista de Comercios
 drop procedure getComercios
@@ -447,8 +582,77 @@ go
 
 
 ---------------------------------------------------------------------------------------------- Guardar Categoria
+drop procedure saveCategoria
+go
+create procedure saveCategoria
+(
+	@nombre				varchar (255),
+	@image_url          varchar (500)
+)
+AS
+BEGIN
+	INSERT into categorias_productos
+	VALUES (@nombre, @image_url)
+end
+
+---------------------------------------------------------------------------------------------- Guardar Traduccion Categoria
+drop procedure saveTranslationCategoria
+go
+create procedure saveTranslationCategoria
+(
+	@idCategoria		smallint,
+	@idIdioma          	smallint,
+	@traduccion			varchar (255)
+)
+AS
+BEGIN
+	INSERT into categorias_idiomas
+	VALUES (@idCategoria, @idIdioma, @traduccion)
+end
+
+
+---------------------------------------------------------------------------------------------- Obtener Categoria
+drop procedure getCategoria
+go
+create procedure getCategoria
+(
+	@nombre				varchar (255)
+)
+AS
+BEGIN
+	SELECT * from categorias_productos cp
+	JOIN categorias_idiomas ci
+		ON cp.id_categoria = ci.id_categoria
+	WHERE cp.nombre = @nombre
+end
 
 ---------------------------------------------------------------------------------------------- Editar Categoria
+drop procedure editCategoria
+go
+create procedure editCategoria
+(
+	@nombre				varchar (255),
+	@image_url          varchar (500)
+)
+AS
+BEGIN
+	UPDATE categorias_productos set nombre = @nombre, image_url = @image_url
+	WHERE nombre = @nombre
+end
+---------------------------------------------------------------------------------------------- Editar Traduccion Categoria
+drop procedure editTranslationCategoria
+go
+create procedure editTranslationCategoria
+(
+	@idCategoria		smallint,
+	@idIdioma          	smallint,
+	@traduccion			varchar (255)
+)
+AS
+BEGIN
+	UPDATE categorias_idiomas set nombre = @traduccion
+	WHERE id_categoria = @idCategoria AND id_idioma = @idIdioma
+end
 
 ---------------------------------------------------------------------------------------------- Obtener Lista de Productos x categoria
 drop procedure getProductos
@@ -557,7 +761,58 @@ go
 ---------------------------------------------------------------------------------------------- Obtener Estadistica:
 
 
+---------------------------------------------------------------------------------------------- Save Transaccion
+drop procedure saveTransaccion
+go
 
+create procedure saveTransaccion
+(
+    @fechaTransaccion   	varchar(100),
+    @idProducto      		integer,
+    @idTipoTransaccion    	SMALLINT,
+    @idComercio       		SMALLINT,
+    @idUsuario         		INTEGER,
+    @idOferta    			integer,
+    @pending     			bit
+)
+as
+BEGIN
+
+    insert into transacciones (	fecha,
+                                id_producto,
+                                id_tipo_transaccion,
+                                id_comercio,
+                                id_usuario,
+                                id_oferta,
+                                pending)
+    values (@fechaTransaccion,
+            @idProducto,
+            @idOferta,
+            @idTipoTransaccion,
+            @idComercio,
+            @idUsuario,
+            @idOferta,
+            @pending
+			)
+    
+END
+
+---------------------------------------------------------------------------------------------- Release Pending Transaccion
+drop procedure releasePendingTransaction
+go
+
+create procedure releasePendingTransaction
+(
+    @idTransaccion   		integer
+)
+as
+BEGIN
+
+    UPDATE transacciones
+	SET pending = 0
+	WHERE id_transaccion = @idTransaccion
+    
+END
 
 
 
