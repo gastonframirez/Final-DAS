@@ -190,6 +190,7 @@ create table tipo_transacciones
 go
 
 ----------------------------------------------------------------------------------------------
+
 create table usuarios
 (
     id_usuario          integer         not null        identity (1,1),
@@ -393,6 +394,23 @@ begin
 end
 go
 
+---------------------------------------------------------------------------------------------- Validar User
+drop procedure validateLoginInverse
+go
+
+create procedure validateLoginInverse
+(
+	@nombreusuario	varchar (255)
+)
+as
+begin
+    SELECT id_usuario, usuario, usuario_password, isAdmin, nombre, apellido, dni
+	FROM usuarios
+	WHERE usuario = @nombreusuario
+	OR email = @nombreusuario
+end
+go
+-- execute validateLoginInverse @nombreusuario = 'gastonfra'
 ---------------------------------------------------------------------------------------------- Aumentar intentos Adminn
 drop procedure increaseAdminAttempts
 go
@@ -559,7 +577,14 @@ go
 EXECUTE getValoresComisionesComercio @idComercio=3
 
 ---------------------------------------------------------------------------------------------- Guardar Comercio
+drop procedure saveComercio
+go
 
+create procedure saveComercio
+AS
+begin
+	SELECT * FROM comercios
+end
 ---------------------------------------------------------------------------------------------- Editar Comercio
 
 ---------------------------------------------------------------------------------------------- Obtener Lista de Categorias
