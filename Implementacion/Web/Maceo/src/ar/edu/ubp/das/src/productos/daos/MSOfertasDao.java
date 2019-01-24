@@ -39,7 +39,7 @@ public class MSOfertasDao extends DaoImpl {
 	public List<DynaActionForm> select(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
 		
-this.connect();
+		this.connect();
 		
 		this.setProcedure("dbo.getOfertas", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
@@ -72,9 +72,9 @@ this.connect();
 	}
 
 	@Override
-	public boolean valid(DynaActionForm form) throws SQLException {
+	public DynaActionForm valid(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
-		return false;
+		return null;
 	}
 
 }

@@ -9,6 +9,8 @@ import java.util.List;
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.db.DaoImpl;
 import ar.edu.ubp.das.src.productos.forms.OfertasForm;
+import ar.edu.ubp.das.src.users.forms.UserForm;
+import ar.edu.ubp.das.security.jbcrypt.BCrypt;
 
 public class MSUserDao extends DaoImpl {
 
@@ -30,12 +32,12 @@ public class MSUserDao extends DaoImpl {
     		this.setParameter(1, form.getItem("nombreUsuario"));
     		this.setParameter(2, form.getItem("nombre"));
     		this.setParameter(3, form.getItem("apellido"));
-    		this.setParameter(4, form.getItem("email"));
-    		
-    		//ENCRIPTAR PASS ACA
+    		this.setParameter(4, form.getItem("email"));  	
     		String password = form.getItem("password");
     		
-    		this.setParameter(5, password);
+    		String pw_hash = BCrypt.hashpw(password, BCrypt.gensalt()); 
+    		
+    		this.setParameter(5, pw_hash);
     		this.setParameter(6, form.getItem("dni"));
 
     		this.getStatement().execute();		
@@ -70,11 +72,41 @@ public class MSUserDao extends DaoImpl {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Override
-	public boolean valid(DynaActionForm form) throws SQLException {
+	public DynaActionForm valid(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
-		return false;
+		
+		this.connect();
+		
+		this.setProcedure("dbo.validateLoginInverse(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		
+		this.setParameter(1, form.getItem("nombreUsuario"));
+		
+		ResultSet result = this.getStatement().executeQuery();
+		
+		String password = form.getItem("password");
+		
+		result.next();
+		
+		System.out.println(password);
+		System.out.println(result.getString("usuario_password"));
+		if (BCrypt.checkpw(password, result.getString("usuario_password"))) {
+			UserForm user = new UserForm();
+			user.setNombre(result.getString("nombre"));
+			user.setApellido(result.getString("apellido"));
+			user.setDni(result.getInt("dni"));
+			user.setIsAdmin(result.getBoolean("isAdmin"));
+			user.setIdUser(result.getInt("id_usuario"));
+			user.setNombreUsuario(result.getString("usuario"));
+			
+			return user;
+		}
+		else {
+			//ACA HACER EL INCREMENTO DE ATTEMPTS PARA ADMIN
+			return null;
+		}
+		
 	}
 
 }

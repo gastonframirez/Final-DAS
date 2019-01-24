@@ -99,9 +99,9 @@ public class MSProductoDao extends DaoImpl {
 	}
 
 	@Override
-	public boolean valid(DynaActionForm form) throws SQLException {
+	public DynaActionForm valid(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
-		return false;
+		return null;
 	}
 
 }

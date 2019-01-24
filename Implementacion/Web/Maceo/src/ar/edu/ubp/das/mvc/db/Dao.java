@@ -13,6 +13,6 @@ public interface Dao {
     public void update(DynaActionForm form) throws SQLException;
     public void delete(DynaActionForm form) throws SQLException;
     public List<DynaActionForm> select(DynaActionForm form) throws SQLException;
-    public boolean valid(DynaActionForm form) throws SQLException;
+    public DynaActionForm valid(DynaActionForm form) throws SQLException;
 
 }
