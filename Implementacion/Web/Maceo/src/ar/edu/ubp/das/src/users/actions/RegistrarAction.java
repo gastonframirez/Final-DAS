@@ -11,6 +11,9 @@ import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.config.ForwardConfig;
 import ar.edu.ubp.das.mvc.db.Dao;
 import ar.edu.ubp.das.mvc.db.DaoFactory;
+import ar.edu.ubp.das.security.jbcrypt.BCrypt;
+
+
 
 public class RegistrarAction implements Action{
 

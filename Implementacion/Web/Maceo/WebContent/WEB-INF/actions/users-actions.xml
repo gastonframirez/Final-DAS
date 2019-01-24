@@ -4,8 +4,12 @@
     <form-beans>
     </form-beans>
     <action-mappings>
-        <action path="/Login.do" type="LoginAction">
+        <action path="/Login.do" type="LoginPageAction">
             <forward name="success" path="/users/login.jsp"/>
+        </action>
+        <action path="/ValidateLogin.do" type="LoginAction">
+            <forward name="success" path="/users/loginResult.jsp"/>
+            <forward name="error" path="/users/loginError.jsp"/>
         </action>
         <action path="/Registrar.do" type="RegistrarAction">
             <forward name="success" path="/users/registrarResult.jsp"/>

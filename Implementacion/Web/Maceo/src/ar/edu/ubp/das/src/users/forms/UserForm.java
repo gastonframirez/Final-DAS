@@ -10,6 +10,9 @@ public class UserForm extends DynaActionForm {
     private String email;
     private String password;
     private Integer dni;
+    private Boolean isAdmin;
+    private Integer idUser;
+    
 	public String getNombreUsuario() {
 		return nombreUsuario;
 	}
@@ -46,6 +49,19 @@ public class UserForm extends DynaActionForm {
 	public void setDni(Integer dni) {
 		this.dni = dni;
 	}
+	public Boolean getIsAdmin() {
+		return isAdmin;
+	}
+	public void setIsAdmin(Boolean isAdmin) {
+		this.isAdmin = isAdmin;
+	}
+	public Integer getIdUser() {
+		return idUser;
+	}
+	public void setIdUser(Integer idUser) {
+		this.idUser = idUser;
+	}
+	
     
     
 }

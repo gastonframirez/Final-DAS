@@ -29,4 +29,27 @@ $(document).ready(function() {
 		
 		return false;
 	 })
+	 
+	 $("#loginForm").on("submit", function(e){
+		e.preventDefault();
+		
+		var data = $( "#loginForm" ).serialize();
+		
+		$.ajax({
+          url: "/Maceo/users/ValidateLogin.do",
+          type: "post",
+          data: data,
+          dataType: "html",
+          error: function(hr){
+              jUtils.hiding("resultLogin");
+              jUtils.showing("error", hr.responseText);
+          },
+          success: function(html) {
+              jUtils.hiding("error");
+              jUtils.showing("resultLogin", html);
+          }
+      });
+		
+		return false;
+	 })
 });
