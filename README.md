@@ -57,3 +57,7 @@ Posteriormente, una vez finalizada la revisión del software, se asignará una t
 
 # CDN
 Los logos de los comercios se van a encontrar en https://github.com/gastonframirez/cdnDAS
+
+# Milestones
+[February 1st](https://github.com/gastonframirez/Final-DAS/milestone/1)
+[February 8th](https://github.com/gastonframirez/Final-DAS/milestone/2)
