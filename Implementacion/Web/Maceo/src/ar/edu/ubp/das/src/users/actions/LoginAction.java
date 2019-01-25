@@ -4,7 +4,6 @@ import java.sql.SQLException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import ar.edu.ubp.das.mvc.action.Action;
 import ar.edu.ubp.das.mvc.action.ActionMapping;
@@ -27,12 +26,10 @@ public class LoginAction implements Action{
 		form.setItem("nombreUsuario", request.getParameter("username"));
 		form.setItem("password", request.getParameter("password"));
 	
-//		daoUser.valid(form);
 		UserForm user = (UserForm) daoUser.valid(form);
 		if(user!=null) {
-//			response.set
-			HttpSession session = request.getSession(true);
-			session.setAttribute("userData", user);
+
+			request.getSession(true).setAttribute("userData", user);
 			return mapping.getForwardByName("success");
 		}else {
 			return mapping.getForwardByName("error");
