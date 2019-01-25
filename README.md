@@ -60,4 +60,5 @@ Los logos de los comercios se van a encontrar en https://github.com/gastonframir
 
 # Milestones
 [February 1st](https://github.com/gastonframirez/Final-DAS/milestone/1)
+
 [February 8th](https://github.com/gastonframirez/Final-DAS/milestone/2)
