@@ -113,8 +113,34 @@ create table logs
 go
 
 ----------------------------------------------------------------------------------------------
----------------------------------------------------------------------------------------------- Create procedures
+create table tokens
+(
+    id_token            integer         not null    identity(1,1),
+    hash_token          varchar(255)    not null,
+    active              BIT             not null    default 0,
 
+    constraint pk__tokens__end primary key (id_token),
+    constraint uk__tokens_hash__end unique(hash_token)
+)
+
+-- insert into tokens values ('abbb4a0574aab5e145060b12379d88a3', 1)
+
+----------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------- Create procedures
+drop procedure validateToken
+GO
+
+create procedure validateToken
+(
+    @hash       varchar (255)
+)
+AS
+BEGIN
+      SELECT * 
+      from tokens 
+      where hash_token = @hash 
+        and active = 1
+END
 
 ---------------------------------------------------------------------------------------------- Guardar log
 -- drop procedure save_log
