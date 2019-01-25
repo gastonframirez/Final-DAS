@@ -8,7 +8,9 @@
   <xs:element name="getOfertasResponse" type="tns:getOfertasResponse"/>
 
   <xs:complexType name="getOfertas">
-    <xs:sequence/>
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="getOfertasResponse">

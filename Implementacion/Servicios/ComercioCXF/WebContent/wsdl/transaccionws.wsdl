@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdl:definitions name="TransaccionWSService" targetNamespace="http://ws.comercio.src.das.ubp.edu.ar/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ws.comercio.src.das.ubp.edu.ar/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
   <wsdl:types>
-    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.comercio.src.das.ubp.edu.ar/" version="1.0" xmlns:tns="http://ws.comercio.src.das.ubp.edu.ar/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:schema targetNamespace="http://ws.comercio.src.das.ubp.edu.ar/" version="1.0" xmlns:tns="http://ws.comercio.src.das.ubp.edu.ar/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:element name="insertTransaccion" type="tns:insertTransaccion"/>
 

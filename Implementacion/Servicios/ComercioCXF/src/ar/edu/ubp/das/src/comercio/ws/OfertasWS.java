@@ -19,28 +19,49 @@ import ar.edu.ubp.das.src.comercio.daos.MSOfertasDao;
 public class OfertasWS {
 
 	@WebMethod(operationName = "getOfertas", action = "urn:GetOfertas")
-	public String getOfertas() {
+	public String getOfertas(@WebParam(name = "arg0") String authToken) {
 		List<DynaActionForm> ofertas = new LinkedList<DynaActionForm>();
 		
-		try {
+		if(authToken!=null) {
+			if(authToken.indexOf("Token")!=-1 && authToken.split(" ").length==2) {
+				String token = authToken.split(" ")[1];
+	
+				DynaActionForm daf = new DynaActionForm();
+				daf.setItem("hashToken", token);
+				
+				try {
+					MSOfertasDao dao = (MSOfertasDao)DaoFactory.getDao( "Ofertas", "ar.edu.ubp.das.src.comercio" );
+					if(dao.valid(daf)){
+						System.out.println("Token valido");
 
-			MSOfertasDao dao = (MSOfertasDao)DaoFactory.getDao( "Ofertas", "ar.edu.ubp.das.src.comercio" );
+						ofertas = dao.select(daf);
 
-			DynaActionForm daf = new DynaActionForm();
+						LinkedList<Map<String,Object>> ofertasForJson = new LinkedList<Map<String,Object>>();
+						
+						for( DynaActionForm c : ofertas ) {
+							ofertasForJson.add(c.getItems());
+						}
+						
+						Gson gson = new GsonBuilder().create();
+						return gson.toJson(ofertasForJson);
+						
+					}else {
+						System.out.println("Token inexistente.");
+						return ("Error 401: Token inexistente.");
+					}
+							
+				} catch ( SQLException e ) {
+					e.printStackTrace();
+		    	    return ("Error 400: Error al obtener datos.");
+				}
 
-			ofertas = dao.select(daf);
-			
-			LinkedList<Map<String,Object>> ofertasForJson = new LinkedList<Map<String,Object>>();
-			
-			for( DynaActionForm c : ofertas ) {
-				ofertasForJson.add(c.getItems());
+			}else {
+				System.out.println("Token mal formado.");
+				return ("Error 401: Token mal formado.");
 			}
-			
-			Gson gson = new GsonBuilder().create();
-			return gson.toJson(ofertasForJson);
-			
-		} catch ( SQLException error ) {
-    	    return error.getMessage();
+		}else {
+			System.out.println("Token no provisto.");
+			return ("Error 401: Token no provisto.");
 		}
 	}
 	
