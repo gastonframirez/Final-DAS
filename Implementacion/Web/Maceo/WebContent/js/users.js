@@ -45,8 +45,8 @@ $(document).ready(function() {
               jUtils.showing("error", hr.responseText);
           },
           success: function(html) {
-              jUtils.hiding("error");
-              jUtils.showing("resultLogin", html);
+        	  //Checkear a donde devolver
+              window.location = "/Maceo";
           }
       });
 		

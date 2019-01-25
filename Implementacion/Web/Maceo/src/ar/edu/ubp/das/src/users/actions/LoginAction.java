@@ -28,9 +28,15 @@ public class LoginAction implements Action{
 	
 		UserForm user = (UserForm) daoUser.valid(form);
 		if(user!=null) {
-
 			request.getSession(true).setAttribute("userData", user);
-			return mapping.getForwardByName("success");
+			if(user.getIsAdmin()) {
+				//LLevar a Admin dashboard
+				request.getSession(true).setAttribute("isAdmin", true);
+				return mapping.getForwardByName("admin");
+			}else {
+				return mapping.getForwardByName("normal");
+			}
+			
 		}else {
 			return mapping.getForwardByName("error");
 		}

@@ -8,7 +8,7 @@
             <forward name="success" path="/users/login.jsp"/>
         </action>
         <action path="/ValidateLogin.do" type="LoginAction">
-            <forward name="success" path="/users/loginResult.jsp"/>
+            <forward name="normal" path="/users/loginResult.jsp"/>
             <forward name="error" path="/users/loginError.jsp"/>
         </action>
         <action path="/Registrar.do" type="RegistrarAction">
@@ -16,6 +16,9 @@
         </action>
         <action path="/Registro.do" type="RegistroAction">
             <forward name="success" path="/users/registro.jsp"/>
+        </action>
+        <action path="/Logout.do" type="LogoutAction">
+            <forward name="success" path="/users/logout.jsp"/>
         </action>
     </action-mappings>
 </actions>
