@@ -29,18 +29,22 @@ public class LoginAction implements Action{
 		UserForm user = (UserForm) daoUser.valid(form);
 		if(user!=null) {
 			request.getSession(true).setAttribute("userData", user);
+			//implementar bloqueado
 			if(user.getIsAdmin()) {
 				//LLevar a Admin dashboard
 				request.getSession(true).setAttribute("isAdmin", true);
-				return mapping.getForwardByName("admin");
-			}else {
-				return mapping.getForwardByName("normal");
+				request.setAttribute("loginValidation", "a");
+//				return mapping.getForwardByName("admin");
+			}else{
+				request.setAttribute("loginValidation", "u");
+//				return mapping.getForwardByName("success");
 			}
 			
 		}else {
-			return mapping.getForwardByName("error");
+			request.setAttribute("loginValidation", "w");
+			
 		}
-		
+		return mapping.getForwardByName("success");
 	}
 
 }

@@ -39,14 +39,16 @@ $(document).ready(function() {
           url: "/Maceo/users/ValidateLogin.do",
           type: "post",
           data: data,
-          dataType: "html",
+          dataType: "json",
           error: function(hr){
-              jUtils.hiding("resultLogin");
-              jUtils.showing("error", hr.responseText);
+              jUtils.showing("error", hr.error);
           },
-          success: function(html) {
-        	  //Checkear a donde devolver
-              window.location = "/Maceo";
+          success: function(res) {        	 
+        	  if(res.redirect){
+        		  window.location.replace(res.redirect);
+        	  }else{
+                  jUtils.showing("error", res.error);
+        	  }
           }
       });
 		

@@ -87,26 +87,27 @@ public class MSUserDao extends DaoImpl {
 		
 		String password = form.getItem("password");
 		
-		result.next();
 		
-		System.out.println(password);
-		System.out.println(result.getString("usuario_password"));
-		if (BCrypt.checkpw(password, result.getString("usuario_password"))) {
-			UserForm user = new UserForm();
-			user.setNombre(result.getString("nombre"));
-			user.setApellido(result.getString("apellido"));
-			user.setDni(result.getInt("dni"));
-			user.setIsAdmin(result.getBoolean("isAdmin"));
-			user.setIdUser(result.getInt("id_usuario"));
-			user.setNombreUsuario(result.getString("usuario"));
-			
-			return user;
+		if(result.next()) {
+			if (BCrypt.checkpw(password, result.getString("usuario_password"))) {
+				System.out.println(password);
+				System.out.println(result.getString("usuario_password"));
+				UserForm user = new UserForm();
+				user.setNombre(result.getString("nombre"));
+				user.setApellido(result.getString("apellido"));
+				user.setDni(result.getInt("dni"));
+				user.setIsAdmin(result.getBoolean("isAdmin"));
+				user.setIdUser(result.getInt("id_usuario"));
+				user.setNombreUsuario(result.getString("usuario"));
+				
+				return user;
+			}
+			else {
+				//ACA HACER EL INCREMENTO DE ATTEMPTS PARA ADMIN
+				return null;
+			}
 		}
-		else {
-			//ACA HACER EL INCREMENTO DE ATTEMPTS PARA ADMIN
-			return null;
-		}
-		
+		return null;
 	}
 
 }

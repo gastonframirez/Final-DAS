@@ -8,14 +8,16 @@
             <forward name="success" path="/users/login.jsp"/>
         </action>
         <action path="/ValidateLogin.do" type="LoginAction">
-            <forward name="normal" path="/users/loginResult.jsp"/>
-            <forward name="error" path="/users/loginError.jsp"/>
+            <forward name="success" path="/users/loginValidation.jsp"/>
         </action>
         <action path="/Registrar.do" type="RegistrarAction">
             <forward name="success" path="/users/registrarResult.jsp"/>
         </action>
         <action path="/Registro.do" type="RegistroAction">
             <forward name="success" path="/users/registro.jsp"/>
+        </action>
+        <action path="/Editar.do" type="EditarAction">
+            <forward name="success" path="/users/profileEdit.jsp"/>
         </action>
         <action path="/Logout.do" type="LogoutAction">
             <forward name="success" path="/users/logout.jsp"/>
