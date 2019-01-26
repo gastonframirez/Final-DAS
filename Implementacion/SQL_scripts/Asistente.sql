@@ -338,6 +338,21 @@ create table scraper_categoria
 )
 go
 
+----------------------------------------------------------------------------------------------
+drop table scraper_config
+go
+
+create table scraper_config
+(
+	id_scrap_config		INTEGER			not null		identity(1,1),
+	id_comercio			SMALLINT		not null,
+	prop_name			varchar (255)	not null,
+	class_name			varchar (255)  	not null,
+	is_in_title			BIT				not null		default 0,
+	needs_crawl			BIT				not null		default 0,
+
+	constraint pk__scraper_config__end PRIMARY key (id_scrap_config, id_comercio),
+)
 
 ----------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------- Create procedures
