@@ -28,6 +28,15 @@ public class DynaActionForm {
         this.items.put(name, value);
     }
     
+    public void setItems(String name, Map<String, String> value) {
+        this.items.put(name, value);
+    }
+    
+    public void setBoolItems(String name, Map<String, Boolean> value) {
+        this.items.put(name, value);
+    }
+
+    
     public void removeItem(String name) {
         this.items.remove(name);
     }
@@ -53,6 +62,7 @@ public class DynaActionForm {
         }
         return null;
     }
+
     
     public Map<String, Object> getItems() {
     	return this.items;

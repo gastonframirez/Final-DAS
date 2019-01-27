@@ -1,5 +1,7 @@
 package ar.edu.ubp.das.src.admin.forms;
 
+import java.util.Map;
+
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 
 public class ComercioFrom extends DynaActionForm {
@@ -30,15 +32,22 @@ public class ComercioFrom extends DynaActionForm {
 	private Float offerComm;
 	private Float productComm;
 	
-	private String categoriaURL[];
+	private Map<String, String> categoriaURL;
 	private String cssNombre;
 	private String cssModelo;
 	private String cssMarca;
 	private String cssPrecio;
 	private String cssImgURL;
 	private String cssProdURL;
-	private Boolean needsCrawl[];
-	private Boolean searchInName[];
+	private Boolean cssImgURLNeedsCrawl;
+	private Boolean cssImgURLInTitle;
+	private Boolean cssMarcaNeedsCrawl;
+	private Boolean cssMarcaInTitle;
+	private Boolean cssModeloNeedsCrawl;
+	private Boolean cssModeloInTitle;
+	
+	private Map<String, Boolean> needsCrawl;
+	private Map<String, Boolean> searchInName;
 	
 	public Integer getIdComercio() {
 		return idComercio;
@@ -172,12 +181,6 @@ public class ComercioFrom extends DynaActionForm {
 	public void setProductComm(Float productComm) {
 		this.productComm = productComm;
 	}
-	public String[] getCategoriaURL() {
-		return categoriaURL;
-	}
-	public void setCategoriaURL(String[] categoriaURL) {
-		this.categoriaURL = categoriaURL;
-	}
 	public String getCssNombre() {
 		return cssNombre;
 	}
@@ -214,19 +217,25 @@ public class ComercioFrom extends DynaActionForm {
 	public void setCssProdURL(String cssProdURL) {
 		this.cssProdURL = cssProdURL;
 	}
-	public Boolean[] getSearchInName() {
-		return searchInName;
+	public Map<String, String> getCategoriaURL() {
+		return categoriaURL;
 	}
-	public void setSearchInName(Boolean searchInName[]) {
-		this.searchInName = searchInName;
+	public void setCategoriaURL(Map<String, String> categoriaURL) {
+		this.categoriaURL = categoriaURL;
 	}
-	public Boolean[] getNeedsCrawl() {
+	public Map<String, Boolean> getNeedsCrawl() {
 		return needsCrawl;
 	}
-	public void setNeedsCrawl(Boolean needsCrawl[]) {
+	public void setNeedsCrawl(Map<String, Boolean> needsCrawl) {
 		this.needsCrawl = needsCrawl;
 	}
-	
+	public Map<String, Boolean> getSearchInName() {
+		return searchInName;
+	}
+	public void setSearchInName(Map<String, Boolean> searchInName) {
+		this.searchInName = searchInName;
+	}
+
 	
 	
 }
