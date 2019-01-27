@@ -210,8 +210,10 @@
                     <div class="row">
                     
                       <div class="col-md-12">
-                        <label class="col-sm-3 col-form-label">Logo</label>
-                        <input type="file" class="dropify">
+                          <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">URL Logo</label>
+                        <div class="col-sm-10"><input type="url" class="form-control"/></div>
+                        </div>
                       </div>
                     </div>
                   </form>
@@ -231,7 +233,7 @@
                         <div class="form-group row">
                           <label class="col-sm-2 col-form-label">URL</label>
                           <div class="col-sm-10">
-                            <input type="text" class="form-control"/>
+                            <input type="url" class="form-control"/>
                           </div>
                         </div>
                       </div>
@@ -239,7 +241,7 @@
                         <div class="form-group row">
                           <label class="col-sm-3 col-form-label">Puerto</label>
                           <div class="col-sm-9">
-                            <input type="text" class="form-control" />
+                            <input type="number" class="form-control" />
                           </div>
                         </div>
                       </div>
@@ -314,13 +316,16 @@
                           <input type="text" class="form-control" id="exampleInputUsername2" placeholder="Username">
                         </div>
                       </div>
-                      <div class="form-group row">
+                      <div class="form-group row pb-4 border-bottom">
                         <label for="exampleInputUsername2" class="col-sm-3 col-form-label">URL para Categoria #5</label>
                         <div class="col-sm-9">
                           <input type="text" class="form-control" id="exampleInputUsername2" placeholder="Username">
                         </div>
                       </div>
-                      
+                      <div class="divider"></div>
+                      <p class="card-description">
+                          Estructura del CSS para scraper
+                        </p>
                     </form>
                   </div>
                 </div>

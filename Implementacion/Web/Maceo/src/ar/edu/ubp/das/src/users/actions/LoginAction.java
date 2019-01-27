@@ -30,7 +30,7 @@ public class LoginAction implements Action{
 		if(user!=null) {
 			request.getSession(true).setAttribute("userData", user);
 			//implementar bloqueado
-			if(user.getIsAdmin()) {
+			if(user.isAdmin()) {
 				//LLevar a Admin dashboard
 				request.getSession(true).setAttribute("isAdmin", true);
 				request.setAttribute("loginValidation", "a");

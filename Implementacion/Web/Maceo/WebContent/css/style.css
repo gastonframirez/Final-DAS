@@ -14367,6 +14367,10 @@ button.bg-dark:focus {
 .border-bottom {
   border-bottom: 1px solid #ebedf2 !important;
 }
+.border-thick{
+	border-width: 3px;
+}
+
 
 .border-left {
   border-left: 1px solid #ebedf2 !important;

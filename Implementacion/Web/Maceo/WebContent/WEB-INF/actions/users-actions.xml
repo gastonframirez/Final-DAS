@@ -19,6 +19,12 @@
         <action path="/Editar.do" type="EditarAction">
             <forward name="success" path="/users/profileEdit.jsp"/>
         </action>
+        <action path="/Admin/Agregar.do" type="EditarAction">
+            <forward name="success" path="/users/profileEdit.jsp"/>
+        </action>
+        <action path="/Admin/Editar.do" type="EditarAction">
+            <forward name="success" path="/users/profileEdit.jsp"/>
+        </action>
         <action path="/Logout.do" type="LogoutAction">
             <forward name="success" path="/users/logout.jsp"/>
         </action>

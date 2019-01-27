@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xsi:noNamespaceSchemaLocation="../schema/actions.xsd">
+    <form-beans>
+    </form-beans>
+    <action-mappings>
+        <action path="/Home.do" type="DashboardAction">
+            <forward name="success" path="/admin/dashboard.jsp"/>
+        </action>
+        <action path="/Comercios.do" type="ListComerciosAction">
+            <forward name="success" path="/admin/dashboard.jsp"/>
+        </action>
+        <action path="/AgregarComercio.do" type="ShowAddComercioAction">
+            <forward name="success" path="/admin/addComercio.jsp"/>
+        </action>
+        <action path="/AddComercio.do" type="AddComercioAction">
+            <forward name="success" path="/admin/addComercioResult.jsp"/>
+        </action>
+        <action path="/EditarComercio.do" type="EditComercioAction">
+            <forward name="success" path="/admin/dashboard.jsp"/>
+        </action>
+        <action path="EstadisticasComercio.do" type="EstadisticasAction">
+            <forward name="success" path="/admin/dashboard.jsp"/>
+        </action>
+        <action path="/Categorias.do" type="ListCategoriasAction">
+            <forward name="success" path="/admin/dashboard.jsp"/>
+        </action>
+        <action path="/AgregarCategoria.do" type="AddCategoriaAction">
+            <forward name="success" path="/admin/dashboard.jsp"/>
+        </action>
+        <action path="/EditarCategoria.do" type="EditCategoriaAction">
+            <forward name="success" path="/admin/dashboard.jsp"/>
+        </action>
+    </action-mappings>
+</actions>

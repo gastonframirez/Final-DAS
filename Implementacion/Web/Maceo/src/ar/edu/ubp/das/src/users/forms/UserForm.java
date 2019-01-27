@@ -49,6 +49,10 @@ public class UserForm extends DynaActionForm {
 	public void setDni(Integer dni) {
 		this.dni = dni;
 	}
+	public Boolean isAdmin() {
+		return isAdmin;
+	}
+
 	public Boolean getIsAdmin() {
 		return isAdmin;
 	}

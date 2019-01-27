@@ -548,6 +548,38 @@ go
 
 -- execute getComercios
 
+---------------------------------------------------------------------------------------------- Obtener Lista de Comercios con datos extra
+drop procedure getComerciosExtra
+go
+
+create procedure getComerciosExtra
+as
+begin
+    SELECT id_comercio, (SELECT COUNT(*) FROM ofertas offer
+		WHERE offer.id_comercio = com.id_comercio AND offer.habilitada=1) as cant_offers, nombre_publico, habilitado FROM comercios com	
+end
+go
+
+-- execute getComerciosExtra
+
+-- drop procedure getComerciosExtra
+-- go
+
+-- create procedure getComerciosExtra
+-- as
+-- begin
+--     SELECT id_comercio, (SELECT COUNT(*) FROM ofertas offer
+-- 		WHERE offer.id_comercio = com.id_comercio AND offer.habilitada=1) as cant_offers, nombre_publico, habilitado, 
+-- 		(SELECT SUM(*) 
+-- 			FROM transacciones tr 
+-- 			JOIN comisiones_tipo_transacciones ctt
+-- 				ON tr.id_comercio = ctt.id_comercio
+-- 				AND tr.id_tipo_transaccion = ctt.id_tipo
+-- 			WHERE offer.id_comercio = com.id_comercio)
+-- 	FROM comercios com	
+-- end
+-- go
+
 ---------------------------------------------------------------------------------------------- Obtener Datos de Comercio
 drop procedure getDatosComercio
 go
@@ -620,7 +652,26 @@ go
 
 -- execute getCategorias
 
+drop procedure getCategoriasLang
+go
 
+create procedure getCategoriasLang
+(
+	@lang 	varchar(4)
+)
+as
+begin
+    SELECT cp.id_categoria, ci.nombre, image_url, cp.habilitado, idi.nombre as lang FROM categorias_productos cp
+	JOIN categorias_idiomas ci
+		ON cp.id_categoria = ci.id_categoria
+	JOIN idiomas idi
+		ON ci.id_idioma = idi.id_idioma
+		AND idi.nombre=@lang
+	WHERE cp.habilitado = 1
+end
+go
+
+execute getCategoriasLang @lang='es'
 ---------------------------------------------------------------------------------------------- Guardar Categoria
 drop procedure saveCategoria
 go
@@ -853,6 +904,7 @@ BEGIN
 	WHERE id_transaccion = @idTransaccion
     
 END
+
 
 
 
