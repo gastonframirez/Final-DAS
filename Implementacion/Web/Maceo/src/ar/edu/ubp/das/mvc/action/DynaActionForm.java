@@ -68,6 +68,14 @@ public class DynaActionForm {
     	return this.items;
     }
     
+    public Map<String, Object> getItems(String name) {
+    	if(this.items.containsKey(name)) {
+            return (Map<String, Object>) this.items.get(name);
+        }
+        return null;
+    }
+    
+    
 	public void validate(ActionMapping mapping, HttpServletRequest request) throws RuntimeException {	}
 
 	@Override
