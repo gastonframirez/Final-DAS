@@ -22,6 +22,9 @@ public class ShowAddComercioAction implements Action{
 		Dao daoCategorias = DaoFactory.getDao( "Categorias", "productos" );
 		request.setAttribute("categorias", daoCategorias.select(form));
 		
+		Dao daoTecnologias = DaoFactory.getDao( "Tecnologia", "admin" );
+		request.setAttribute("tecnologias", daoTecnologias.select(form));
+		
 		return mapping.getForwardByName("success");
 	}
 

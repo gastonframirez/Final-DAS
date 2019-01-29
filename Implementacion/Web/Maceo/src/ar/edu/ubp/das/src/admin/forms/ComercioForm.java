@@ -4,14 +4,14 @@ import java.util.Map;
 
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 
-public class ComercioFrom extends DynaActionForm {
+public class ComercioForm extends DynaActionForm {
 	private Integer idComercio;
 	private String nombre;
 	private Integer cantOffers;
 	private Boolean habilitado;
 	private Float totComisiones;
 	private Boolean serviceStatus;
-	
+
 	private String razonSocial;
 	private String CUIT;
 	private String direccion;
@@ -21,6 +21,8 @@ public class ComercioFrom extends DynaActionForm {
 	private String telefono;
 	private String logoURL;
 	
+	private String authToken;
+
 	private String baseURLOffers;
 	private Integer portOffers;
 	private	String funcionOffers;
@@ -33,6 +35,7 @@ public class ComercioFrom extends DynaActionForm {
 	private Float productComm;
 	
 	private Map<String, String> categoriaURL;
+	private String cssIterator;
 	private String cssNombre;
 	private String cssModelo;
 	private String cssMarca;
@@ -46,9 +49,19 @@ public class ComercioFrom extends DynaActionForm {
 	private Boolean cssModeloNeedsCrawl;
 	private Boolean cssModeloInTitle;
 	
+	private Integer tecnologiaID;
+	
 	private Map<String, Boolean> needsCrawl;
 	private Map<String, Boolean> searchInName;
 	
+	
+	
+	public String getCssIterator() {
+		return cssIterator;
+	}
+	public void setCssIterator(String cssIterator) {
+		this.cssIterator = cssIterator;
+	}
 	public Integer getIdComercio() {
 		return idComercio;
 	}
@@ -234,6 +247,18 @@ public class ComercioFrom extends DynaActionForm {
 	}
 	public void setSearchInName(Map<String, Boolean> searchInName) {
 		this.searchInName = searchInName;
+	}
+	public Integer getTecnologiaID() {
+		return tecnologiaID;
+	}
+	public void setTecnologiaID(Integer tecnologiaID) {
+		this.tecnologiaID = tecnologiaID;
+	}
+	public String getAuthToken() {
+		return authToken;
+	}
+	public void setAuthToken(String authToken) {
+		this.authToken = authToken;
 	}
 
 	

@@ -24,107 +24,83 @@ public class AddComercioAction implements Action{
 		
 		Dao daoComercio = DaoFactory.getDao( "Comercio", "admin" );
 		
-		//Chequear que vengan todos los parametros
+		//No controlo si no vienen porque son obligatorios en el form
+		form.setItem("publicName", request.getParameter("publicName"));
+		form.setItem("razonSocial", request.getParameter("companyName"));
+		form.setItem("CUIT", request.getParameter("CUIT"));
+		form.setItem("address", request.getParameter("address"));
+		form.setItem("zipCode", request.getParameter("cp"));
+		form.setItem("phone", request.getParameter("phone"));
+		form.setItem("logoURL", request.getParameter("logoURL"));
+		form.setItem("baseURLOffers", request.getParameter("baseURLOffers"));
+		form.setItem("portOffers", request.getParameter("portOffers"));
+		form.setItem("functionOffers", request.getParameter("functionOffers"));
+		form.setItem("baseURLTrsct", request.getParameter("baseURLTrsct"));
+		form.setItem("portTrsct", request.getParameter("portTrsct"));
+		form.setItem("functionTrsct", request.getParameter("functionTrsct"));
+		form.setItem("ppProd", request.getParameter("ppProd"));
+		form.setItem("ppOffer", request.getParameter("ppOffer"));
+		form.setItem("authToken", request.getParameter("authToken"));
+		form.setItem("techID", request.getParameter("techID"));
 		
-		/*
-		 * 
-		 * companyName - razonSocial
-		 * CUIT - CUIT
-		 * address - direccion
-		 * zipCode - cp
-		 * phone - telefono
-		 * logoURL - logoURL
-		 * baseURLOffers - baseURLOffers
-		 * portOffers - portOffers
-		 * functionOffers - funcionOffers
-		 * baseURLTrsct - baseURLTransacciones
-		 * portTrsct - portTransacciones
-		 * functionTrsct - funcionTransacciones
-		 * ppProd - productComm
-		 * ppOffer - offerComm
-		 * urlCategorias.... - categoriaURL
-		 * cssNombre - cssNombre
-		 * cssModel - cssModelo
-		 * cssModelInTitle - searchInName
-		 * cssModelNeedsCrawl - needsCrawl
-		 * cssBrand - cssMarca
-		 * cssBrandInTitle - searchInName
-		 * cssBrandNeedsCrawl - needsCrawl
-		 * cssPrice - cssPrecio
-		 * cssImgURL - cssImgURL
-		 * cssImgURLInTitle - searchInName
-		 * cssImgURLNeedsCrawl - needsCrawl
-		 * cssProductURL - cssProdURL
-		 * 
-		 */
+		Map<String, String> classes = new HashMap<String, String>();
+		classes.put("iterator", request.getParameter("cssIterator"));
+		classes.put("name", request.getParameter("cssNombre"));
+		classes.put("model", request.getParameter("cssModel"));
+		classes.put("brand", request.getParameter("cssBrand"));
+		classes.put("price", request.getParameter("cssPrice"));
+		classes.put("imgURL", request.getParameter("cssImgURL"));
+		classes.put("prodURL", request.getParameter("cssProductURL"));
+		form.setItems("cssClasses", classes);
 
-//
-//		form.setItem("nombre", request.getParameter("companyName"));
-//		form.setItem("CUIT", request.getParameter("CUIT"));
-//		form.setItem("address", request.getParameter("direccion"));
-//		form.setItem("zipCode", request.getParameter("cp"));
-//		form.setItem("phone", request.getParameter("telefono"));
-//		form.setItem("logoURL", request.getParameter("logoURL"));
-//		form.setItem("baseURLOffers", request.getParameter("baseURLOffers"));
-//		form.setItem("portOffers", request.getParameter("portOffers"));
-//		form.setItem("functionOffers", request.getParameter("funcionOffers"));
-//		form.setItem("baseURLTrsct", request.getParameter("baseURLTransacciones"));
-//		form.setItem("portTrsct", request.getParameter("portTransacciones"));
-//		form.setItem("functionTrsct", request.getParameter("funcionTransacciones"));
-//		form.setItem("ppProd", request.getParameter("productComm"));
-//		form.setItem("ppOffer", request.getParameter("offerComm"));
-//		form.setItem("cssNombre", request.getParameter("cssNombre"));
-//		form.setItem("cssModel", request.getParameter("cssModelo"));
-//		form.setItem("cssBrand", request.getParameter("cssMarca"));
-//		form.setItem("cssPrice", request.getParameter("cssPrecio"));
-//		form.setItem("cssPrice", request.getParameter("cssImgURL"));
-//		form.setItem("cssProductURL", request.getParameter("cssProdURL"));
 		
-		//urlCategorias
-		//needsCrawl
-		//searchInName
-		/* cssModelInTitle - searchInName
-		 * cssModelOptions - needsCrawl
-		 * cssBrandInTitle - searchInName
-		 * cssBrandNeedsCrawl - needsCrawl
-		 * cssImgURLInTitle - searchInName
-		 * cssImgURLNeedsCrawl - needsCrawl
-		 */
-		 
+		
+		Map<String, String> catIds = new HashMap<String, String>();
+
+		
+		if(request.getParameterValues("urlCategoriasIds")!=null) {
+			String[] urlCategoriasIds = request.getParameterValues("urlCategoriasIds");
+			String[] urlCategorias = request.getParameterValues("urlCategorias");
+			for(Integer i=0; i<urlCategoriasIds.length;++i) {
+				catIds.put(urlCategoriasIds[i], urlCategorias[i]);
+			}
+			form.setItems("urlCategories", catIds);
+		}
+		
+		
+		
 		Map<String, Boolean> needsCrawl = new HashMap<String, Boolean>();
 		Map<String, Boolean> searchInName = new HashMap<String, Boolean>();
 		
 		if(request.getParameterValues("cssModelOptions")!=null) {
 			String[] modelOptions = request.getParameterValues("cssModelOptions");
-			for(String s : modelOptions) {
-				if(s.equals("inTitle")) {
+			for(String mOpt : modelOptions) {
+				if(mOpt.equals("inTitle")) {
 					searchInName.put("model", true);
 				}else {
 					needsCrawl.put("model", true);
 				}
-//				System.out.println(s);
+
 			}
 		}
 		if(request.getParameterValues("cssBrandOptions")!=null) {
-			String[] modelOptions = request.getParameterValues("cssBrandOptions");
-			for(String s : modelOptions) {
-				if(s.equals("inTitle")) {
+			String[] brandOptions = request.getParameterValues("cssBrandOptions");
+			for(String bOpt : brandOptions) {
+				if(bOpt.equals("inTitle")) {
 					searchInName.put("brand", true);
 				}else {
 					needsCrawl.put("brand", true);
 				}
-//				System.out.println(s);
 			}
 		}
 		if(request.getParameterValues("cssImgURLOptions")!=null) {
-			String[] modelOptions = request.getParameterValues("cssImgURLOptions");
-			for(String s : modelOptions) {
-				if(s.equals("inTitle")) {
+			String[] imgOptions = request.getParameterValues("cssImgURLOptions");
+			for(String iOpt : imgOptions) {
+				if(iOpt.equals("inTitle")) {
 					searchInName.put("imgURL", true);
 				}else {
 					needsCrawl.put("imgURL", true);
 				}
-//				System.out.println(s);
 			}
 		}
 		
@@ -134,7 +110,14 @@ public class AddComercioAction implements Action{
 		if(searchInName.size()>0) {
 			form.setBoolItems("searchInName", searchInName);
 		}
-
+		
+		try {
+			daoComercio.insert(form);
+		}catch (SQLException ex){
+			System.out.println(ex.getMessage());
+		}
+		
+		
 		
 		return mapping.getForwardByName("success");
 	}
