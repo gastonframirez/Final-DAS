@@ -16,16 +16,6 @@ jUtils = {
             $('#' + divId).html('&nbsp;');
         }
     },
-
-    changeLang: function(filename, lang, root) {
-    	root = root == undefined ? '' : root;
-        jQuery.i18n.properties({
-            name: filename,
-            path:  root + '/js/properties/',
-            mode: 'map',
-            language: lang
-        });
-    }
 };
 
 

@@ -1,4 +1,7 @@
 $(document).ready(function() {
+	
+	
+	
 //	$( "#userRegister" ).validate({
 //		  rules: {
 //		    password1: "required",
@@ -49,6 +52,51 @@ $(document).ready(function() {
         	  }else{
                   jUtils.showing("error", res.error);
         	  }
+          }
+      });
+		
+		return false;
+	 })
+	 
+	 $("#updateUserForm").on("submit", function(e){
+		e.preventDefault();
+		
+		var data = $( "#updateUserForm" ).serialize();
+		
+		$.ajax({
+		  url: "/Maceo/users/Registrar.do",
+          type: "post",
+          data: data,
+          dataType: "html",
+          error: function(hr){
+              jUtils.showing("error", hr.error);
+//              showSwal('agregado-correcto', 'danger', 'tituloo', 'textooo', './Home.do');
+          },
+          success: function(res) {        	 
+        	  console.log(res);
+        	  showSwal('agregado-correcto', 'success', 'Agregado con exito', 'Blah', './Home.do', 'success');
+          }
+      });
+		
+		return false;
+	 })
+	 $("#updateUserNormalForm").on("submit", function(e){
+		e.preventDefault();
+		
+		var data = $( "#updateUserForm" ).serialize();
+		
+		$.ajax({
+		  url: "/Maceo/users/Registrar.do",
+          type: "post",
+          data: data,
+          dataType: "html",
+          error: function(hr){
+              jUtils.showing("error", hr.error);
+//              showSwal('agregado-correcto', 'danger', 'tituloo', 'textooo', './Home.do');
+          },
+          success: function(res) {        	 
+        	  console.log(res);
+        	  showSwal('agregado-correcto', 'success', 'Agregado con exito', '', '/Maceo', 'success');
           }
       });
 		
