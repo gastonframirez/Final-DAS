@@ -62,3 +62,24 @@ Los logos de los comercios se van a encontrar en https://github.com/gastonframir
 [February 1st](https://github.com/gastonframirez/Final-DAS/milestone/1)
 
 [February 8th](https://github.com/gastonframirez/Final-DAS/milestone/2)
+
+***
+
+# Estadisticas elegidas:
+## Generales:
+- [ ] Total de trasnacciones
+- [ ] Ofertas activas
+- [ ] Cantidad de usuarios nuevos en el mes
+- [ ] Grafico comparativo entre transacciones de productos y ofertas
+
+## De cada comercio:
+### Banners
+- [ ] Total de comision del mes
+- [ ] Cantidad de productos mostrados
+- [ ] Cantidad de ofertas activas
+- [ ] Total de transacciones
+
+### Graficos
+- [ ] Grafico comparativo entre transacciones de productos y ofertas
+- [ ] Evolucion de $ en el mes (dividido por tipo)
+- [ ] Registro de caidas del servicio
