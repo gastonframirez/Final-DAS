@@ -45,31 +45,41 @@ public abstract class DaoImpl implements Dao {
     }
 
     public void connect() throws SQLException {
-        try {
-            Class.forName(this.datasource.getDriver()).newInstance();
-            this.connection = DriverManager.getConnection(this.datasource.getUrl(), this.datasource.getUsername(), this.datasource.getPassword());
-            this.connection.setAutoCommit(true);
-        }
-        catch(InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
-            throw new SQLException(ex.getMessage());
-        }
-        catch(SQLException ex) {
-            throw new SQLException("TEXT.LOGINDATA_NULO");
-        }
+    	 try {
+             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver").newInstance();
+             
+             ResourceBundle bundle = ResourceBundle.getBundle("data");
+             
+             this.connection = DriverManager.getConnection(bundle.getString("url"),
+ 										            	  bundle.getString("usuario"),
+ 										            	  bundle.getString("password"));
+             this.connection.setAutoCommit(true);
+         }
+         catch(InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
+             throw new SQLException(ex.getMessage());
+         }
+         catch(SQLException ex) {
+             throw new SQLException(ex.getMessage());
+         }
     }
     public void connectWAutoFalse() throws SQLException {
-        try {
-        	Class.forName(this.datasource.getDriver()).newInstance();
-            this.connection = DriverManager.getConnection(this.datasource.getUrl(), this.datasource.getUsername(), this.datasource.getPassword());
-            
-            this.connection.setAutoCommit(false);
-        }
-        catch(InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
-            throw new SQLException(ex.getMessage());
-        }
-        catch(SQLException ex) {
-            throw new SQLException(ex.getMessage());
-        }
+		 try {
+	         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver").newInstance();
+	         
+	         ResourceBundle bundle = ResourceBundle.getBundle("data");
+	         
+	         this.connection = DriverManager.getConnection(bundle.getString("url"),
+										            	  bundle.getString("usuario"),
+										            	  bundle.getString("password"));
+	         this.connection.setAutoCommit(false);
+	     }
+	     catch(InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
+	         throw new SQLException(ex.getMessage());
+	     }
+	     catch(SQLException ex) {
+	         throw new SQLException(ex.getMessage());
+	     }
+      
     }
     
     public void rollback() throws SQLException {

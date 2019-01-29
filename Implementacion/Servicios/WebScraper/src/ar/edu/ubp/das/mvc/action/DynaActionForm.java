@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
 public class DynaActionForm {
 
     private String              name;
@@ -27,6 +25,15 @@ public class DynaActionForm {
     public void setItem(String name, String[] value) {
         this.items.put(name, value);
     }
+    
+    public void setItems(String name, Map<String, String> value) {
+        this.items.put(name, value);
+    }
+    
+    public void setBoolItems(String name, Map<String, Boolean> value) {
+        this.items.put(name, value);
+    }
+
     
     public void removeItem(String name) {
         this.items.remove(name);
@@ -53,12 +60,12 @@ public class DynaActionForm {
         }
         return null;
     }
+
     
     public Map<String, Object> getItems() {
     	return this.items;
     }
     
-	public void validate(ActionMapping mapping, HttpServletRequest request) throws RuntimeException {	}
 
 	@Override
     public String toString() {

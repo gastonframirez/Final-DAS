@@ -4,5 +4,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib/jsoup-1.11.3.jar"/>
 	<classpathentry kind="lib" path="/Users/gframirez/Documents/UBP/Q10/DAS/Final-DAS/Implementacion/Web/Maceo/WebContent/WEB-INF/lib/javax.servlet-api-3.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/sqljdbc4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
