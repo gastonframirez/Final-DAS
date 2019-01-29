@@ -75,9 +75,9 @@ Los logos de los comercios se van a encontrar en https://github.com/gastonframir
 ## De cada comercio:
 ### Banners
 - [ ] Total de comision del mes
-- [ ] Cantidad de productos mostrados
-- [ ] Cantidad de ofertas activas
-- [ ] Total de transacciones
+- [x] Cantidad de productos mostrados
+- [x] Cantidad de ofertas activas
+- [x] Total de transacciones
 
 ### Graficos
 - [x] Grafico comparativo entre transacciones de productos y ofertas
