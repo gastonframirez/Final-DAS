@@ -8,28 +8,34 @@
             <forward name="success" path="/admin/dashboard.jsp"/>
         </action>
         <action path="/Comercios.do" type="ListComerciosAction">
-            <forward name="success" path="/admin/dashboard.jsp"/>
+            <forward name="success" path="/admin/storesList.jsp"/>
         </action>
         <action path="/AgregarComercio.do" type="ShowAddComercioAction">
             <forward name="success" path="/admin/addComercio.jsp"/>
         </action>
         <action path="/AddComercio.do" type="AddComercioAction">
-            <forward name="success" path="/admin/addComercioResult.jsp"/>
+            <forward name="success" path="/admin/sqlResults.jsp"/>
         </action>
-        <action path="/EditarComercio.do" type="EditComercioAction">
-            <forward name="success" path="/admin/dashboard.jsp"/>
+        <action path="/EditarComercio.do" type="ShowAddComercioAction">
+            <forward name="success" path="/admin/addComercio.jsp"/>
         </action>
         <action path="EstadisticasComercio.do" type="EstadisticasAction">
             <forward name="success" path="/admin/dashboard.jsp"/>
         </action>
         <action path="/Categorias.do" type="ListCategoriasAction">
-            <forward name="success" path="/admin/dashboard.jsp"/>
+            <forward name="success" path="/admin/categoriesList.jsp"/>
         </action>
-        <action path="/AgregarCategoria.do" type="AddCategoriaAction">
-            <forward name="success" path="/admin/dashboard.jsp"/>
+        <action path="/AgregarCategoria.do" type="ShowAddCategoriaAction">
+            <forward name="success" path="/admin/addCategoria.jsp"/>
         </action>
-        <action path="/EditarCategoria.do" type="EditCategoriaAction">
-            <forward name="success" path="/admin/dashboard.jsp"/>
+        <action path="/AddCategoria.do" type="AddCategoriaAction">
+            <forward name="success" path="/admin/sqlResults.jsp"/>
+        </action>
+        <action path="/EditarCategoria.do" type="ShowAddCategoriaAction">
+            <forward name="success" path="/admin/addCategoria.jsp"/>
+        </action>
+        <action path="/Editar.do" type="ShowPerfilAction">
+            <forward name="success" path="/admin/profileEdit.jsp"/>
         </action>
     </action-mappings>
 </actions>

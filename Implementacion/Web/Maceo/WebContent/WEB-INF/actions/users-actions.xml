@@ -16,13 +16,7 @@
         <action path="/Registro.do" type="RegistroAction">
             <forward name="success" path="/users/registro.jsp"/>
         </action>
-        <action path="/Editar.do" type="EditarAction">
-            <forward name="success" path="/users/profileEdit.jsp"/>
-        </action>
-        <action path="/Admin/Agregar.do" type="EditarAction">
-            <forward name="success" path="/users/profileEdit.jsp"/>
-        </action>
-        <action path="/Admin/Editar.do" type="EditarAction">
+        <action path="/Editar.do" type="ShowPerfilAction">
             <forward name="success" path="/users/profileEdit.jsp"/>
         </action>
         <action path="/Logout.do" type="LogoutAction">

@@ -51,9 +51,9 @@ public class MSCategoriasDao extends DaoImpl {
         while(result.next()) {
         	categoria = new CategoriasForm();
         	categoria.setIdCategoria(result.getInt("id_categoria"));
-        	categoria.setImageURL(result.getString("image_url"));
         	categoria.setNombre(result.getString("nombre"));
         	categoria.setLang(result.getString("lang"));
+        	categoria.setImageURL(result.getString("image_url"));
             categorias.add(categoria);
         }
         

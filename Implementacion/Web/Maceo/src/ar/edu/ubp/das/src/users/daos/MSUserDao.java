@@ -58,7 +58,41 @@ public class MSUserDao extends DaoImpl {
 	@Override
 	public void update(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
+		try {
+        	this.connectWAutoFalse();
 
+    		this.setProcedure("dbo.updateUser(?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+    		this.setParameter(1, form.getItem("userID"));
+    		this.setParameter(2, form.getItem("nombreUsuario"));
+    		this.setParameter(3, form.getItem("nombre"));
+    		this.setParameter(4, form.getItem("apellido"));
+    		this.setParameter(5, form.getItem("email"));  
+
+    		if(form.getItem("password")!=null) {
+    			String password = form.getItem("password");
+        		
+        		String pw_hash = BCrypt.hashpw(password, BCrypt.gensalt()); 
+        		
+        		this.setParameter(6, pw_hash);
+    		}else {
+    			this.setNull(6, Types.VARCHAR);
+    		}
+    		
+    		this.setParameter(7, form.getItem("dni"));
+
+    		this.getStatement().execute();		
+     	
+			this.commit();
+			
+		} catch (SQLException e) {
+			this.rollback();
+			throw e;
+		}finally {
+			this.autoCommit(true);
+			this.disconnect();
+		}
+		this.disconnect();
 	}
 
 	@Override
@@ -90,13 +124,12 @@ public class MSUserDao extends DaoImpl {
 		
 		if(result.next()) {
 			if (BCrypt.checkpw(password, result.getString("usuario_password"))) {
-				System.out.println(password);
-				System.out.println(result.getString("usuario_password"));
 				UserForm user = new UserForm();
 				user.setNombre(result.getString("nombre"));
 				user.setApellido(result.getString("apellido"));
 				user.setDni(result.getInt("dni"));
 				user.setIsAdmin(result.getBoolean("isAdmin"));
+				user.setEmail(result.getString("email"));
 				user.setIdUser(result.getInt("id_usuario"));
 				user.setNombreUsuario(result.getString("usuario"));
 				

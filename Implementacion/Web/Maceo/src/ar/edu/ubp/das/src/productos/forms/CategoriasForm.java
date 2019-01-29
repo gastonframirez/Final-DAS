@@ -6,9 +6,9 @@ public class CategoriasForm extends DynaActionForm {
 
 	private Integer idCategoria;
 	private String nombre;
-	private String imageURL;
 	private String habilitada;
 	private String lang;
+	private String imageURL;
 	
 	public Integer getIdCategoria() {
 		return idCategoria;
@@ -22,12 +22,6 @@ public class CategoriasForm extends DynaActionForm {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-	public String getImageURL() {
-		return imageURL;
-	}
-	public void setImageURL(String imageURL) {
-		this.imageURL = imageURL;
-	}
 	public String getHabilitada() {
 		return habilitada;
 	}
@@ -40,6 +34,13 @@ public class CategoriasForm extends DynaActionForm {
 	public void setLang(String lang) {
 		this.lang = lang;
 	}
+	public String getImageURL() {
+		return imageURL;
+	}
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
+	
 	
 	
 }
