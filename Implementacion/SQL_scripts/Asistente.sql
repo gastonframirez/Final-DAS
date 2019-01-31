@@ -611,27 +611,48 @@ drop procedure getComerciosExtra
 go
 
 create procedure getComerciosExtra
+(
+	@idComercio integer = null
+)
 as
 begin
-    SELECT id_comercio, (SELECT COUNT(*) FROM ofertas offer
-		WHERE offer.id_comercio = com.id_comercio AND offer.habilitada=1) as q_offers, nombre_publico, habilitado, 
-		ISNULL((SELECT SUM(valor) FROM (SELECT count(*)*ctt.valor as valor FROM transacciones tr
-			JOIN comisiones_tipo_transacciones ctt
-				ON ctt.id_tipo = tr.id_tipo_transaccion
-				AND ctt.id_comercio = tr.id_comercio
-			WHERE tr.id_comercio=com.id_comercio
-				AND Year(tr.fecha) = Year(CURRENT_TIMESTAMP) 
-            	AND Month(tr.fecha) = Month(CURRENT_TIMESTAMP)
-				
-			group by ctt.valor, tr.id_comercio) as valor),0)as tot_comm,
-			logo_url,
-			nombre_publico as nombre,
-			com.direccion as serv_status
-	FROM comercios com
+	IF @idComercio IS NOT NULL AND LEN(@idComercio) > 0
+		SELECT id_comercio, (SELECT COUNT(*) FROM ofertas offer
+			WHERE offer.id_comercio = com.id_comercio AND offer.habilitada=1) as q_offers, nombre_publico, habilitado, 
+			ISNULL((SELECT SUM(valor) FROM (SELECT count(*)*ctt.valor as valor FROM transacciones tr
+				JOIN comisiones_tipo_transacciones ctt
+					ON ctt.id_tipo = tr.id_tipo_transaccion
+					AND ctt.id_comercio = tr.id_comercio
+				WHERE tr.id_comercio=com.id_comercio
+					AND Year(tr.fecha) = Year(CURRENT_TIMESTAMP) 
+					AND Month(tr.fecha) = Month(CURRENT_TIMESTAMP)
+					
+				group by ctt.valor, tr.id_comercio) as valor),0)as tot_comm,
+				logo_url,
+				nombre_publico as nombre,
+				com.direccion as serv_status
+		FROM comercios com
+		WHERE com.id_comercio = @idComercio
+	ELSE
+		SELECT id_comercio, (SELECT COUNT(*) FROM ofertas offer
+				WHERE offer.id_comercio = com.id_comercio AND offer.habilitada=1) as q_offers, nombre_publico, habilitado, 
+				ISNULL((SELECT SUM(valor) FROM (SELECT count(*)*ctt.valor as valor FROM transacciones tr
+					JOIN comisiones_tipo_transacciones ctt
+						ON ctt.id_tipo = tr.id_tipo_transaccion
+						AND ctt.id_comercio = tr.id_comercio
+					WHERE tr.id_comercio=com.id_comercio
+						AND Year(tr.fecha) = Year(CURRENT_TIMESTAMP) 
+						AND Month(tr.fecha) = Month(CURRENT_TIMESTAMP)
+						
+					group by ctt.valor, tr.id_comercio) as valor),0)as tot_comm,
+					logo_url,
+					nombre_publico as nombre,
+					com.direccion as serv_status
+			FROM comercios com
 end
 go
 
-execute getComerciosExtra
+execute getComerciosExtra @idComercio = 71
 
 
 ---------------------------------------------------------------------------------------------- Obtener Datos de Comercio
@@ -644,15 +665,21 @@ create procedure getDatosComercio
 )
 as
 begin
-    SELECT co.id_comercio, razon_social, cuit, direccion, telefono, habilitado, logo_url, ua.fecha_productos, ua.fecha_ofertas
+    SELECT co.id_comercio, razon_social, cuit, direccion, nombre_publico, telefono, habilitado, 
+		logo_url, ua.fecha_productos, ua.fecha_ofertas, id_tecnologia, service_url_of, funcion_of,
+		puerto_of, service_url_trans, funcion_trans, puerto_trans, auth_token
 	FROM comercios co
+	JOIN servicios serv
+		ON serv.id_comercio = co.id_comercio
 	LEFT JOIN ult_actualizacion ua
 		ON ua.id_comercio = co.id_comercio
 	WHERE co.id_comercio = @idComercio
 end
 go
 
-EXECUTE getDatosComercio @idComercio=3
+execute getDatosComercio @idComercio=71
+
+---------------------------------------------------------------------------------------------- Obtener Datos de Scraping Comercio
 
 ---------------------------------------------------------------------------------------------- Obtener Datos de Comercio: Precio Comision
 drop procedure getValoresComisionesComercio
@@ -666,16 +693,16 @@ as
 begin
     SELECT comi.nombre, fecha_inicio, fecha_fin, valor, co.id_comercio
 	FROM comercios co
-	RIGHT JOIN (SELECT nombre, fecha_inicio, fecha_fin, valor, id_comercio FROM comisiones_tipo_transacciones ctt
+	RIGHT JOIN (SELECT nombre, fecha_inicio, fecha_fin, valor, id_comercio, tt.id_tipo FROM comisiones_tipo_transacciones ctt
 				JOIN tipo_transacciones tt
-					ON tt.nombre = ctt.id_tipo
+					ON tt.id_tipo = ctt.id_tipo
 				WHERE ctt.id_comercio = @idComercio) comi
 		ON comi.id_comercio = co.id_comercio
 	WHERE co.id_comercio = @idComercio
 end
 go
 
-EXECUTE getValoresComisionesComercio @idComercio=3
+EXECUTE getValoresComisionesComercio @idComercio=71
 
 ---------------------------------------------------------------------------------------------- Get Comercio ID
 drop procedure getComercioID
@@ -1167,7 +1194,7 @@ go
 
 create procedure getComerciosURLScraper
 (
-	@idComercio 	INTEGER
+	@idComercio 	INTEGER,
 )
 as
 begin
@@ -1203,9 +1230,10 @@ begin
 end
 go
 
+
 EXECUTE getComerciosCSSScraper @idComercio = 71
 go
--- insert into scraper_config values(3, 'price', '.itemBox--price .value-item', 0, 0)
+-- insert into scraper_config values(71, 'prodURL', '.itemBox--price .value-item', 0, 0)
 
 
 ---------------------------------------------------------------------------------------------- Comercios CSS Scraper
@@ -1275,15 +1303,15 @@ go
 
 create procedure activeOffers
 (
-	@comercioID	integer = null
+	@idComercio	integer = null
 )
 AS
 BEGIN
-	IF @comercioID IS NOT NULL AND LEN(@comercioID) > 0
+	IF @idComercio IS NOT NULL AND LEN(@idComercio) > 0
 		SELECT count(*) as stats
 		FROM ofertas
 		WHERE habilitada = 1
-		AND id_comercio = @comercioID
+		AND id_comercio = @idComercio
 	ELSE
 		SELECT count(*) as stats
 		FROM ofertas
@@ -1291,7 +1319,7 @@ BEGIN
 END
 go
 
--- execute activeOffers
+--  
 
 ---------------------------------------------------------------------------------------------- Nuevos Users del mes
 drop procedure actionsByType
@@ -1320,3 +1348,72 @@ END
 go
 -- execute actionsByType
 -- execute actionsByType @comercioID=71
+
+---------------------------------------------------------------------------------------------- Cantidad de productos mostrados
+drop procedure cantProductosActivos
+go
+
+create procedure cantProductosActivos
+(
+	@idComercio	integer = null
+)
+AS
+BEGIN
+	IF @idComercio IS NOT NULL AND LEN(@idComercio) > 0
+		SELECT count(1) as stats FROM productos pr
+		JOIN producto_comercio pc
+			ON pr.id_producto = pc.id_producto
+		WHERE pc.habilitado = 1
+		AND pc.id_comercio = @idComercio
+	ELSE 
+		SELECT count(1) as stats FROM productos pr
+		JOIN producto_comercio pc
+			ON pr.id_producto = pc.id_producto
+		WHERE pc.habilitado = 1
+END
+go
+
+execute cantProductosActivos @idComercio = 71
+
+---------------------------------------------------------------------------------------------- Transacciones en historial
+drop procedure getCantTransactionsSinceRegistry
+go
+
+create procedure getCantTransactionsSinceRegistry
+(
+	@comercioID	integer
+)
+AS
+BEGIN
+	SELECT count(*) as stats FROM transacciones
+	WHERE id_comercio = @comercioID		
+END
+go
+-- execute getCantTransactionsSinceRegistry @comercioID=71
+
+-- SELECT
+
+
+---------------------------------------------------------------------------------------------- Evolucion de $ en el mes
+drop procedure totalCommisionByMonth
+go
+
+create procedure actionsByType
+(
+	@date1		datetime,
+	@date2		datetime,
+	@comercioID	integer = null
+)
+AS
+BEGIN
+	IF @comercioID IS NOT NULL AND LEN(@comercioID) > 0
+		
+	ELSE
+		
+END
+go
+-- execute actionsByType
+-- execute actionsByType @comercioID=71
+
+-- SELECT
+

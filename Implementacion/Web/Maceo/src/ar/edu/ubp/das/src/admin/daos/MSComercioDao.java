@@ -183,31 +183,135 @@ public class MSComercioDao extends DaoImpl {
 	@Override
 	public List<DynaActionForm> select(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
-//		this.connect();
-//		
-//		this.setProcedure("dbo.getTecnologias", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-//
-//    	List<DynaActionForm> comercios = new LinkedList<DynaActionForm>();
-//    	
-//    	ComercioForm comercio;
-//    	
-//    	ResultSet result = this.getStatement().executeQuery();
-//  
-//        while(result.next()) {
-//        	comercio = new ComercioForm();
-//        	comercio.setIdComercio(result.getInt("id_comercio"));
-//        	comercio.setNombre(result.getString("nombre"));
-//        	comercio.setCantOffers(result.getInt("q_ffers"));
-//        	comercio.setTotComisiones(result.getFloat("tot_comm"));
-//        	comercio.setServiceStatus(result.getBoolean("serv_status"));
-//        	comercio.setHabilitado(result.getBoolean("habilitado"));
-//
-//        	comercios.add(comercio);
-//        }
-//        
-//		this.disconnect();
-//		
-		return null;
+		this.connect();
+		
+		Integer idComercio = Integer.parseInt(form.getItem("idComercio"));
+		
+		this.setProcedure("dbo.getDatosComercio(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+		this.setParameter(1, idComercio);
+    	
+		List<DynaActionForm> comercios = new LinkedList<DynaActionForm>();
+    	
+    	ComercioForm comercio = null;
+    	
+    	ResultSet result = this.getStatement().executeQuery();
+    	//getComerciosURLScraper
+    	//getComerciosCSSScraper
+    	
+        if(result.next()) {
+        	comercio = new ComercioForm();
+        	comercio.setIdComercio(result.getInt("id_comercio"));
+        	comercio.setRazonSocial(result.getString("razon_social"));
+        	comercio.setCUIT(result.getString("CUIT"));
+        	comercio.setDireccion(result.getString("direccion"));
+        	comercio.setNombre(result.getString("nombre_publico"));
+        	comercio.setTelefono(result.getString("telefono"));
+        	comercio.setLogoURL(result.getString("logo_url"));
+        	comercio.setTecnologiaID(Integer.parseInt(result.getString("id_tecnologia")));
+        	comercio.setHabilitado(result.getBoolean("habilitado"));
+        	comercio.setBaseURLOffers(result.getString("service_url_of"));
+        	comercio.setBaseURLTransacciones(result.getString("service_url_trans"));
+        	comercio.setFuncionOffers(result.getString("funcion_of"));
+        	comercio.setFuncionTransacciones(result.getString("funcion_trans"));
+        	comercio.setPortOffers(result.getInt("puerto_of"));
+        	comercio.setPortTransacciones(result.getInt("puerto_trans"));
+        	comercio.setAuthToken(result.getString("auth_token"));
+        }
+
+        
+        this.setProcedure("dbo.getValoresComisionesComercio(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+		this.setParameter(1, idComercio);
+		
+		result = this.getStatement().executeQuery();
+        
+        while(result.next()) {
+        	if(result.getString("nombre").equals("ppClick")) {
+        		comercio.setProductComm(result.getFloat("valor"));
+        	}else if(result.getString("nombre").equals("ppOffer")) {
+        		comercio.setOfferComm(result.getFloat("valor"));
+        	}
+        	
+        }
+        
+        
+        this.setProcedure("dbo.getComerciosURLScraper(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+		this.setParameter(1, idComercio);
+        
+		Map<String, String> categoriaURL = new HashMap<String, String>();
+		
+		result = this.getStatement().executeQuery();
+        
+        while(result.next()) {
+        	Integer idCategoria = result.getInt("id_categoria");
+        	categoriaURL.put(Integer.toString(idCategoria), result.getString("url_scrapping"));
+        }
+        System.out.println(categoriaURL.toString());
+        comercio.setCategoriaURL(categoriaURL);
+        
+        
+        this.setProcedure("dbo.getComerciosCSSScraper(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+		this.setParameter(1, idComercio);
+        
+		result = this.getStatement().executeQuery();
+        
+		Map<String, Boolean> needsCrawl = new HashMap<String, Boolean>();
+		Map<String, Boolean> inTitle = new HashMap<String, Boolean>();
+
+        while(result.next()) {
+        	
+        	switch (result.getString("prop_name")) {
+			case "brand":
+				comercio.setCssMarca(result.getString("class_name"));
+				if(result.getInt("is_in_title")==1)  {
+					inTitle.put(result.getString("prop_name"), true);
+				}
+				if(result.getInt("needs_crawl")==1) {
+					needsCrawl.put(result.getString("prop_name"), true);
+				}
+				break;
+			case "model":
+				comercio.setCssModelo(result.getString("class_name"));	
+				if(result.getInt("is_in_title")==1) {
+					inTitle.put(result.getString("prop_name"), true);
+				}
+				if(result.getInt("needs_crawl")==1)  {
+					needsCrawl.put(result.getString("prop_name"), true);
+				}
+				break;
+			case "imgURL":
+				comercio.setCssImgURL(result.getString("class_name"));
+				if(result.getInt("needs_crawl")==1)  {
+					needsCrawl.put(result.getString("prop_name"), true);
+				}
+				break;
+			case "iterator":
+				comercio.setCssIterator(result.getString("class_name"));
+				break;
+			case "name":
+				comercio.setCssNombre(result.getString("class_name"));
+				break;
+			case "price":
+				comercio.setCssPrecio(result.getString("class_name"));
+				break;
+			case "prodURL":
+				comercio.setCssProdURL(result.getString("class_name"));
+				break;
+
+			default:
+				break;
+			} 
+        	comercio.setNeedsCrawl(needsCrawl);
+        	comercio.setSearchInName(inTitle);
+        }
+        comercios.add(comercio);
+        
+		this.disconnect();
+    	
+		return comercios;
 	}
 
 	@Override

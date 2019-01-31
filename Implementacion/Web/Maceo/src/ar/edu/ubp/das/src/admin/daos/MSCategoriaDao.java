@@ -139,9 +139,6 @@ public class MSCategoriaDao extends DaoImpl {
     			categoriaTranslated.setIsQualifiable(false);
     		}
         	
-        	
-        	
-        	
         	translations = new HashMap<String, String>();
         	
         	while(result.getRow() > 0 && idCategoria == result.getInt("id_categoria")) {

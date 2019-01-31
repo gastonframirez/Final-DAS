@@ -3,6 +3,7 @@ package ar.edu.ubp.das.src.admin.daos;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,11 +43,12 @@ public class MSEstadisticasDashboardDao extends DaoImpl {
 		// TODO Auto-generated method stub
 		
 		this.connect();
-		this.setProcedure("dbo.monthlyTransactions(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		this.setProcedure("dbo.monthlyTransactions(?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		
 		Date currMonth= new Date(System.currentTimeMillis());
 		
 		this.setParameter(1,currMonth);
+    	this.setNull(2, Types.INTEGER);
 		
     	List<DynaActionForm> estadisticas = new LinkedList<DynaActionForm>();
     	
@@ -61,8 +63,11 @@ public class MSEstadisticasDashboardDao extends DaoImpl {
         	estadisticas.add(estadistica);
         }
         
-        this.setProcedure("dbo.activeOffers", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        this.setProcedure("dbo.activeOffers(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		    	    	
+        this.setNull(1, Types.INTEGER);
+    
+        
     	result = this.getStatement().executeQuery();
   
         if(result.next()) {
@@ -72,8 +77,6 @@ public class MSEstadisticasDashboardDao extends DaoImpl {
         	estadisticas.add(estadistica);
         }
 		
-        
-        
 		this.setProcedure("dbo.newMonthlyUsers(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		
 		this.setParameter(1,currMonth);
@@ -86,6 +89,8 @@ public class MSEstadisticasDashboardDao extends DaoImpl {
         	estadistica.setValor(result.getString("stats"));
         	estadisticas.add(estadistica);
         }
+    	
+        
         
 		this.disconnect();
 		

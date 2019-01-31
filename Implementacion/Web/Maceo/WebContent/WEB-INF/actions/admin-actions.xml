@@ -19,8 +19,8 @@
         <action path="/EditarComercio.do" type="ShowAddComercioAction">
             <forward name="success" path="/admin/addComercio.jsp"/>
         </action>
-        <action path="EstadisticasComercio.do" type="EstadisticasAction">
-            <forward name="success" path="/admin/dashboard.jsp"/>
+        <action path="/Estadisticas.do" type="EstadisticasAction">
+            <forward name="success" path="/admin/estadisticas.jsp"/>
         </action>
         <action path="/Categorias.do" type="ListCategoriasAction">
             <forward name="success" path="/admin/categoriesList.jsp"/>

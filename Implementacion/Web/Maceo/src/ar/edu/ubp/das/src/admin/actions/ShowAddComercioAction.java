@@ -19,11 +19,22 @@ public class ShowAddComercioAction implements Action{
 			HttpServletResponse response) throws SQLException, RuntimeException {
 		// TODO Auto-generated method stub
 		
-		Dao daoCategorias = DaoFactory.getDao( "Categorias", "productos" );
+		Dao daoCategorias = DaoFactory.getDao( "Categoria", "admin" );
 		request.setAttribute("categorias", daoCategorias.select(form));
 		
 		Dao daoTecnologias = DaoFactory.getDao( "Tecnologia", "admin" );
 		request.setAttribute("tecnologias", daoTecnologias.select(form));
+		
+		if(request.getParameter("idComercio")!=null) {
+			Dao daoComercio = DaoFactory.getDao( "Comercio", "admin" );
+			
+			form.setItem("idComercio", request.getParameter("idComercio"));
+			try {
+			request.setAttribute("comercio", daoComercio.select(form).get(0));
+			}catch(SQLException ex) {
+				ex.printStackTrace();
+			}
+		}
 		
 		return mapping.getForwardByName("success");
 	}

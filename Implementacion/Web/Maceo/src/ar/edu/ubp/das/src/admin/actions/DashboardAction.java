@@ -18,7 +18,7 @@ public class DashboardAction implements Action{
 	public ForwardConfig execute(ActionMapping mapping, DynaActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws SQLException, RuntimeException {
 		// TODO Auto-generated method stub
-		Dao daoComercios = DaoFactory.getDao( "EstadisticasComercio", "admin" );
+		Dao daoComercios = DaoFactory.getDao( "DatosCompletosComercio", "admin" );
 		request.setAttribute("comercios", daoComercios.select(form));
 		
 		Dao daoEstadisticas = DaoFactory.getDao( "EstadisticasDashboard", "admin" );

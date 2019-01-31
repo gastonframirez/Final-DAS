@@ -37,9 +37,13 @@ public class StatisticBannerTagHandler extends SimpleTagSupport {
 	@Override
 	public void doTag() throws JspException, IOException {
 		super.doTag();
-
+		
 		JspWriter out = this.getJspContext().getOut();
-		out.println("<div class=\"card bg-"+ this.color +" card-img-holder text-white\">");	
+		if(this.color.equals("gradient-secondary")) {
+			out.println("<div class=\"card bg-"+ this.color +" card-img-holder\">");	
+		}else {
+			out.println("<div class=\"card bg-"+ this.color +" card-img-holder text-white\">");	
+		}
 		out.println("<div class=\"card-body\">");
 		out.println("<img src=\"/Maceo/img/dashboard/circle.svg\" class=\"card-img-absolute\" alt=\"circle-image\"/>");
 		out.println("<h4 class=\"font-weight-normal mb-3\">"+ this.title);

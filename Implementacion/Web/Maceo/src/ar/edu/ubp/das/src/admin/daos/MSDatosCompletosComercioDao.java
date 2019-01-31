@@ -1,6 +1,5 @@
 package ar.edu.ubp.das.src.admin.daos;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -9,9 +8,9 @@ import java.util.List;
 
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.db.DaoImpl;
-import ar.edu.ubp.das.src.admin.forms.EstadisticaForm;
+import ar.edu.ubp.das.src.admin.forms.ComercioForm;
 
-public class MSGraficosDashboardDao extends DaoImpl {
+public class MSDatosCompletosComercioDao extends DaoImpl {
 
 	@Override
 	public DynaActionForm make(ResultSet result) throws SQLException {
@@ -39,14 +38,13 @@ public class MSGraficosDashboardDao extends DaoImpl {
 
 	@Override
 	public List<DynaActionForm> select(DynaActionForm form) throws SQLException {
-		// TODO Auto-generated method stub
-
 		this.connect();
-		this.setProcedure("dbo.actionsByType(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		
-    	List<DynaActionForm> datosGrafico = new LinkedList<DynaActionForm>();
+		this.setProcedure("dbo.getComerciosExtra(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+    	List<DynaActionForm> comercios = new LinkedList<DynaActionForm>();
     	
-    	EstadisticaForm estadistica;
+    	ComercioForm comercio;
     	
     	if(form.getItem("idComercio")!=null) {
     		this.setParameter(1, form.getItem("idComercio"));
@@ -56,15 +54,21 @@ public class MSGraficosDashboardDao extends DaoImpl {
     	ResultSet result = this.getStatement().executeQuery();
   
         while(result.next()) {
-        	estadistica = new EstadisticaForm();
-        	estadistica.setNombre(result.getString("nombre"));
-        	estadistica.setValor(result.getString("stats"));
-        	datosGrafico.add(estadistica);
+        	comercio = new ComercioForm();
+        	comercio.setIdComercio(result.getInt("id_comercio"));
+        	comercio.setNombre(result.getString("nombre"));
+        	comercio.setLogoURL(result.getString("logo_url"));
+        	comercio.setCantOffers(result.getInt("q_offers"));
+        	comercio.setTotComisiones(result.getFloat("tot_comm"));
+        	comercio.setServiceStatus(result.getBoolean("serv_status"));
+        	comercio.setHabilitado(result.getBoolean("habilitado"));
+
+        	comercios.add(comercio);
         }
-       
+        
 		this.disconnect();
 		
-		return datosGrafico;
+		return comercios;
 	}
 
 	@Override
