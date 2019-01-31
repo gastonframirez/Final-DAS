@@ -67,12 +67,13 @@ Los logos de los comercios se van a encontrar en https://github.com/gastonframir
 
 # Estadisticas elegidas:
 ## Generales:
-- [x] Total de trasnacciones
+- [x] Total de transacciones
 - [x] Ofertas activas
 - [x] Cantidad de usuarios nuevos en el mes
 - [x] Grafico comparativo entre transacciones de productos y ofertas
 
 ## De cada comercio:
+- [ ] Tabla de todas las transacciones en el sitio (filtrable)
 ### Banners
 - [ ] Total de comision del mes
 - [x] Cantidad de productos mostrados
