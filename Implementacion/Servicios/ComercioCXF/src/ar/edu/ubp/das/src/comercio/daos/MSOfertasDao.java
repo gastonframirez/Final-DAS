@@ -57,8 +57,22 @@ public class MSOfertasDao extends DaoImpl {
 
 	@Override
 	public boolean valid(DynaActionForm form) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		this.connect();
+		
+		this.setProcedure("dbo.validateToken(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		
+		String token = form.getItem("hashToken");
+		
+		this.setParameter(1, token);
+		
+		ResultSet result = this.getStatement().executeQuery();
+		
+		if(result.next()) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 }

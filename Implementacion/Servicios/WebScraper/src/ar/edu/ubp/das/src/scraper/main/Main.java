@@ -1,6 +1,7 @@
 package ar.edu.ubp.das.src.scraper.main;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,8 +23,6 @@ public class Main {
 	public static void main(String []args) {
 
 		System.out.println( ">> Iniciando Scrapping de Webs - " + new Date().toString() );
-	
-		final String url = "https://www.garbarino.com/productos/tv-led-y-smart-tv/4342";
 		
 		try {
 			DynaActionForm form = new DynaActionForm();
@@ -36,17 +35,13 @@ public class Main {
 			List<DynaActionForm> comercios = comerciosDao.select(form);
 			for(DynaActionForm com : comercios) {
 				ComercioForm comF = (ComercioForm)com;
-//				System.out.println(comF.getID());
-//				System.out.println(comF.getCssMarca());
-//				System.out.println(comF.getCssImgURL());
-//				System.out.println(comF.getCssNombre());
-//				System.out.println(comF.getCssIterator());
-				Map<String, String> map = comF.getCategoriaURLs();
+
+				Map<String, String> categories = comF.getCategoriaURLs();
 				
-				for(String mapUrl : map.keySet()) {
-					System.out.println(mapUrl + ": " + map.get(mapUrl));
+				for(String mapUrl : categories.keySet()) {
+					System.out.println(mapUrl + ": " + categories.get(mapUrl));
 					try {
-						final Document document = Jsoup.connect(map.get(mapUrl)).get();
+						final Document document = Jsoup.connect(categories.get(mapUrl)).get();
 						
 						for(Element prod : document.select(comF.getCssIterator())) {
 							
@@ -110,6 +105,15 @@ public class Main {
 								String[] titleParts = title.split(" ");
 								String modelo = titleParts[titleParts.length-1];
 								System.out.println(modelo.replace("-", ""));
+								
+								List<String> excludeList = new ArrayList<>();
+							    excludeList.add("blanca");
+							    excludeList.add("blanco");
+							    excludeList.add("blanca");
+							    excludeList.add("blanco");
+							    
+							 // replace all whitespace with tabs
+						        System.out.println(title.replaceAll("\\s+", "\t"));
 							}
 
 			

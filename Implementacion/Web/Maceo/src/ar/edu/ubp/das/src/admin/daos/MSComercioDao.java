@@ -2,6 +2,7 @@ package ar.edu.ubp.das.src.admin.daos;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class MSComercioDao extends DaoImpl {
         	this.connectWAutoFalse();
 
 //        	Guardo el comercio
-    		this.setProcedure("dbo.saveComercio(?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+    		this.setProcedure("dbo.saveComercio(?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
     		this.setParameter(1, form.getItem("razonSocial"));
 //    		System.out.println(form.getItem("razonSocial"));
@@ -42,6 +43,8 @@ public class MSComercioDao extends DaoImpl {
     		this.setParameter(5, form.getItem("phone"));
 //    		System.out.println(form.getItem("phone"));
     		this.setParameter(6, form.getItem("logoURL"));
+//    		System.out.println(form.getItem("logoURL"));
+    		this.setParameter(7, Integer.parseInt(form.getItem("zipCode")));
 //    		System.out.println(form.getItem("logoURL"));
     		
     		this.getStatement().execute();		
@@ -171,7 +174,137 @@ public class MSComercioDao extends DaoImpl {
 	@Override
 	public void update(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
+		try {
+        	this.connectWAutoFalse();
+        	Integer idComercio = Integer.valueOf(form.getItem("idComercio"));
+        	
+//        	Guardo el comercio
+    		this.setProcedure("dbo.updateComercio(?,?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+    		
+    		this.setParameter(1, idComercio);
+    		this.setParameter(2, form.getItem("razonSocial"));
+    		System.out.println(form.getItem("razonSocial"));
+    		this.setParameter(3, form.getItem("CUIT"));
+    		System.out.println(form.getItem("CUIT"));
+    		this.setParameter(4, form.getItem("address"));
+    		System.out.println(form.getItem("address"));
+    		this.setParameter(5, form.getItem("publicName"));  	
+    		System.out.println(form.getItem("publicName"));
+    		this.setParameter(6, form.getItem("phone"));
+    		System.out.println(form.getItem("phone"));
+    		this.setParameter(7, form.getItem("logoURL"));
+    		System.out.println(form.getItem("logoURL"));
+    		if(form.getItem("zipCode")!=null) {
+    			this.setParameter(8, Integer.parseInt(form.getItem("zipCode")));
+    			System.out.println(form.getItem("zipCode"));
+    		}else {
+    			this.setNull(8, Types.INTEGER);
+    		}
+    		
+    		
+    		this.getStatement().execute();		
 
+			if(idComercio>0) {
+				this.autoCommit(false);
+//				// Ahora guardo el servicio
+				this.setProcedure("dbo.updateServicesComercio(?,?,?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+				
+	    		this.setParameter(1, idComercio);
+	    		this.setParameter(2, Integer.parseInt(form.getItem("techID")));
+	    		this.setParameter(3, form.getItem("baseURLOffers"));
+	    		this.setParameter(4, Integer.parseInt(form.getItem("portOffers")));
+	    		this.setParameter(5, form.getItem("functionOffers"));  	
+	    		this.setParameter(6, form.getItem("baseURLTrsct"));
+	    		this.setParameter(7, Integer.parseInt(form.getItem("portTrsct")));
+	    		this.setParameter(8, form.getItem("functionTrsct"));
+    			this.setParameter(9, form.getItem("authToken"));
+				
+	    		this.getStatement().execute();		
+	         	
+//				this.commit();
+				
+				this.getStatement().close();
+				
+				// Ahora guardo las comisiones
+				this.setProcedure("dbo.updateComisionesComercio(?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+	    		this.setParameter(1, idComercio);
+	    		this.setParameter(2, form.getItem("ppOffer"));
+	    		this.setParameter(3, form.getItem("ppProd"));
+				
+	    		this.getStatement().execute();		
+	         	
+//				this.commit();
+				
+				this.getStatement().close();
+//				
+				// Ahora guardo datos del scraper - URL Categorias
+				
+
+				Map<String, Object> catIds = new HashMap<String, Object>();
+				catIds = form.getItems("urlCategories");
+				
+				for(String kClass : catIds.keySet()) {
+					if(catIds!=null && catIds.get(kClass) != null) {
+		    			this.setProcedure("dbo.updateScraperURLComercio(?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+						System.out.println("Sin error 0: "+kClass);
+						
+		    			this.setParameter(1, idComercio);
+			    		this.setParameter(2, kClass);
+			    		this.setParameter(3, catIds.get(kClass).toString());
+			    		
+			    		this.getStatement().execute();	
+//			    		this.commit();
+			    		this.getStatement().close();
+		    		}
+				}
+				
+				
+				// Ahora guardo datos sobre la config del scraper
+				Map<String, Object> classes = new HashMap<String, Object>();
+				classes = form.getItems("cssClasses");
+				
+				Map<String, Object> needsCrawl = new HashMap<String, Object>();
+				needsCrawl = form.getItems("needsCrawl");
+				
+				Map<String, Object> searchInName = new HashMap<String, Object>();
+				searchInName = form.getItems("searchInName");
+				
+				
+				for(String kClass : classes.keySet()) {
+					this.setProcedure("dbo.updateScraperConfigComercio(?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+					this.setParameter(1, idComercio);
+		    		this.setParameter(2, classes.get(kClass).toString());
+		    		if(needsCrawl!=null && needsCrawl.get(kClass) != null) {
+		    			this.setParameter(3, 1);
+		    		}else {
+		    			this.setParameter(3, 0);
+		    		}
+		    		if(searchInName!=null && searchInName.get(kClass) != null) {
+		    			this.setParameter(4, 1);
+		    		}else {
+		    			this.setParameter(4, 0);
+		    		}
+		    		this.setParameter(5, kClass);
+		    	
+		    		this.getStatement().execute();	
+		    		
+		    		this.getStatement().close();
+				}
+				
+			}
+			
+			this.commit();
+		} catch (SQLException e) {
+			this.rollback();
+			throw e;
+		}finally {
+			this.autoCommit(true);
+			this.disconnect();
+		}
+		
+		
 	}
 
 	@Override
@@ -196,8 +329,7 @@ public class MSComercioDao extends DaoImpl {
     	ComercioForm comercio = null;
     	
     	ResultSet result = this.getStatement().executeQuery();
-    	//getComerciosURLScraper
-    	//getComerciosCSSScraper
+
     	
         if(result.next()) {
         	comercio = new ComercioForm();

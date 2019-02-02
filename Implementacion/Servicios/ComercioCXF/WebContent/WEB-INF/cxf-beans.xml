@@ -7,20 +7,10 @@
 	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 	<jaxws:endpoint
-		xmlns:tns="http://ws.comercio.src.das.ubp.edu.ar/" id="ofertasws"
-		implementor="ar.edu.ubp.das.src.comercio.ws.OfertasWS"
-		wsdlLocation="wsdl/ofertasws.wsdl" endpointName="tns:OfertasWSPort"
-		serviceName="tns:OfertasWSService" address="/OfertasWSPort">
-		<jaxws:features>
-			<bean class="org.apache.cxf.feature.LoggingFeature" />
-		</jaxws:features>
-	</jaxws:endpoint>
-	<jaxws:endpoint
-		xmlns:tns="http://ws.comercio.src.das.ubp.edu.ar/" id="transaccionws"
-		implementor="ar.edu.ubp.das.src.comercio.ws.TransaccionWS"
-		wsdlLocation="wsdl/transaccionws.wsdl"
-		endpointName="tns:TransaccionWSPort"
-		serviceName="tns:TransaccionWSService" address="/TransaccionWSPort">
+		xmlns:tns="http://ws.comercio.src.das.ubp.edu.ar/" id="apiws"
+		implementor="ar.edu.ubp.das.src.comercio.ws.ApiWS"
+		wsdlLocation="wsdl/apiws.wsdl" endpointName="tns:ApiWSPort"
+		serviceName="tns:ApiWSService" address="/ApiWSPort">
 		<jaxws:features>
 			<bean class="org.apache.cxf.feature.LoggingFeature" />
 		</jaxws:features>

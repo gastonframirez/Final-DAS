@@ -56,8 +56,9 @@ public class MSComerciosDao extends DaoImpl {
         	comercio.setNombre(result.getString("nombre_publico"));
         	
         	//Obteniendo URLs a scrapear
-        	this.setProcedure("dbo.getComerciosURLScraper(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        	this.setProcedure("dbo.getComerciosURLScraper(?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
         	this.setParameter(1, comercio.getID());
+        	this.setParameter(2, 1);
         	
         	ResultSet resultScraper = this.getStatement().executeQuery();
         	

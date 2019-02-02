@@ -29,7 +29,7 @@ public class AddComercioAction implements Action{
 		form.setItem("razonSocial", request.getParameter("companyName"));
 		form.setItem("CUIT", request.getParameter("CUIT"));
 		form.setItem("address", request.getParameter("address"));
-		form.setItem("zipCode", request.getParameter("cp"));
+		form.setItem("zipCode", request.getParameter("zipCode"));
 		form.setItem("phone", request.getParameter("phone"));
 		form.setItem("logoURL", request.getParameter("logoURL"));
 		form.setItem("baseURLOffers", request.getParameter("baseURLOffers"));
@@ -112,7 +112,11 @@ public class AddComercioAction implements Action{
 		}
 		
 		try {
-			daoComercio.insert(form);
+			if(request.getParameter("idComercio")!=null) {
+				daoComercio.update(form);
+			}else {
+				daoComercio.insert(form);
+			}
 		}catch (SQLException ex){
 			System.out.println(ex.getMessage());
 		}

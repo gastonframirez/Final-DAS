@@ -30,7 +30,7 @@ public class ShowAddComercioAction implements Action{
 			
 			form.setItem("idComercio", request.getParameter("idComercio"));
 			try {
-			request.setAttribute("comercio", daoComercio.select(form).get(0));
+				request.setAttribute("comercio", daoComercio.select(form).get(0));
 			}catch(SQLException ex) {
 				ex.printStackTrace();
 			}

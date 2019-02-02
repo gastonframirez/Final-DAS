@@ -76,7 +76,7 @@ public class MSTransaccionDao extends DaoImpl {
 
 	@Override
 	public boolean valid(DynaActionForm form) throws SQLException {
-this.connect();
+		this.connect();
 		
 		this.setProcedure("dbo.validateToken(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		

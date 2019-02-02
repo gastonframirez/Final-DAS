@@ -2,11 +2,13 @@ package ar.edu.ubp.das.src.comercio.ws;
 
 import java.sql.SQLException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,16 +18,19 @@ import ar.edu.ubp.das.mvc.db.DaoFactory;
 import ar.edu.ubp.das.src.comercio.daos.MSOfertasDao;
 import ar.edu.ubp.das.src.comercio.daos.MSTransaccionDao;
 
-@WebService(targetNamespace = "http://ws.comercio.src.das.ubp.edu.ar/", portName = "TransaccionWSPort", serviceName = "TransaccionWSService")
-public class TransaccionWS {
 
+@WebService(targetNamespace = "http://ws.comercio.src.das.ubp.edu.ar/", portName = "ApiWSPort", serviceName = "ApiWSService")
+public class ApiWS {
+	
+	
 	@WebMethod(operationName = "insertTransaccion", action = "urn:InsertTransaccion")
-	public String insertTransaccion(String authToken, String fechaTransaccion, String nombreCliente, 
-			String apellidoCliente, String emailCliente, 
-			Integer dniCliente, String tipoTransaccion, 
-			String modeloProducto, Integer idOferta, 
-			Float precioProducto) {
-		
+	public String insertTransaccion(@WebParam(name = "arg0") String authToken, @WebParam(name = "arg1") String fechaTransaccion, @WebParam(name = "arg2") String nombreCliente, 
+			@WebParam(name = "arg3") String apellidoCliente, @WebParam(name = "arg4") String emailCliente, 
+			@WebParam(name = "arg5") Integer dniCliente, @WebParam(name = "arg6") String tipoTransaccion, 
+			@WebParam(name = "arg7") String modeloProducto, @WebParam(name = "arg8") Integer idOferta, 
+			@WebParam(name = "arg9") Float precioProducto) {
+				
+
 		if(authToken!=null) {
 			if(authToken.indexOf("Token")!=-1 && authToken.split(" ").length==2) {
 				String token = authToken.split(" ")[1];
@@ -34,7 +39,7 @@ public class TransaccionWS {
 				daf.setItem("hashToken", token);
 				
 				try {
-					MSOfertasDao dao = (MSOfertasDao)DaoFactory.getDao( "Ofertas", "ar.edu.ubp.das.src.comercio" );
+					MSOfertasDao dao = (MSOfertasDao)DaoFactory.getDao( "Transaccion", "ar.edu.ubp.das.src.comercio" );
 					if(dao.valid(daf)){
 						System.out.println("Token valido");
 
@@ -93,6 +98,54 @@ public class TransaccionWS {
 			System.out.println("Token no provisto.");
 			return ("Error 401: Token no provisto.");
 		}
-		
 	}
+	
+
+	@WebMethod(operationName = "getOfertas", action = "urn:GetOfertas")
+	public String getOfertas(@WebParam(name = "arg0") String authToken) {
+		List<DynaActionForm> ofertas = new LinkedList<DynaActionForm>();
+		if(authToken!=null) {
+			if(authToken.indexOf("Token")!=-1 && authToken.split(" ").length==2) {
+				String token = authToken.split(" ")[1];
+	
+				DynaActionForm daf = new DynaActionForm();
+				daf.setItem("hashToken", token);
+				
+				try {
+					System.out.println(token);
+					MSOfertasDao dao = (MSOfertasDao)DaoFactory.getDao( "Ofertas", "ar.edu.ubp.das.src.comercio" );
+					if(dao.valid(daf)){
+						System.out.println("Token valido");
+
+						ofertas = dao.select(daf);
+
+						LinkedList<Map<String,Object>> ofertasForJson = new LinkedList<Map<String,Object>>();
+						
+						for( DynaActionForm c : ofertas ) {
+							ofertasForJson.add(c.getItems());
+						}
+						
+						Gson gson = new GsonBuilder().create();
+						return gson.toJson(ofertasForJson);
+						
+					}else {
+						System.out.println("Token inexistente.");
+						return ("Error 401: Token inexistente.");
+					}
+							
+				} catch ( SQLException e ) {
+					e.printStackTrace();
+		    	    return ("Error 400: Error al obtener datos.");
+				}
+
+			}else {
+				System.out.println("Token mal formado.");
+				return ("Error 401: Token mal formado.");
+			}
+		}else {
+			System.out.println("Token no provisto.");
+			return ("Error 401: Token no provisto.");
+		}
+	}
+	
 }

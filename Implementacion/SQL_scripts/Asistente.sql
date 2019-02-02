@@ -733,7 +733,8 @@ create procedure saveComercio
 	@direccion varchar (255),
 	@nombre varchar( 255),
 	@telefono varchar (13),
-	@logoURL varchar (500)
+	@logoURL varchar (500),
+	@CP	integer
 )
 AS
 begin
@@ -803,7 +804,7 @@ begin
 end
 GO
 
----------------------------------------------------------------------------------------------- Guardar Comercio
+---------------------------------------------------------------------------------------------- Editar Comercio
 drop procedure saveScraperConfigComercio
 go
 
@@ -822,7 +823,120 @@ begin
 end
 go
 ---------------------------------------------------------------------------------------------- Editar Comercio
+drop procedure updateComercio
+go
 
+create procedure updateComercio
+(
+	@idComercio integer,
+	@razonSocial varchar (255),
+	@CUIT varchar (12),
+	@direccion varchar (255),
+	@nombre varchar( 255),
+	@telefono varchar (13),
+	@logoURL varchar (500),
+	@CP	integer
+)
+AS
+begin
+	UPDATE comercios set razon_social = @razonSocial, cuit = @CUIT, direccion = @direccion, nombre_publico = @nombre,
+		telefono = @telefono, logo_url=@logoURL
+	WHERE id_comercio = @idComercio
+end
+go
+
+---------------------------------------------------------------------------------------------- Editar Comercio
+drop procedure updateServicesComercio
+go
+
+create procedure updateServicesComercio
+(
+	@idComercio integer,
+	@idTecnologia integer,
+	@baseURLOffers varchar (500),
+	@portOffers integer,
+	@funcionOffers varchar (500),
+	
+	@baseURLTransacciones varchar (500),
+	@portTransacciones integer,
+	@funcionTransacciones varchar (500),
+	@authToken		varchar(500)
+)
+AS
+begin
+	UPDATE servicios set id_tecnologia = @idTecnologia, service_url_of = @baseURLOffers, puerto_of = @portOffers,
+		funcion_of = @funcionOffers, service_url_trans = @baseURLTransacciones, puerto_trans = @portTransacciones,
+		funcion_trans = @funcionTransacciones, auth_token = @authToken
+	WHERE id_comercio = @idComercio 
+end
+GO
+---------------------------------------------------------------------------------------------- Editar Comercio
+drop procedure updateComisionesComercio
+go
+
+create procedure updateComisionesComercio
+(
+	@idComercio integer,
+	@offerComm float,
+	@productComm float
+)
+AS
+begin
+	UPDATE comisiones_tipo_transacciones
+		SET fecha_inicio=getdate(), fecha_fin=getdate(), valor = @productComm
+	WHERE id_comercio = @idComercio
+		AND id_tipo = 1;
+	UPDATE comisiones_tipo_transacciones
+		SET fecha_inicio=getdate(), fecha_fin=getdate(), valor = @offerComm
+	WHERE id_comercio = @idComercio
+		AND id_tipo = 2;	
+end
+go
+
+---------------------------------------------------------------------------------------------- Editar Comercio
+drop procedure updateScraperURLComercio
+go
+
+create procedure updateScraperURLComercio
+(
+	@idComercio integer,
+	@idCategoria integer,
+	@url	varchar (500)
+)
+AS
+begin
+	IF EXISTS (SELECT * FROM scraper_categoria WHERE id_categoria = @idCategoria AND id_comercio = @idComercio)
+		UPDATE scraper_categoria 
+			SET url_scrapping = @url
+		WHERE id_categoria = @idCategoria
+			AND id_comercio = @idComercio
+	ELSE
+		INSERT INTO scraper_categoria (id_categoria, id_comercio, url_scrapping) VALUES
+		(@idCategoria, @idComercio, @url)
+end
+GO
+
+---------------------------------------------------------------------------------------------- Editar Comercio
+drop procedure updateScraperConfigComercio
+go
+
+create procedure updateScraperConfigComercio
+(
+	@idComercio integer,
+	@cssClass varchar (255),
+	@needsCrawl bit,
+	@searchInName bit,
+	@name varchar (255)
+)
+AS
+begin
+	UPDATE scraper_config
+		SET class_name = @cssClass, needs_crawl = @needsCrawl,
+		is_in_title = @searchInName
+	WHERE id_comercio = @idComercio
+	AND prop_name = @name
+end
+go
 ---------------------------------------------------------------------------------------------- Obtener Lista de Categorias
 drop procedure getCategorias
 go
@@ -1159,17 +1273,27 @@ go
 create procedure getComerciosURLScraper
 (
 	@idComercio 	INTEGER,
+	@habilitado		BIT = null
 )
 as
 begin
-    SELECT com.id_comercio, nombre_publico, cp.id_categoria, sc.url_scrapping
-	FROM comercios com
-	JOIN scraper_categoria sc
-		ON	sc.id_comercio = com.id_comercio
-	JOIN categorias_productos cp
-		ON cp.id_categoria = sc.id_categoria
-	WHERE cp.habilitado = 1
-		AND com.id_comercio = @idComercio
+	IF @habilitado IS NOT NULL AND LEN(@habilitado) > 0
+		SELECT com.id_comercio, nombre_publico, cp.id_categoria, sc.url_scrapping
+		FROM comercios com
+		JOIN scraper_categoria sc
+			ON	sc.id_comercio = com.id_comercio
+		JOIN categorias_productos cp
+			ON cp.id_categoria = sc.id_categoria
+		WHERE com.id_comercio = @idComercio
+			AND cp.habilitado = @habilitado
+	ELSE
+		SELECT com.id_comercio, nombre_publico, cp.id_categoria, sc.url_scrapping
+		FROM comercios com
+		JOIN scraper_categoria sc
+			ON	sc.id_comercio = com.id_comercio
+		JOIN categorias_productos cp
+			ON cp.id_categoria = sc.id_categoria
+		WHERE com.id_comercio = @idComercio
 end
 go
 

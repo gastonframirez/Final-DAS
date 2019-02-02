@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -58,31 +59,32 @@ public class MSGraficosComercioDao extends DaoImpl {
     		
     		ResultSet result = this.getStatement().executeQuery();
     		  
-    		Map<String, Float> valuesOffer = new HashMap<String, Float>();
-    		Map<String, Float> valuesProduct = new HashMap<String, Float>();
-    		Map<String, Float> valuesTotal = new HashMap<String, Float>();
+    		LinkedHashMap<String, Float> valuesOffer = new LinkedHashMap<String, Float>();
+    		LinkedHashMap<String, Float> valuesProduct = new LinkedHashMap<String, Float>();
+    		LinkedHashMap<String, Float> valuesTotal = new LinkedHashMap<String, Float>();
     		
     		Float totProd = (float) 0.0;
     		Float totOff = (float) 0.0;
     		
             while(result.next()) {
-            	
+            	System.out.println(result.getString("year_transaction"));
+            	System.out.println(result.getString("month_transaction"));
             	comisionMes = new HistoricoComisionForm();
             	if(result.getInt("tipo")==1) {
             		totProd+=result.getFloat("month_total");
-            		valuesProduct.put(result.getString("year_transaction") + "-" + result.getString("month_transaction") + "-31", totProd);
             	}else if(result.getInt("tipo")==2){
             		totOff+=result.getFloat("month_total");
-            		valuesOffer.put(result.getString("year_transaction") + "-" + result.getString("month_transaction") + "-31", totOff);
-            	}else {
-            		valuesProduct.put(result.getString("year_transaction") + "-" + result.getString("month_transaction") + "-31", totProd);
-            		valuesOffer.put(result.getString("year_transaction") + "-" + result.getString("month_transaction") + "-31", totOff);
             	}
-            	valuesTotal.put(result.getString("year_transaction") + "-" + result.getString("month_transaction") + "-31", totOff+totProd);
+            	
+            	valuesOffer.put(result.getString("month_transaction") + "/" + result.getString("year_transaction"), totOff);
+            	valuesProduct.put(result.getString("month_transaction") + "/" + result.getString("year_transaction"), totProd);
+            	
+            	valuesTotal.put(result.getString("month_transaction") + "/" + result.getString("year_transaction"), totOff+totProd);
             }
             comisionMes.setValuesOffer(valuesOffer);
             comisionMes.setValuesProduct(valuesProduct);
             comisionMes.setValuesTotal(valuesTotal);
+            System.out.println(valuesTotal);
             datosGrafico.add(comisionMes);
     	}
 		this.disconnect();
