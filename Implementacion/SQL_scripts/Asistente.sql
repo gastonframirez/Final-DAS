@@ -238,7 +238,7 @@ create table transacciones
     id_oferta           integer,
     pending             bit             not NULL    default 0,
 
-    constraint pk__transaccion__end primary key (id_transaccion),
+    constraint pk__transaccion__end primary key (id_transaccion, id_comercio),
     constraint fk__transacciones_1__end foreign key (id_producto)
         references productos (id_producto),
     constraint fk__transacciones_2__end foreign key (id_tipo_transaccion)
@@ -1098,41 +1098,6 @@ go
 
 -- EXECUTE getOfertas
 -- go
----------------------------------------------------------------------------------------------- Obtener Comision Total
-drop procedure getComisiones
-go
-
-create procedure getComisiones
-(
-	@fecha_inicio	datetime,
-	@fecha_fin		datetime,
-	@comercio		smallint
-)
-as
-begin
-	-- Seleccionar la suma de la multiplicacion de todas las comisiones entre fi y ff de ese comercio con el valor correspondiente por tipo de comision
-end
-go
-
----------------------------------------------------------------------------------------------- Obtener Comision
-drop procedure getComisionPorTipo
-go
-
-create procedure getComisionPorTipo
-(
-	@tipo    smallint,
-	@fecha_inicio	datetime,
-	@fecha_fin		datetime,
-	@comercio		smallint
-)
-as
-begin
-   -- Seleccionar la suma de la multiplicacion de todas las comisiones del tipo entre fi y ff de ese comercio con el valor correspondiente del tipo
-end
-go
-
----------------------------------------------------------------------------------------------- Obtener Estadistica:
-
 
 ---------------------------------------------------------------------------------------------- Save Transaccion
 drop procedure saveTransaccion
@@ -1160,7 +1125,6 @@ BEGIN
                                 pending)
     values (@fechaTransaccion,
             @idProducto,
-            @idOferta,
             @idTipoTransaccion,
             @idComercio,
             @idUsuario,
@@ -1270,11 +1234,11 @@ go
 -- execute newMonthlyUsers @date='2019-01-20'
 
 
----------------------------------------------------------------------------------------------- Nuevos Users del mes
-drop procedure monthlyTransactions
+---------------------------------------------------------------------------------------------- Cant de transacciones mes
+drop procedure monthlyTransactionsCount
 go
 
-create procedure monthlyTransactions
+create procedure monthlyTransactionsCount
 (
 	@date 	DATETIME,
 	@comercioID	integer = null
@@ -1295,8 +1259,97 @@ BEGIN
 END
 go
 
--- execute monthlyTransactions @date='2019-01-20', @comercioID=1
+-- execute monthlyTransactionsCount @date='2019-01-20', @comercioID=71
 
+
+----------------------------------------------------------------------------------------------  Transacciones del mes
+drop procedure monthlyTransactionsList
+go
+
+create procedure monthlyTransactionsList
+(
+	@date 	DATETIME,
+	@comercioID	integer = null
+)
+AS
+BEGIN
+	IF @comercioID IS NOT NULL AND LEN(@comercioID) > 0
+		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, prod.nombre as nombre_prod, pc.precio
+			FROM transacciones tr
+		JOIN tipo_transacciones tt
+			ON tt.id_tipo = tr.id_tipo_transaccion
+		JOIN comisiones_tipo_transacciones ctt
+			ON tr.id_tipo_transaccion = ctt.id_tipo
+			AND tr.id_comercio = ctt.id_comercio
+		JOIN producto_comercio pc
+			ON pc.id_producto = tr.id_producto
+			AND pc.id_comercio = tr.id_comercio
+		JOIN productos prod
+			ON tr.id_producto = prod.id_producto
+		WHERE Year(fecha) = Year(@date) 
+    		AND Month(fecha) = Month(@date)
+			AND tr.id_comercio = @comercioID
+	ELSE
+		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, prod.nombre as nombre_prod, pc.precio
+			FROM transacciones tr
+		JOIN tipo_transacciones tt
+			ON tt.id_tipo = tr.id_tipo_transaccion
+		JOIN comisiones_tipo_transacciones ctt
+			ON tr.id_tipo_transaccion = ctt.id_tipo
+			AND tr.id_comercio = ctt.id_comercio
+		JOIN producto_comercio pc
+			ON pc.id_producto = tr.id_producto
+			AND pc.id_comercio = tr.id_comercio
+		JOIN productos prod
+			ON tr.id_producto = prod.id_producto
+		WHERE Year(fecha) = Year(@date) 
+			AND Month(fecha) = Month(@date)
+END
+go
+
+-- execute monthlyTransactionsList @date='2019-02-20', @comercioID=71
+
+----------------------------------------------------------------------------------------------  Transacciones historicas
+drop procedure historicalTransactionsList
+go
+
+create procedure historicalTransactionsList
+(
+	@comercioID	integer = null
+)
+AS
+BEGIN
+	IF @comercioID IS NOT NULL AND LEN(@comercioID) > 0
+		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, prod.nombre as nombre_prod, pc.precio
+			FROM transacciones tr
+		JOIN tipo_transacciones tt
+			ON tt.id_tipo = tr.id_tipo_transaccion
+		JOIN comisiones_tipo_transacciones ctt
+			ON tr.id_tipo_transaccion = ctt.id_tipo
+			AND tr.id_comercio = ctt.id_comercio
+		JOIN producto_comercio pc
+			ON pc.id_producto = tr.id_producto
+			AND pc.id_comercio = tr.id_comercio
+		JOIN productos prod
+			ON tr.id_producto = prod.id_producto
+		WHERE tr.id_comercio = @comercioID
+	ELSE
+		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, prod.nombre as nombre_prod, pc.precio
+			FROM transacciones tr
+		JOIN tipo_transacciones tt
+			ON tt.id_tipo = tr.id_tipo_transaccion
+		JOIN comisiones_tipo_transacciones ctt
+			ON tr.id_tipo_transaccion = ctt.id_tipo
+			AND tr.id_comercio = ctt.id_comercio
+		JOIN producto_comercio pc
+			ON pc.id_producto = tr.id_producto
+			AND pc.id_comercio = tr.id_comercio
+		JOIN productos prod
+			ON tr.id_producto = prod.id_producto
+END
+go
+
+-- execute historicalTransactionsList @comercioID=71
 ---------------------------------------------------------------------------------------------- Nuevos Users del mes
 drop procedure activeOffers
 go
@@ -1337,12 +1390,16 @@ BEGIN
 		JOIN tipo_transacciones tt
 			ON tr.id_tipo_transaccion = tt.id_tipo
 		WHERE id_comercio = @comercioID
+		AND Year(fecha) = Year(CURRENT_TIMESTAMP) 
+		AND Month(fecha) = Month(CURRENT_TIMESTAMP)
 		GROUP BY nombre
 	ELSE
 		SELECT nombre, count(*) as stats
 		FROM transacciones tr 
 		JOIN tipo_transacciones tt
 			ON tr.id_tipo_transaccion = tt.id_tipo
+		WHERE Year(fecha) = Year(CURRENT_TIMESTAMP) 
+		AND Month(fecha) = Month(CURRENT_TIMESTAMP)
 		GROUP BY nombre
 END
 go
@@ -1391,29 +1448,135 @@ END
 go
 -- execute getCantTransactionsSinceRegistry @comercioID=71
 
--- SELECT
-
-
----------------------------------------------------------------------------------------------- Evolucion de $ en el mes
-drop procedure totalCommisionByMonth
+---------------------------------------------------------------------------------------------- Usuarios activos del mes (hicieron trans)
+drop procedure getCantActiveUsersInMonth
 go
 
-create procedure actionsByType
+create procedure getCantActiveUsersInMonth
 (
-	@date1		datetime,
-	@date2		datetime,
+	@comercioID	integer
+)
+AS
+BEGIN
+	SELECT count(DISTINCT(id_usuario)) as stats FROM transacciones
+	WHERE id_comercio = @comercioID
+	AND Year(fecha) = Year(CURRENT_TIMESTAMP) 
+	AND Month(fecha) = Month(CURRENT_TIMESTAMP)
+END
+go
+-- execute getCantActiveUsersInMonth @comercioID=71
+
+---------------------------------------------------------------------------------------------- Evolucion de $ por mes
+
+	-- SELECT distinct YEAR(fecha) as year_transaction,
+    --      MONTH(fecha) as mes_transaction,
+    --      ISNULL(SUM(valor),0) AS total_mes,
+	-- 	 id_tipo
+
+			 
+    -- FROM transacciones tr
+	-- JOIN comisiones_tipo_transacciones ctt 
+	-- 	ON  ctt.id_comercio=@comercioID 
+	-- 	AND ctt.id_tipo=tr.id_tipo_transaccion
+	
+	-- GROUP BY YEAR(fecha), MONTH(fecha), id_tipo
+	-- ORDER BY YEAR(fecha), MONTH(fecha)
+
+drop procedure comissionsEvolution
+go
+
+create procedure comissionsEvolution
+(
 	@comercioID	integer = null
 )
 AS
 BEGIN
-	IF @comercioID IS NOT NULL AND LEN(@comercioID) > 0
-		
-	ELSE
-		
+	select distinct MONTH(d.date) as month_transaction, YEAR(d.date)  year_transaction, isnull(t.amnt, 0) as month_total, isnull(id_tipo,0) as tipo from (
+    SELECT
+        YEAR(fecha) as 'Year', 
+        MONTH(fecha) as 'Month', 
+        sum(valor) as amnt,
+        id_tipo
+    FROM transacciones tr
+	JOIN comisiones_tipo_transacciones ctt 
+		ON  ctt.id_comercio=@comercioID 
+		AND ctt.id_tipo=tr.id_tipo_transaccion
+    where tr.id_comercio = @comercioID
+    group by YEAR(fecha), Month(fecha), id_tipo
+) t
+right join (
+    select dateadd(mm, -number, getdate()) as date
+    from master.dbo.spt_values 
+    where type = 'p' and number < 12
+) d  on year(d.date) = t.[year] and month(d.date) = t.[month]
+order by YEAR(d.date), MONTH(d.date)
 END
 go
--- execute actionsByType
--- execute actionsByType @comercioID=71
 
--- SELECT
+execute comissionsEvolution @comercioID=71
 
+
+---------------------------------------------------------------------------------------------- Obtener Comision Total
+drop procedure getComisiones
+go
+
+create procedure getComisiones
+(
+	@mes	datetime,
+	@comercioID	smallint,
+	@idTipo smallint = null
+)
+as
+begin	
+	IF @idTipo IS NOT NULL AND LEN(@idTipo) > 0
+				SELECT distinct SUM(valor) AS stats
+				FROM transacciones tr
+				JOIN comisiones_tipo_transacciones ctt 
+					ON  ctt.id_comercio=@comercioID 
+					AND ctt.id_tipo=tr.id_tipo_transaccion
+				WHERE id_tipo = @idTipo
+				AND MONTH(fecha) = MONTH(@mes)
+				AND YEAR(fecha) = YEAR(@mes)
+				
+		ELSE
+				SELECT distinct SUM(valor) AS stats, id_tipo
+				FROM transacciones tr
+				JOIN comisiones_tipo_transacciones ctt 
+					ON  ctt.id_comercio=@comercioID 
+					AND ctt.id_tipo=tr.id_tipo_transaccion
+				WHERE MONTH(fecha) = MONTH(@mes)
+				AND YEAR(fecha) = YEAR(@mes)
+				GROUP BY id_tipo
+end
+go
+
+declare @dt as datetime = datetimefromparts(2019,2,1,17,0,0,0)
+
+execute getComisiones @mes=@dt, @comercioID=71
+go
+
+---------------------------------------------------------------------------------------------- Obtener Comision Total
+
+drop procedure getComisionesTotal
+go
+
+create procedure getComisionesTotal
+(
+	@mes	datetime,
+	@comercioID	smallint
+)
+as
+begin	
+	SELECT distinct SUM(valor) AS stats
+		FROM transacciones tr
+		JOIN comisiones_tipo_transacciones ctt 
+			ON  ctt.id_comercio=@comercioID 
+			AND ctt.id_tipo=tr.id_tipo_transaccion
+		WHERE MONTH(fecha) = MONTH(@mes)
+		AND YEAR(fecha) = YEAR(@mes)
+end
+go
+
+declare @dt as datetime = datetimefromparts(2019,2,1,17,0,0,0)
+
+execute getComisionesTotal @mes=@dt, @comercioID=71

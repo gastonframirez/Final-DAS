@@ -45,21 +45,40 @@ public class MSEstadisticasComercioDao extends DaoImpl {
 		List<DynaActionForm> estadisticas = new LinkedList<DynaActionForm>();
 		
 		if(form.getItem("idComercio")!=null) {
-			this.setProcedure("dbo.monthlyTransactions(?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			
 			Date currMonth= new Date(System.currentTimeMillis());
+	    	EstadisticaForm estadistica;
+
+			this.setProcedure("dbo.getComisionesTotal(?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+	    	
+	        this.setParameter(1,currMonth);
+	    	this.setParameter(2, form.getItem("idComercio"));
+	 
+	    	ResultSet result = this.getStatement().executeQuery();
+	  
+	        if(result.next()) {
+	        	estadistica = new EstadisticaForm();
+	        	estadistica.setNombre("totalCommInCurrMonth");
+	        	estadistica.setValor(result.getString("stats"));
+	        	estadistica.setIsMoney(true);
+	        	estadistica.setIcon("coin");
+	        	estadisticas.add(estadistica);
+	        }
+	        
+			this.setProcedure("dbo.monthlyTransactionsCount(?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			
 			
 			this.setParameter(1,currMonth);
 	    	this.setParameter(2, form.getItem("idComercio"));
 	    	
-	    	EstadisticaForm estadistica;
 	    	
-	    	ResultSet result = this.getStatement().executeQuery();
+	    	result = this.getStatement().executeQuery();
 	  
 	        if(result.next()) {
 	        	estadistica = new EstadisticaForm();
 	        	estadistica.setNombre("transactionTotal");
 	        	estadistica.setValor(result.getString("stats"));
+	        	estadistica.setIcon("counter");
 	        	estadisticas.add(estadistica);
 	        }
 	        
@@ -73,6 +92,7 @@ public class MSEstadisticasComercioDao extends DaoImpl {
 	        	estadistica = new EstadisticaForm();
 	        	estadistica.setNombre("activeOffers");
 	        	estadistica.setValor(result.getString("stats"));
+	        	estadistica.setIcon("sale");
 	        	estadisticas.add(estadistica);
 	        }
 	        
@@ -86,6 +106,7 @@ public class MSEstadisticasComercioDao extends DaoImpl {
 	        	estadistica = new EstadisticaForm();
 	        	estadistica.setNombre("activeProducts");
 	        	estadistica.setValor(result.getString("stats"));
+	        	estadistica.setIcon("shopping");
 	        	estadisticas.add(estadistica);
 	        }
 	        
@@ -99,6 +120,7 @@ public class MSEstadisticasComercioDao extends DaoImpl {
 	        	estadistica = new EstadisticaForm();
 	        	estadistica.setNombre("historyTransactionsCount");
 	        	estadistica.setValor(result.getString("stats"));
+	        	estadistica.setIcon("history");
 	        	estadisticas.add(estadistica);
 	        }
 	        
@@ -112,9 +134,11 @@ public class MSEstadisticasComercioDao extends DaoImpl {
 	        	estadistica = new EstadisticaForm();
 	        	estadistica.setNombre("cantActiveUsersInMonth");
 	        	estadistica.setValor(result.getString("stats"));
+	        	estadistica.setIcon("account-multiple-plus");
 	        	estadisticas.add(estadistica);
 	        }
-	        
+	       
+ 
 		}
 		this.disconnect();
 		

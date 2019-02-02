@@ -24,9 +24,18 @@ public class EstadisticasAction implements Action{
 			
 			Dao daoComercios = DaoFactory.getDao( "EstadisticasComercio", "admin" );
 			request.setAttribute("estadisticas", daoComercios.select(form));
+
+			Dao daoTransacciones = DaoFactory.getDao( "TransaccionesComercio", "admin" );
+			request.setAttribute("transacciones", daoTransacciones.select(form));
+			
+			Dao daoTransaccionesHistoricas = DaoFactory.getDao( "TransaccionesHistoricasComercio", "admin" );
+			request.setAttribute("transaccionesHistoricas", daoTransaccionesHistoricas.select(form));
 			
 			Dao daoGraficos = DaoFactory.getDao( "GraficosDashboard", "admin" );
 			request.setAttribute("graficos", daoGraficos.select(form));
+			
+			Dao daoGraficosComercio = DaoFactory.getDao( "GraficosComercio", "admin" );
+			request.setAttribute("graficosC", daoGraficosComercio.select(form));
 			
 		}
 

@@ -43,7 +43,7 @@ public class MSEstadisticasDashboardDao extends DaoImpl {
 		// TODO Auto-generated method stub
 		
 		this.connect();
-		this.setProcedure("dbo.monthlyTransactions(?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		this.setProcedure("dbo.monthlyTransactionsCount(?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		
 		Date currMonth= new Date(System.currentTimeMillis());
 		
@@ -60,6 +60,7 @@ public class MSEstadisticasDashboardDao extends DaoImpl {
         	estadistica = new EstadisticaForm();
         	estadistica.setNombre("transactionTotal");
         	estadistica.setValor(result.getString("stats"));
+        	estadistica.setIcon("counter");
         	estadisticas.add(estadistica);
         }
         
@@ -74,6 +75,7 @@ public class MSEstadisticasDashboardDao extends DaoImpl {
         	estadistica = new EstadisticaForm();
         	estadistica.setNombre("activeOffers");
         	estadistica.setValor(result.getString("stats"));
+        	estadistica.setIcon("sale");
         	estadisticas.add(estadistica);
         }
 		
@@ -87,6 +89,7 @@ public class MSEstadisticasDashboardDao extends DaoImpl {
         	estadistica = new EstadisticaForm();
         	estadistica.setNombre("newUsers");
         	estadistica.setValor(result.getString("stats"));
+        	estadistica.setIcon("account-multiple-plus");
         	estadisticas.add(estadistica);
         }
     	
