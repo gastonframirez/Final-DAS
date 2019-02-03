@@ -43,14 +43,11 @@ public class MSOfertasDao extends DaoImpl {
 	@Override
 	public List<DynaActionForm> select(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
-		System.out.print("A");
 		this.connect();
-		System.out.print("A");
 		this.setProcedure("dbo.getOfertas", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-		System.out.print("B");
         List<DynaActionForm> ofertas = this.executeQuery();
-        System.out.print("C");
-		this.disconnect();
+
+        this.disconnect();
 		
 		return ofertas;
 	}

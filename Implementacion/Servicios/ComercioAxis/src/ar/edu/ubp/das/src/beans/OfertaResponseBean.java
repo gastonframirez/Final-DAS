@@ -1,12 +1,10 @@
-package ar.edu.ubp.das.src.comercio.forms;
+package ar.edu.ubp.das.src.beans;
 
-import ar.edu.ubp.das.mvc.action.DynaActionForm;
+public class OfertaResponseBean extends ResponseBean{
 
-public class OfertaForm extends DynaActionForm {
-	
 	private String fechaInicio;
 	private String fechaFin;
-	private float precioOferta;
+	private Float precioOferta;
 	private String modeloProducto;
 	
 	public String getFechaInicio() {
@@ -33,6 +31,7 @@ public class OfertaForm extends DynaActionForm {
 	public void setModeloProducto(String modeloProducto) {
 		this.modeloProducto = modeloProducto;
 	}
+
 	
 	
 }

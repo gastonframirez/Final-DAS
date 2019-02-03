@@ -54,6 +54,10 @@ public class Main {
 							String price = prod.select(comF.getCssPrecio()).text();
 							System.out.println(price);
 							
+							String brand = "";
+							String model = "";
+							String imgURL = "";
+							
 							Boolean needsCrawl = comF.getNeedsCrawl().get("brand")!=null || comF.getNeedsCrawl().get("model")!=null || comF.getNeedsCrawl().get("imgURL")!=null;
 							
 							if(needsCrawl) {
@@ -85,12 +89,15 @@ public class Main {
 									
 									switch (str) {
 										case "brand":
+											brand = results.get(str).text();
 											System.out.println(results.get(str).text());
 											break;
 										case "model":
+											model = results.get(str).text();
 											System.out.println(results.get(str).text());
 											break;
 										case "imgURL":
+											imgURL = results.get(str).attr("src").replace(".webp_500", ".jpg");
 											System.out.println(results.get(str).attr("src").replace(".webp_500", ".jpg"));
 											break;
 										default:
@@ -102,18 +109,67 @@ public class Main {
 							Boolean searchInName = comF.getSearchInName().get("brand")!=null || comF.getSearchInName().get("model")!=null || comF.getSearchInName().get("imgURL")!=null;
 
 							if(searchInName) {
-								String[] titleParts = title.split(" ");
-								String modelo = titleParts[titleParts.length-1];
-								System.out.println(modelo.replace("-", ""));
+							
 								
 								List<String> excludeList = new ArrayList<>();
-							    excludeList.add("blanca");
-							    excludeList.add("blanco");
-							    excludeList.add("blanca");
-							    excludeList.add("blanco");
 							    
+							    excludeList.add("plateado");
+							    excludeList.add("plateada");
+							    excludeList.add("platinum");
+							    excludeList.add("plata");
+							    excludeList.add("inoxidable");
+							    excludeList.add("inox.");
+							    excludeList.add("inox");
+							    excludeList.add("acero");
+							    excludeList.add("negro");
+							    excludeList.add("negra");
+							    excludeList.add("blanca");
+							    excludeList.add("blanco");
+							    excludeList.add("azul");
+							    excludeList.add("rojo");
+							    excludeList.add("roja");
+							    
+							    excludeList.add("full");
+							    
+							    excludeList.add("uhd");
+							    excludeList.add("hd");
+							    excludeList.add("4k");
+							    excludeList.add("ultra");
+							    excludeList.add("gris");
+							    excludeList.add("silver");
+							    excludeList.add("frost");
+							    excludeList.add("no");
+							    excludeList.add("ap");
+							    excludeList.add("ab");
+							    excludeList.add(brand);
+							    excludeList.add(".");
+							    
+							    List<String> regexList = new ArrayList<>();
+							    regexList.add("\\s([0-9])+\\s?(lts)(.)?");
+							    regexList.add("\\s(con)*\\s*(grill)");
+							    regexList.add("\\s(para)\\s[0-9]+\\s(botellas)");
+							    regexList.add("\\s[0-9]+\\s(botellas)");
+							    regexList.add("\\s[0-9]+\\s(bts)");
+							    regexList.add("\\s(ultra)\\s(hd)");
+							    
+							    String titleAux = title.toLowerCase();
 							 // replace all whitespace with tabs
-						        System.out.println(title.replaceAll("\\s+", "\t"));
+//						        System.out.println(titleAux.replaceAll("\\s+", "\t"));
+						        
+						        for(String rgx : regexList) {
+						        	titleAux = titleAux.replaceAll(rgx, "");
+						        }
+						        for(String excl : excludeList) {
+						        	titleAux = titleAux.replace(excl, "");
+						        }
+						        String[] titleParts = titleAux.split(" ");
+						        model = titleParts[titleParts.length-1];
+								System.out.println(model);
+						        
+//								String modelo = titleParts[titleParts.length-1];
+//								System.out.println(modelo.replace("-", ""));
+								
+								
 							}
 
 			
