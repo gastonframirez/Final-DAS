@@ -3,7 +3,7 @@ use maceo
 go
 
 
----------------------------------------------------------------------------------------------- Dropping tables
+-- -------------------------------------------------------------------------------------------- Dropping tables
 -- drop table logs
 -- drop table administradores
 -- drop table servicios
@@ -11,7 +11,7 @@ go
 -- drop table ult_actualizacion
 -- drop table comisiones_tipo_transacciones
 -- drop table transacciones
--- drop table usuarios
+-- -- drop table usuarios
 -- drop table tipo_transacciones
 -- drop table producto_comercio
 -- drop table scraper_categoria
@@ -21,7 +21,10 @@ go
 -- drop table categorias_productos
 -- drop table comercios
 -- drop table idiomas
-go
+-- drop table categorias_idiomas
+-- drop table idiomas_idiomas
+-- drop table scraper_config
+-- go
 
 ----------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------- Create tables
@@ -32,11 +35,12 @@ create table idiomas
 	nombre				varchar (100) 	not NULl,
 	habilitado			BIT				not null	default 0,
 
-	constraint pk__idioma__end primary key (id_idioma)
+	constraint pk__idioma__end primary key (id_idioma),
+	constraint uq__idioma__end	unique(nombre)
 )
 go
--- insert into idiomas values ('es', 1)
--- insert into idiomas	values	('en', 1)
+insert into idiomas values ('es', 1)
+insert into idiomas	values	('en', 1)
 
 create table idiomas_idiomas
 (
@@ -47,10 +51,10 @@ create table idiomas_idiomas
 	constraint pk__idioma_idioma__end primary key (id_idioma, id_traduccion)
 )
 go
--- insert into idiomas_idiomas values (1, 1, 'Español')
--- insert into idiomas_idiomas values (1, 2, 'Inglés')
--- insert into idiomas_idiomas values (2, 1, 'Spanish')
--- insert into idiomas_idiomas values (2, 2, 'English')
+insert into idiomas_idiomas values (1, 'Español')
+insert into idiomas_idiomas values (1, 'Inglés')
+insert into idiomas_idiomas values (2, 'Spanish')
+insert into idiomas_idiomas values (2,'English')
 ----------------------------------------------------------------------------------------------
 
 create table comercios
@@ -62,6 +66,7 @@ create table comercios
 	nombre_publico		varchar (255) 	not null,
     telefono            varchar (20)    not null,
     logo_url            varchar (500)   not null,
+	cp					integer			not null,
     habilitado          bit             not null        default 0, -- 0: False, 1: True
     
     
@@ -79,6 +84,7 @@ create table categorias_productos
 (
     id_categoria        smallint        not null        identity (1,1),
     nombre              varchar (255)   not null,
+	image_url			varchar (500)	not null,
 	habilitado          bit             not null        default 0, -- 0: False, 1: True
     
     constraint pk__categorias_productos__end primary key (id_categoria)
@@ -98,11 +104,11 @@ create table categorias_idiomas
     
     constraint pk__categorias_idiomas__end primary key (id_categoria, id_idioma)
 )
-
-insert into categorias_idiomas values (1, 1, 'Televisores')
-insert into categorias_idiomas values (1, 2, 'TVs')
-insert into categorias_idiomas values (2, 1, 'Heladeras')
-insert into categorias_idiomas values (2, 2, 'Fridges')
+go
+-- insert into categorias_idiomas values (1, 1, 'Televisores')
+-- insert into categorias_idiomas values (1, 2, 'TVs')
+-- insert into categorias_idiomas values (2, 1, 'Heladeras')
+-- insert into categorias_idiomas values (2, 2, 'Fridges')
 ----------------------------------------------------------------------------------------------
 create table marcas
 (
@@ -119,13 +125,16 @@ create table productos
 (
     id_producto         integer         not null        identity (1,1),
     nombre              varchar (255)   not null,
-    marca               varchar (255)   not null,
+    id_marca            SMALLINT	    not null,
     modelo              varchar (255)   not null,
     id_categoria        smallint        not null,
 
     constraint pk__producto__end primary key (id_producto),
     constraint fk__productos__end foreign key (id_categoria)
-        references categorias_productos (id_categoria)
+        references categorias_productos (id_categoria),
+	constraint fk__productos_marca__end foreign key (id_marca)
+        references marcas (id_marca),
+	constraint uq__productos__end	unique(modelo, id_marca)
     -- Checkear que no exista otro producto de la misma marca con el mismo numero de modelo en la misma categoria
 )
 go
@@ -188,6 +197,8 @@ create table tipo_transacciones
 )
 go
 
+insert into tipo_transacciones values ('ppClick');
+insert into tipo_transacciones values ('ppOffer');
 ----------------------------------------------------------------------------------------------
 
 create table usuarios
@@ -208,7 +219,7 @@ create table usuarios
     constraint uq__usuario_3__end unique (email)
 )
 go
-
+-- insert into usuarios values ('admin', 'Gaston', 'Ramirez', 'gastonframirez@gmail.com', '$2a$10$oPUu0ocjUy/whTdJA7CZsuN5jrv7RvBrqmIkuBWkiv6RjQ.gSce8G', 38503389, getdate(), 1);
 ----------------------------------------------------------------------------------------------
 create table administradores
 (
@@ -224,8 +235,8 @@ create table administradores
     constraint ch__administradores__1__end check (bloqueado in (1, 0) ) -- si, no
 )
 go
-
-
+insert into administradores values (1, 0,0)
+go
 ----------------------------------------------------------------------------------------------
 create table transacciones
 (
@@ -295,7 +306,12 @@ create table tecnologias
     constraint uq__tecnologias__1__end unique (nombre)    
 )
 go
-
+insert into tecnologias (nombre,javaClass)
+values
+    ('Axis 2','ClienteAxis2'),
+    ('JAX-WS (CXF)','ClienteCXF'),
+    ('Jersey REST','ClienteRest')
+go
 ----------------------------------------------------------------------------------------------
 create table servicios
 (
@@ -343,9 +359,6 @@ create table scraper_categoria
 go
 
 ----------------------------------------------------------------------------------------------
-drop table scraper_config
-go
-
 create table scraper_config
 (
 	id_scrap_config		INTEGER			not null		identity(1,1),
@@ -357,6 +370,7 @@ create table scraper_config
 
 	constraint pk__scraper_config__end PRIMARY key (id_scrap_config, id_comercio),
 )
+go
 
 ----------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------- Create procedures
@@ -667,7 +681,7 @@ as
 begin
     SELECT co.id_comercio, razon_social, cuit, direccion, nombre_publico, telefono, habilitado, 
 		logo_url, ua.fecha_productos, ua.fecha_ofertas, id_tecnologia, service_url_of, funcion_of,
-		puerto_of, service_url_trans, funcion_trans, puerto_trans, auth_token
+		puerto_of, service_url_trans, funcion_trans, puerto_trans, auth_token, cp
 	FROM comercios co
 	JOIN servicios serv
 		ON serv.id_comercio = co.id_comercio
@@ -738,8 +752,8 @@ create procedure saveComercio
 )
 AS
 begin
-	INSERT INTO comercios (razon_social, cuit, direccion, nombre_publico, telefono, logo_url, habilitado)
-	VALUES (@razonSocial, @CUIT, @direccion, @nombre, @telefono, @logoURL, 1)
+	INSERT INTO comercios (razon_social, cuit, direccion, nombre_publico, cp, telefono, logo_url, habilitado)
+	VALUES (@razonSocial, @CUIT, @direccion, @nombre, @CP, @telefono, @logoURL, 1)
 end
 go
 
@@ -978,7 +992,7 @@ create procedure getCategoriasAdmin
 as
 begin
 	IF @idCategoria IS NOT NULL AND LEN(@idCategoria) > 0
-		SELECT cp.id_categoria, ci.nombre, cp.habilitado, image_url, idi.nombre as lang FROM categorias_productos cp
+		SELECT cp.id_categoria, ci.nombre, cp.habilitado, cp.image_url, idi.nombre as lang FROM categorias_productos cp
 			JOIN categorias_idiomas ci
 				ON cp.id_categoria = ci.id_categoria
 			JOIN idiomas idi
@@ -986,14 +1000,14 @@ begin
 		WHERE cp.id_categoria = @idCategoria
 		
 	ELSE
-		SELECT cp.id_categoria, ci.nombre, cp.habilitado, image_url, idi.nombre as lang FROM categorias_productos cp
+		SELECT cp.id_categoria, ci.nombre, cp.habilitado, cp.image_url, idi.nombre as lang FROM categorias_productos cp
 		JOIN categorias_idiomas ci
 			ON cp.id_categoria = ci.id_categoria
 		JOIN idiomas idi
 			ON ci.id_idioma = idi.id_idioma    
 end
 go
--- execute getCategoriasAdmin
+-- execute getCategoriasAdmin @idCategoria=1
 
 drop procedure getCategoriasLang
 go
@@ -1030,7 +1044,7 @@ begin
 	WHERE NOT EXISTS(
 		SELECT * FROM scraper_categoria sc
 		WHERE sc.id_comercio = com.id_comercio
-		AND sc.id_categoria = @idCategoria
+		AND sc.id_categoria = @idCategoria		
 	)
 end
 go
@@ -1049,7 +1063,7 @@ create procedure saveCategoria
 )
 AS
 BEGIN
-	INSERT into categorias_productos
+	INSERT into categorias_productos (nombre, habilitado,image_url)
 	VALUES (@esp,0, @image_url);
 	declare @idCategoria integer = (SELECT id_categoria
 								FROM categorias_productos
@@ -1138,7 +1152,7 @@ create procedure updateTranslationCategoria
 AS
 BEGIN
 	UPDATE categorias_idiomas set nombre = @traduccion
-	WHERE id_categoria = @idCategoria AND id_idioma = (SELECT id_idioma from idiomas idi WHERE nombre = @nameIdioma)
+	WHERE id_categoria = @idCategoria AND id_idioma = (SELECT id_idioma from idiomas idi WHERE nombre = '@nameIdioma')
 end
 go
 ---------------------------------------------------------------------------------------------- Obtener Lista de Productos x categoria
@@ -1297,7 +1311,7 @@ begin
 end
 go
 
-EXECUTE getComerciosURLScraper @idComercio=71
+EXECUTE getComerciosURLScraper @idComercio=71, @habilitado=1
 
 ---------------------------------------------------------------------------------------------- Comercios CSS Scraper
 
@@ -1615,7 +1629,7 @@ create procedure comissionsEvolution
 )
 AS
 BEGIN
-	select distinct MONTH(d.date) as month_transaction, YEAR(d.date)  year_transaction, isnull(t.amnt, 0) as month_total, isnull(id_tipo,0) as tipo from (
+	select distinct YEAR(d.date)  year_transaction, MONTH(d.date) as month_transaction, isnull(t.amnt, 0) as month_total, isnull(id_tipo,0) as tipo from (
     SELECT
         YEAR(fecha) as 'Year', 
         MONTH(fecha) as 'Month', 
