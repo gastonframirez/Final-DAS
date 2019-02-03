@@ -336,6 +336,7 @@ public class MSComercioDao extends DaoImpl {
         	comercio.setIdComercio(result.getInt("id_comercio"));
         	comercio.setRazonSocial(result.getString("razon_social"));
         	comercio.setCUIT(result.getString("CUIT"));
+        	comercio.setCp(result.getInt("cp"));
         	comercio.setDireccion(result.getString("direccion"));
         	comercio.setNombre(result.getString("nombre_publico"));
         	comercio.setTelefono(result.getString("telefono"));

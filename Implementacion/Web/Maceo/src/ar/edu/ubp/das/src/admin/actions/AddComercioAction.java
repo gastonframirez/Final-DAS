@@ -113,8 +113,10 @@ public class AddComercioAction implements Action{
 		
 		try {
 			if(request.getParameter("idComercio")!=null) {
+				System.out.println("Updating");
 				daoComercio.update(form);
 			}else {
+				System.out.println("Adding");
 				daoComercio.insert(form);
 			}
 		}catch (SQLException ex){

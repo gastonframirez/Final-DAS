@@ -30,7 +30,7 @@ public class AddCategoriaAction implements Action{
 			if(request.getParameter("idCategoria")!=null) {
 				form.setItem("idCategoria", request.getParameter("idCategoria"));
 				form.setItem("enabled", request.getParameter("enabled"));
-				
+
 				daoCategoria.update(form);
 			}else {
 				daoCategoria.insert(form);

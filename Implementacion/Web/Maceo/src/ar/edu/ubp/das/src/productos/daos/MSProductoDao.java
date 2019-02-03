@@ -65,7 +65,7 @@ public class MSProductoDao extends DaoImpl {
         	producto = new ProductoForm();
         	producto.setIdProducto(result.getString("modelo"));
         	producto.setNombre(result.getString("nombre"));
-        	producto.setImagenURL(result.getString("image_url"));
+//        	producto.setImagenURL(result.getString("image_url"));
         	producto.setPrecio(result.getFloat("precio"));
         	producto.setProductoURL(result.getString("url_producto"));
         	producto.setLogoComercio(result.getString("logo_url"));
@@ -78,7 +78,7 @@ public class MSProductoDao extends DaoImpl {
         		productoAux = new ProductoForm();
         		productoAux.setIdProducto(result.getString("modelo"));
         		productoAux.setNombre(result.getString("nombre"));
-        		productoAux.setImagenURL(result.getString("image_url"));
+//        		productoAux.setImagenURL(result.getString("image_url"));
         		productoAux.setPrecio(result.getFloat("precio"));
         		productoAux.setProductoURL(result.getString("url_producto"));
         		productoAux.setLogoComercio(result.getString("logo_url"));

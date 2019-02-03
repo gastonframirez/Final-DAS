@@ -27,7 +27,7 @@ public class MSCategoriaDao extends DaoImpl {
 		// TODO Auto-generated method stub
 		try {
         	this.connectWAutoFalse();
-
+        	System.out.println("updating1");
 //        	Guardo el comercio
     		this.setProcedure("dbo.saveCategoria(?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
@@ -52,7 +52,6 @@ public class MSCategoriaDao extends DaoImpl {
 		// TODO Auto-generated method stub
 		try {
         	this.connectWAutoFalse();
-
 //        	Guardo el comercio
         	this.setProcedure("dbo.updateCategoria(?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
         	this.setParameter(1, Integer.parseInt(form.getItem("idCategoria")));
@@ -61,7 +60,6 @@ public class MSCategoriaDao extends DaoImpl {
     		this.setParameter(3, form.getItem("imageURL"));
     		
     		this.getStatement().execute();
-    		
     		this.setProcedure("dbo.updateTranslationCategoria(?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
     		this.setParameter(1, Integer.parseInt(form.getItem("idCategoria")));
@@ -69,7 +67,6 @@ public class MSCategoriaDao extends DaoImpl {
     		this.setParameter(3, spanishStr);
     		
     		this.getStatement().execute();
-
     		this.setProcedure("dbo.updateTranslationCategoria(?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
     		this.setParameter(1, Integer.parseInt(form.getItem("idCategoria")));
@@ -77,8 +74,22 @@ public class MSCategoriaDao extends DaoImpl {
     		this.setParameter(3, form.getItem("english"));
     		
     		this.getStatement().execute();		
-     	
-			this.commit();
+    		
+    		if(form.getItem("enabled").equals("1")) {
+    			System.out.println(form.getItem("enabled"));
+    			this.setProcedure("dbo.toggleCategoria(?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+        		this.setParameter(1, Integer.parseInt(form.getItem("idCategoria")));
+        		this.setParameter(2, 1);
+    		}else {
+    			this.setProcedure("dbo.toggleCategoria(?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+    			this.setParameter(1, Integer.parseInt(form.getItem("idCategoria")));
+        		this.setParameter(2, 0);
+    		}
+    		this.getStatement().execute();		
+    		this.commit();
+			
 		} catch (SQLException e) {
 			this.rollback();
 			throw e;
@@ -98,7 +109,6 @@ public class MSCategoriaDao extends DaoImpl {
 	public List<DynaActionForm> select(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
 		this.connect();
-		
 		this.setProcedure("dbo.getCategoriasAdmin(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		
 		if(form.getItem("idCategoria")!=null) {
@@ -109,8 +119,6 @@ public class MSCategoriaDao extends DaoImpl {
 		
 		List<DynaActionForm> categorias = new LinkedList<DynaActionForm>();
 		
-    	CategoriasForm categoria;
-    	
     	CategoriaTransForm categoriaTranslated;
     	Integer idCategoria;
     	Map<String, String> translations;
@@ -124,6 +132,7 @@ public class MSCategoriaDao extends DaoImpl {
         	categoriaTranslated.setIdCategoria(result.getInt("id_categoria"));
         	categoriaTranslated.setHabilitada(result.getBoolean("habilitado"));
         	categoriaTranslated.setImageURL(result.getString("image_url"));
+        	
         	if(form.getItem("idCategoria")!=null) {
         		this.setProcedure("dbo.checkHabilitable(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
     			this.setParameter(1, form.getItem("idCategoria"));
@@ -142,15 +151,16 @@ public class MSCategoriaDao extends DaoImpl {
         	translations = new HashMap<String, String>();
         	
         	while(result.getRow() > 0 && idCategoria == result.getInt("id_categoria")) {
-            	categoria = new CategoriasForm();
             	translations.put(result.getString("lang"), result.getString("nombre"));
         		result.next();
             }
         	categoriaTranslated.setTranslations(translations);
+        	System.out.println(categoriaTranslated);
             categorias.add(categoriaTranslated);
+           
         }
     	
-    	
+       
 		this.disconnect();
 		
 		return categorias;
