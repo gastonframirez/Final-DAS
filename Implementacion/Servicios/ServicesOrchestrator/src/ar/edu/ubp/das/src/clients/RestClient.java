@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URI;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +27,7 @@ import com.google.gson.reflect.TypeToken;
 
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.src.orchestrator.beans.OfertaResponseBean;
+import ar.edu.ubp.das.src.orchestrator.beans.ResponseBean;
 import ar.edu.ubp.das.src.orchestrator.forms.OfferForm;
 
 public class RestClient implements WSClient {
@@ -89,6 +91,64 @@ public class RestClient implements WSClient {
 		}
 
 		return ofertas;
+	}
+
+	@Override
+	public void notificarTransaccion(DynaActionForm transaccion, String authToken, String url, String funcion) throws Exception{
+		
+		HttpClient client = HttpClientBuilder.create().build();
+
+
+		URI uri = URI.create(url+"/ofertas");
+
+		HttpPost req = new HttpPost();
+		req.setURI(uri);
+		req.setHeader("Authorization", authToken);
+
+		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		nvps.add(new BasicNameValuePair("idTransaccion", transaccion.getItem("idTransaccion")));
+		nvps.add(new BasicNameValuePair("fechaTransaccion", transaccion.getItem("fechaTransaccion")));
+		nvps.add(new BasicNameValuePair("nombreCliente", transaccion.getItem("nombreCliente")));
+		nvps.add(new BasicNameValuePair("apellidoCliente", transaccion.getItem("apellidoCliente")));
+		nvps.add(new BasicNameValuePair("dniCliente", transaccion.getItem("dniCliente")));
+		nvps.add(new BasicNameValuePair("emailCliente", transaccion.getItem("tipoTransaccion")));
+		nvps.add(new BasicNameValuePair("tipoTransaccion", transaccion.getItem("tipoTransaccion")));
+		if(transaccion.getItem("modeloProducto")!=null)
+			nvps.add(new BasicNameValuePair("modeloProducto", transaccion.getItem("modeloProducto")));
+		if(transaccion.getItem("precioProducto")!=null)
+			nvps.add(new BasicNameValuePair("precioProducto",transaccion.getItem("precioProducto")));
+		if(transaccion.getItem("idOferta")!=null)
+			nvps.add(new BasicNameValuePair("idOferta", transaccion.getItem("idOferta")));
+		nvps.add(new BasicNameValuePair("comision", transaccion.getItem("comision")));
+
+		try {
+			req.setEntity(new UrlEncodedFormEntity(nvps));
+			
+			client = HttpClientBuilder.create().build();
+			HttpResponse resp = client.execute(req);
+
+			HttpEntity responseEntity = resp.getEntity();
+			StatusLine responseStatus = resp.getStatusLine();
+
+			String restResp = EntityUtils.toString(responseEntity);
+			
+			Gson gson = new Gson();
+			
+			Type listType = new TypeToken<ArrayList<ResponseBean>>(){}.getType();
+			ArrayList<ResponseBean> respuestas = gson.fromJson(restResp, listType);
+
+			if(responseStatus.getStatusCode() != 200) {
+				throw new RuntimeException(restResp);
+			}
+						
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 

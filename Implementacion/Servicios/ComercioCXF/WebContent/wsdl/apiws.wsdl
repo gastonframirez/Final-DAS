@@ -7,9 +7,9 @@
 
   <xs:element name="getOfertasResponse" type="tns:getOfertasResponse"/>
 
-  <xs:element name="insertTransaccion" type="tns:insertTransaccion"/>
+  <xs:element name="notifyTransaccion" type="tns:notifyTransaccion"/>
 
-  <xs:element name="insertTransaccionResponse" type="tns:insertTransaccionResponse"/>
+  <xs:element name="notifyTransaccionResponse" type="tns:notifyTransaccionResponse"/>
 
   <xs:complexType name="getOfertas">
     <xs:sequence>
@@ -44,7 +44,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="insertTransaccion">
+  <xs:complexType name="notifyTransaccion">
     <xs:sequence>
       <xs:element minOccurs="0" name="arg0" type="xs:string"/>
       <xs:element minOccurs="0" name="arg1" type="xs:string"/>
@@ -56,10 +56,11 @@
       <xs:element minOccurs="0" name="arg7" type="xs:string"/>
       <xs:element minOccurs="0" name="arg8" type="xs:int"/>
       <xs:element minOccurs="0" name="arg9" type="xs:float"/>
+      <xs:element minOccurs="0" name="arg10" type="xs:float"/>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="insertTransaccionResponse">
+  <xs:complexType name="notifyTransaccionResponse">
     <xs:sequence>
       <xs:element minOccurs="0" name="return" type="tns:responseBean"/>
     </xs:sequence>
@@ -67,10 +68,6 @@
 
 </xs:schema>
   </wsdl:types>
-  <wsdl:message name="insertTransaccionResponse">
-    <wsdl:part name="parameters" element="tns:insertTransaccionResponse">
-    </wsdl:part>
-  </wsdl:message>
   <wsdl:message name="getOfertasResponse">
     <wsdl:part name="parameters" element="tns:getOfertasResponse">
     </wsdl:part>
@@ -79,8 +76,12 @@
     <wsdl:part name="parameters" element="tns:getOfertas">
     </wsdl:part>
   </wsdl:message>
-  <wsdl:message name="insertTransaccion">
-    <wsdl:part name="parameters" element="tns:insertTransaccion">
+  <wsdl:message name="notifyTransaccion">
+    <wsdl:part name="parameters" element="tns:notifyTransaccion">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="notifyTransaccionResponse">
+    <wsdl:part name="parameters" element="tns:notifyTransaccionResponse">
     </wsdl:part>
   </wsdl:message>
   <wsdl:portType name="ApiWS">
@@ -90,10 +91,10 @@
       <wsdl:output name="getOfertasResponse" message="tns:getOfertasResponse">
     </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="insertTransaccion">
-      <wsdl:input name="insertTransaccion" message="tns:insertTransaccion">
+    <wsdl:operation name="notifyTransaccion">
+      <wsdl:input name="notifyTransaccion" message="tns:notifyTransaccion">
     </wsdl:input>
-      <wsdl:output name="insertTransaccionResponse" message="tns:insertTransaccionResponse">
+      <wsdl:output name="notifyTransaccionResponse" message="tns:notifyTransaccionResponse">
     </wsdl:output>
     </wsdl:operation>
   </wsdl:portType>
@@ -108,19 +109,19 @@
         <soap12:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="insertTransaccion">
-      <soap12:operation soapAction="urn:InsertTransaccion" style="document"/>
-      <wsdl:input name="insertTransaccion">
+    <wsdl:operation name="notifyTransaccion">
+      <soap12:operation soapAction="urn:NotifyTransaccion" style="document"/>
+      <wsdl:input name="notifyTransaccion">
         <soap12:body use="literal"/>
       </wsdl:input>
-      <wsdl:output name="insertTransaccionResponse">
+      <wsdl:output name="notifyTransaccionResponse">
         <soap12:body use="literal"/>
       </wsdl:output>
     </wsdl:operation>
   </wsdl:binding>
   <wsdl:service name="ApiWSService">
     <wsdl:port name="ApiWSPort" binding="tns:ApiWSServiceSoapBinding">
-      <soap12:address location="http://localhost:8080/ComercioCXF/services"/>
+      <soap12:address location="http://localhost:8080/ComercioCXF/services/ApiWSPort"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

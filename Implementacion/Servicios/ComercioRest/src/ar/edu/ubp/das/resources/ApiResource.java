@@ -37,61 +37,66 @@ public class ApiResource {
 			@FormParam("apellidoCliente") String apellidoCliente, @FormParam("emailCliente") String emailCliente, 
 			@FormParam("dniCliente") Integer dniCliente, @FormParam("tipoTransaccion") String tipoTransaccion, 
 			@FormParam("modeloProducto") String modeloProducto, @FormParam("idOferta") Integer idOferta, 
-			@FormParam("precioProducto") Float precioProducto) {
+			@FormParam("precioProducto") Float precioProducto, @FormParam("comision") Float comision) {
 		
 		List<String> authToken = headers.getRequestHeader("Authorization");
 		
 		if(authToken!=null) {
 			if(authToken.get(0).indexOf("Token")!=-1 && authToken.get(0).split(" ").length==2) {
 				try {
-//					System.out.println(authToken.get(0).split(" ")[1]);
-					DynaActionForm dynamicForm = new DynaActionForm();
+					MSTransaccionDao daoTransacciones = (MSTransaccionDao)DaoFactory.getDao( "Transaccion", "ar.edu.ubp.das.src.comercio" );
 					
 					String token = authToken.get(0).split(" ")[1];
-
-					dynamicForm.setItem("hashToken", token);
 					
-					MSTransaccionDao dao = (MSTransaccionDao)DaoFactory.getDao( "Transaccion", "ar.edu.ubp.das.src.comercio" );
-
-					if(dao.valid(dynamicForm)){
+					DynaActionForm daf = new DynaActionForm();
+					daf.setItem("hashToken", token);
+					
+					if(daoTransacciones.valid(daf)){
+						System.out.println("Token valido");
 						if(fechaTransaccion == null || nombreCliente == null || apellidoCliente == null || emailCliente == null || 
-								dniCliente == null || tipoTransaccion == null || modeloProducto == null || precioProducto == null) {
+								dniCliente == null || comision == null || (tipoTransaccion.equals("ppOffer") && idOferta == null) || 
+								(tipoTransaccion.equals("ppClick") && (modeloProducto == null || precioProducto == null))) {
+							return Response.status( Response.Status.BAD_REQUEST ).entity("No se aportaron todos los datos requeridos.").build();
+						}else {
+							System.out.print("Obteniendo datos...\n");
+							
+							daf.setItem("fechaTransaccion", fechaTransaccion);
+							daf.setItem("nombreCliente", nombreCliente);
+							daf.setItem("apellidoCliente", apellidoCliente);
+							daf.setItem("emailCliente", emailCliente);
+							daf.setItem("dniCliente", dniCliente.toString());
+							daf.setItem("tipoTransaccion", tipoTransaccion);
+							daf.setItem("modeloProducto", modeloProducto);	
+							
+
+							if(precioProducto!=null) {
+								daf.setItem("precioProducto", precioProducto.toString());
+							}
+							
+							if(idOferta != null)
+								daf.setItem("idOferta", idOferta.toString());
+							
+							if(comision != null)
+								daf.setItem("comision", comision.toString());
+							
+							System.out.print(fechaTransaccion+"\n");
+							System.out.print(nombreCliente+"\n");
+							System.out.print(apellidoCliente+"\n");
+							System.out.print(emailCliente+"\n");
+							System.out.print(dniCliente+"\n");
+							System.out.print(tipoTransaccion+"\n");
+							System.out.print(modeloProducto+"\n");
+							System.out.print(idOferta+"\n");
+							System.out.print(precioProducto+"\n");
+							System.out.print(comision+"\n");
 							
 							
-							return Response.status( Response.Status.BAD_REQUEST ).entity( "No se aportaron todos los datos requeridos." ).build();
+							daoTransacciones.insert(daf);
+
+							return Response.status( Response.Status.OK ).entity("OK").build();
+							
 						}
 						
-						if(tipoTransaccion.equals("O") && idOferta==null) {
-							return Response.status( Response.Status.BAD_REQUEST ).entity( "No se indico el id de la oferta." ).build();
-						}
-						
-//						System.out.print("Obteniendo datos...\n");
-//						System.out.print(fechaTransaccion+"\n");
-//						System.out.print(nombreCliente+"\n");
-//						System.out.print(apellidoCliente+"\n");
-//						System.out.print(emailCliente+"\n");
-//						System.out.print(dniCliente+"\n");
-//						System.out.print(tipoTransaccion+"\n");
-//						System.out.print(modeloProducto+"\n");
-//						System.out.print(idOferta+"\n");
-//						System.out.print(precioProducto+"\n");
-
-						dynamicForm.setItem("fechaTransaccion", fechaTransaccion);
-						dynamicForm.setItem("nombreCliente", nombreCliente);
-						dynamicForm.setItem("apellidoCliente", apellidoCliente);
-						dynamicForm.setItem("emailCliente", emailCliente);
-						dynamicForm.setItem("dniCliente", dniCliente.toString());
-						dynamicForm.setItem("tipoTransaccion", tipoTransaccion);
-						dynamicForm.setItem("modeloProducto", modeloProducto);		
-						dynamicForm.setItem("precioProducto", precioProducto.toString());
-						
-						if(idOferta != null)
-							dynamicForm.setItem("idOferta", idOferta.toString());
-						
-						dao.insert(dynamicForm);
-
-									
-						return Response.status( Response.Status.OK ).entity("OK").build();
 					}else {
 						System.out.println("Token inexistente.");
 						return Response.status( Response.Status.UNAUTHORIZED ).entity("Token inexistente.").build();

@@ -9,6 +9,7 @@ import ar.edu.ubp.das.mvc.db.DaoFactory;
 import ar.edu.ubp.das.src.beans.OfertaResponseBean;
 import ar.edu.ubp.das.src.beans.ResponseBean;
 import ar.edu.ubp.das.src.comercio.daos.MSOfertasDao;
+import ar.edu.ubp.das.src.comercio.daos.MSTransaccionDao;
 
 public class ApiWS {
 	
@@ -106,8 +107,8 @@ public class ApiWS {
 				daf.setItem("hashToken", token);
 				
 				try {
-					MSOfertasDao dao = (MSOfertasDao)DaoFactory.getDao( "Ofertas", "ar.edu.ubp.das.src.comercio" );
-					if(dao.valid(daf)){
+					MSTransaccionDao daoTransacciones = (MSTransaccionDao)DaoFactory.getDao( "Transaccion", "ar.edu.ubp.das.src.comercio" );
+					if(daoTransacciones.valid(daf)){
 						System.out.println("Token valido");
 
 						if(fechaTransaccion == null || nombreCliente == null || apellidoCliente == null || emailCliente == null || 
@@ -121,6 +122,26 @@ public class ApiWS {
 								err.setErrorMsg("No se indico la oferta");
 							}else {
 								System.out.print("Obteniendo datos...\n");
+								
+								daf.setItem("fechaTransaccion", fechaTransaccion);
+								daf.setItem("nombreCliente", nombreCliente);
+								daf.setItem("apellidoCliente", apellidoCliente);
+								daf.setItem("emailCliente", emailCliente);
+								daf.setItem("dniCliente", dniCliente.toString());
+								daf.setItem("tipoTransaccion", tipoTransaccion);
+								daf.setItem("modeloProducto", modeloProducto);	
+								
+
+								if(precioProducto!=null) {
+									daf.setItem("precioProducto", precioProducto.toString());
+								}
+								
+								if(idOferta != null)
+									daf.setItem("idOferta", idOferta.toString());
+								
+								if(comision != null)
+									daf.setItem("comision", comision.toString());
+								
 								System.out.print(fechaTransaccion+"\n");
 								System.out.print(nombreCliente+"\n");
 								System.out.print(apellidoCliente+"\n");
@@ -132,21 +153,10 @@ public class ApiWS {
 								System.out.print(precioProducto+"\n");
 								System.out.print(comision+"\n");
 								
-								daf.setItem("fechaTransaccion", fechaTransaccion);
-								daf.setItem("nombreCliente", nombreCliente);
-								daf.setItem("apellidoCliente", apellidoCliente);
-								daf.setItem("emailCliente", emailCliente);
-								daf.setItem("dniCliente", dniCliente.toString());
-								daf.setItem("tipoTransaccion", tipoTransaccion);
-								daf.setItem("modeloProducto", modeloProducto);		
-								daf.setItem("precioProducto", precioProducto.toString());
 								
-								if(idOferta != null)
-									daf.setItem("idOferta", idOferta.toString());
 								
-								daf.setItem("comision", comision.toString());
 								
-//								dao.insert(daf);
+								daoTransacciones.insert(daf);
 
 								err.setStatus("200");
 								err.setErrorMsg("OK");
@@ -161,7 +171,7 @@ public class ApiWS {
 				} catch ( SQLException e ) {
 					e.printStackTrace();
 		    	    err.setStatus("400");
-					err.setErrorMsg("Error al obtener datos.");
+					err.setErrorMsg("Error al ingresar datos.");
 				}
 
 			}else {

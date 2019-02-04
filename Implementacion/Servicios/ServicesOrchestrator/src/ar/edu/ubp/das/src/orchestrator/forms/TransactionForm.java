@@ -3,7 +3,7 @@ package ar.edu.ubp.das.src.orchestrator.forms;
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 
 public class TransactionForm extends DynaActionForm {
-	private Integer trannsactionID;
+	private Integer transactionID;
 	private String fecha;
 	private String productID;
 	private String prodName;
@@ -15,11 +15,11 @@ public class TransactionForm extends DynaActionForm {
 	private String userLastName;
 	private String userEmail;
 	private Integer userDni;
-	public Integer getTrannsactionID() {
-		return trannsactionID;
+	public Integer getTransactionID() {
+		return transactionID;
 	}
-	public void setTrannsactionID(Integer trannsactionID) {
-		this.trannsactionID = trannsactionID;
+	public void setTransactionID(Integer transactionID) {
+		this.transactionID = transactionID;
 	}
 	public String getFecha() {
 		return fecha;

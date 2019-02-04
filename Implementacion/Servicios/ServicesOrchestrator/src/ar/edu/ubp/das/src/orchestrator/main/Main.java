@@ -66,7 +66,6 @@ public class Main {
 				System.out.println( "Checkeando si hay transacciones pendientes de envío - " + new Date().toString() );	 
 				
 				TransaccionesAction transacciones = new TransaccionesAction();
-				transacciones.init();
 				try {
 					transacciones.init();
 					

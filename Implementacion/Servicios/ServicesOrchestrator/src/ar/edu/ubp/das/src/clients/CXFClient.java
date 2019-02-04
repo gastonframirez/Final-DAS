@@ -1,6 +1,7 @@
 package ar.edu.ubp.das.src.clients;
 
 import java.lang.reflect.Method;
+import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,6 +57,12 @@ public class CXFClient implements WSClient {
 		}
 
 		return ofertas;
+	}
+
+	@Override
+	public void notificarTransaccion(DynaActionForm transaccion, String authToken, String url, String funcion) throws Exception{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

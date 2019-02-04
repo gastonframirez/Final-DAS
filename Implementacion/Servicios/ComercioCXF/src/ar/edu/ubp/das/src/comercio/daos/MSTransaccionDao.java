@@ -1,9 +1,7 @@
 package ar.edu.ubp.das.src.comercio.daos;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.util.List;
 
 import java.sql.Types;
@@ -26,7 +24,8 @@ public class MSTransaccionDao extends DaoImpl {
 		try {
         	this.connectWAutoFalse();
 
-    		this.setProcedure("dbo.saveTransaccion(?,?,?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        	System.out.println("Guardando transaccion..");
+    		this.setProcedure("dbo.saveTransaccion(?,?,?,?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
     		this.setParameter(1, form.getItem("fechaTransaccion"));
     		this.setParameter(2, form.getItem("nombreCliente"));
@@ -34,12 +33,26 @@ public class MSTransaccionDao extends DaoImpl {
     		this.setParameter(4, form.getItem("emailCliente"));
     		this.setParameter(5, form.getItem("dniCliente"));
     		this.setParameter(6, form.getItem("tipoTransaccion"));
-    		this.setParameter(7, form.getItem("modeloProducto"));
-    		this.setParameter(8, form.getItem("precioProducto"));
+
+    		if(form.getItem("modeloProducto")!=null) 
+    			this.setParameter(7, form.getItem("modeloProducto"));
+    		else 
+    			this.setNull(7, Types.VARCHAR);
+    		
+    		if(form.getItem("precioProducto")!=null) 
+    			this.setParameter(8, form.getItem("precioProducto"));
+    		else 
+    			this.setNull(8, Types.FLOAT);
+    		
+    		
     		if(form.getItem("idOferta") != null)
     			this.setParameter(9, form.getItem("idOferta"));
     		else
     			this.setNull(9, Types.SMALLINT);
+    		
+    		this.setParameter(10, form.getItem("comision"));
+    		
+    		System.out.println("Parametros seteados. Ejecutando statement..");
     		
     		this.getStatement().execute();		
      	

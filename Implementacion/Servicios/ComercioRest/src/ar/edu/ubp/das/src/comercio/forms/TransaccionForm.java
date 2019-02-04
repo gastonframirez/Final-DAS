@@ -4,6 +4,7 @@ import ar.edu.ubp.das.mvc.action.DynaActionForm;
 
 public class TransaccionForm extends DynaActionForm {
 	private String modeloProducto;
+	private String nombreProducto;
 	private Integer idOferta;
 	private String tipoTransaccion;
 	private String nombreCliente;
@@ -12,7 +13,9 @@ public class TransaccionForm extends DynaActionForm {
 	private Integer dniCliente;
 	private float precioProducto;
 	private String fechaTransaccion;
+	private Float comision;
 	
+
 	
 	public String getModeloProducto() {
 		return modeloProducto;
@@ -68,6 +71,20 @@ public class TransaccionForm extends DynaActionForm {
 	public void setFechaTransaccion(String fechaTransaccion) {
 		this.fechaTransaccion = fechaTransaccion;
 	}
+	public String getNombreProducto() {
+		return nombreProducto;
+	}
+	public void setNombreProducto(String nombreProducto) {
+		this.nombreProducto = nombreProducto;
+	}
+	public Float getComision() {
+		return comision;
+	}
+	public void setComision(Float comision) {
+		this.comision = comision;
+	}
+	
+	
 	
 	
 }
