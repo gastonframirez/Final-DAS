@@ -1,9 +1,9 @@
-package ar.edu.ubp.das.src.comercio.forms;
+package ar.edu.ubp.das.src.orchestrator.beans;
 
-import ar.edu.ubp.das.mvc.action.DynaActionForm;
+import ar.edu.ubp.das.src.orchestrator.beans.ResponseBean;
 
-public class OfertaForm extends DynaActionForm {
-	
+public class OfertaResponseBean extends ResponseBean{
+
 	private String fechaInicio;
 	private String fechaFin;
 	private String url;
@@ -47,6 +47,5 @@ public class OfertaForm extends DynaActionForm {
 	public void setOfertaURL(String ofertaURL) {
 		this.ofertaURL = ofertaURL;
 	}
-	
 	
 }

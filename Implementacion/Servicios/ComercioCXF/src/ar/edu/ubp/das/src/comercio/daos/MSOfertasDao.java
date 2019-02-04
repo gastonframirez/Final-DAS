@@ -16,9 +16,10 @@ public class MSOfertasDao extends DaoImpl {
         
 		form.setItem("fechaInicio", result.getString("fecha_inicio"));
     	form.setItem("fechaFin", result.getString("fecha_fin"));
-    	form.setItem("precioOferta",  String.valueOf(result.getFloat("precio_oferta")));
-    	form.setItem("modeloProducto", result.getString("modelo"));
-        
+    	form.setItem("imageURL", result.getString("image_url"));
+    	form.setItem("ofertaURL", result.getString("url_oferta"));
+    	form.setItem("idOferta", result.getString("id_oferta"));
+    	
         return form;
 	}
 
@@ -43,14 +44,11 @@ public class MSOfertasDao extends DaoImpl {
 	@Override
 	public List<DynaActionForm> select(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
-
 		this.connect();
-
 		this.setProcedure("dbo.getOfertas", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        List<DynaActionForm> ofertas = this.executeQuery();
 
-		List<DynaActionForm> ofertas = this.executeQuery();
-
-		this.disconnect();
+        this.disconnect();
 		
 		return ofertas;
 	}

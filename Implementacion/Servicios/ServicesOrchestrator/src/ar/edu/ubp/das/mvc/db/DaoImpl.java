@@ -15,6 +15,7 @@ import ar.edu.ubp.das.mvc.config.DatasourceConfig;
 
 public abstract class DaoImpl implements Dao {
 
+    private DatasourceConfig  datasource;
     private Connection        connection;
     private CallableStatement statement;
 
@@ -45,14 +46,28 @@ public abstract class DaoImpl implements Dao {
 
     public void connect() throws SQLException {
         try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver").newInstance();
-            
-            ResourceBundle bundle = ResourceBundle.getBundle("data");
-            
-            this.connection = DriverManager.getConnection(bundle.getString("url"),
-										            	  bundle.getString("usuario"),
-										            	  bundle.getString("password"));
+        	ResourceBundle bundle = ResourceBundle.getBundle("data");
+        	
+        	Class.forName(bundle.getString("databaseDriver")).newInstance();
+            this.connection = DriverManager.getConnection(bundle.getString("url"), bundle.getString("usuario"), bundle.getString("password"));
+            		
             this.connection.setAutoCommit(true);
+        }
+        catch(InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
+            throw new SQLException(ex.getMessage());
+        }
+        catch(SQLException ex) {
+            throw new SQLException("TEXT.LOGINDATA_NULO");
+        }
+    }
+    public void connectWAutoFalse() throws SQLException {
+        try {
+        	ResourceBundle bundle = ResourceBundle.getBundle("data");
+        	
+        	Class.forName(bundle.getString("databaseDriver")).newInstance();
+            this.connection = DriverManager.getConnection(bundle.getString("url"), bundle.getString("usuario"), bundle.getString("password"));
+            
+            this.connection.setAutoCommit(false);
         }
         catch(InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
             throw new SQLException(ex.getMessage());
@@ -60,6 +75,17 @@ public abstract class DaoImpl implements Dao {
         catch(SQLException ex) {
             throw new SQLException(ex.getMessage());
         }
+    }
+    
+    public void rollback() throws SQLException {
+    	this.connection.rollback();
+    }
+    public void commit() throws SQLException{
+    	this.connection.commit();
+    }
+    
+    public void autoCommit(boolean ac) throws SQLException{
+    	this.connection.setAutoCommit(ac);
     }
     
     public void disconnect() throws SQLException {
@@ -85,18 +111,16 @@ public abstract class DaoImpl implements Dao {
     }
 
     public List<DynaActionForm> executeQuery() throws SQLException {
-    	
         List<DynaActionForm> list   = new LinkedList<DynaActionForm>();
         ResultSet            result = this.statement.executeQuery();
-        
         while(result.next()) {
-        	
             list.add(this.make(result));
         }
         return list;
     }
 	
     public void setDatasource(DatasourceConfig datasource) {
+        this.datasource = datasource;
     }
 
     public void setProcedure(String procedure) throws SQLException {

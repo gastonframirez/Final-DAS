@@ -40,6 +40,7 @@ public class MSTransaccionDao extends DaoImpl {
     			this.setParameter(9, form.getItem("idOferta"));
     		else
     			this.setNull(9, Types.SMALLINT);
+    		this.setParameter(10, form.getItem("comision"));
     		
     		this.getStatement().execute();		
      	

@@ -21,9 +21,10 @@ public class ApiWS {
 	public List<OfertaResponseBean> getOfertas(@WebParam(name = "arg0") String authToken) {
 		List<OfertaResponseBean> ofertas = new LinkedList<OfertaResponseBean>();
 		List<DynaActionForm> ofertasDAF = new LinkedList<DynaActionForm>();
-		
+		System.out.println(authToken);
 		if(authToken!=null) {
 			if(authToken.indexOf("Token")!=-1 && authToken.split(" ").length==2) {
+				System.out.println(authToken);
 				String token = authToken.split(" ")[1];
 	
 				DynaActionForm daf = new DynaActionForm();
@@ -43,8 +44,12 @@ public class ApiWS {
 							oferta.setStatus("200");
 							oferta.setFechaInicio(c.getItem("fechaInicio"));
 							oferta.setFechaFin(c.getItem("fechaFin"));
-							oferta.setModeloProducto(c.getItem("modeloProducto"));
-							oferta.setPrecioOferta(Float.parseFloat(c.getItem("precioOferta")));
+							oferta.setImageURL(c.getItem("imageURL"));
+							oferta.setUrl(c.getItem("ofertaURL"));
+							oferta.setIdOferta(c.getItem("idOferta"));
+							if(c.getItem("precioOferta")!=null) {
+							}
+							
 							ofertas.add(oferta);
 						}
 						
@@ -69,12 +74,17 @@ public class ApiWS {
 				}
 
 			}else {
-				System.out.println("Token mal formado.");
-				OfertaResponseBean err = new OfertaResponseBean();
-				err.setStatus("401");
-				err.setErrorMsg("Token mal formado.");
-				ofertas.add(err);
+				try {
+					System.out.println("Token mal formado.");
+					OfertaResponseBean err = new OfertaResponseBean();
+					err.setStatus("401");
+					err.setErrorMsg("Token mal formado.");
+					ofertas.add(err);
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
 				return ofertas;
+				
 			}
 		}else {
 			System.out.println("Token no provisto.");

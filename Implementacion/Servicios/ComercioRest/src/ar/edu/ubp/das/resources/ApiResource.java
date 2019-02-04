@@ -23,6 +23,7 @@ import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.db.DaoFactory;
 import ar.edu.ubp.das.src.comercio.daos.MSOfertasDao;
 import ar.edu.ubp.das.src.comercio.daos.MSTransaccionDao;
+import ar.edu.ubp.das.src.comercio.forms.OfertaForm;
 
 
 @Path("/api")
@@ -49,12 +50,14 @@ public class ApiResource {
 					String token = authToken.get(0).split(" ")[1];
 
 					dynamicForm.setItem("hashToken", token);
-
+					
 					MSTransaccionDao dao = (MSTransaccionDao)DaoFactory.getDao( "Transaccion", "ar.edu.ubp.das.src.comercio" );
 
 					if(dao.valid(dynamicForm)){
 						if(fechaTransaccion == null || nombreCliente == null || apellidoCliente == null || emailCliente == null || 
 								dniCliente == null || tipoTransaccion == null || modeloProducto == null || precioProducto == null) {
+							
+							
 							return Response.status( Response.Status.BAD_REQUEST ).entity( "No se aportaron todos los datos requeridos." ).build();
 						}
 						
@@ -62,16 +65,16 @@ public class ApiResource {
 							return Response.status( Response.Status.BAD_REQUEST ).entity( "No se indico el id de la oferta." ).build();
 						}
 						
-						System.out.print("Obteniendo datos...\n");
-						System.out.print(fechaTransaccion+"\n");
-						System.out.print(nombreCliente+"\n");
-						System.out.print(apellidoCliente+"\n");
-						System.out.print(emailCliente+"\n");
-						System.out.print(dniCliente+"\n");
-						System.out.print(tipoTransaccion+"\n");
-						System.out.print(modeloProducto+"\n");
-						System.out.print(idOferta+"\n");
-						System.out.print(precioProducto+"\n");
+//						System.out.print("Obteniendo datos...\n");
+//						System.out.print(fechaTransaccion+"\n");
+//						System.out.print(nombreCliente+"\n");
+//						System.out.print(apellidoCliente+"\n");
+//						System.out.print(emailCliente+"\n");
+//						System.out.print(dniCliente+"\n");
+//						System.out.print(tipoTransaccion+"\n");
+//						System.out.print(modeloProducto+"\n");
+//						System.out.print(idOferta+"\n");
+//						System.out.print(precioProducto+"\n");
 
 						dynamicForm.setItem("fechaTransaccion", fechaTransaccion);
 						dynamicForm.setItem("nombreCliente", nombreCliente);

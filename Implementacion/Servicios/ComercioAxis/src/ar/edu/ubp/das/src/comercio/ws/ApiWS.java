@@ -15,9 +15,10 @@ public class ApiWS {
 	public List<OfertaResponseBean> getOfertas(String authToken) {
 		List<OfertaResponseBean> ofertas = new LinkedList<OfertaResponseBean>();
 		List<DynaActionForm> ofertasDAF = new LinkedList<DynaActionForm>();
-		
+		System.out.println(authToken);
 		if(authToken!=null) {
 			if(authToken.indexOf("Token")!=-1 && authToken.split(" ").length==2) {
+				System.out.println(authToken);
 				String token = authToken.split(" ")[1];
 	
 				DynaActionForm daf = new DynaActionForm();
@@ -37,8 +38,12 @@ public class ApiWS {
 							oferta.setStatus("200");
 							oferta.setFechaInicio(c.getItem("fechaInicio"));
 							oferta.setFechaFin(c.getItem("fechaFin"));
-							oferta.setModeloProducto(c.getItem("modeloProducto"));
-							oferta.setPrecioOferta(Float.parseFloat(c.getItem("precioOferta")));
+							oferta.setImageURL(c.getItem("imageURL"));
+							oferta.setUrl(c.getItem("ofertaURL"));
+							oferta.setIdOferta(c.getItem("idOferta"));
+							if(c.getItem("precioOferta")!=null) {
+							}
+							
 							ofertas.add(oferta);
 						}
 						
@@ -63,12 +68,17 @@ public class ApiWS {
 				}
 
 			}else {
-				System.out.println("Token mal formado.");
-				OfertaResponseBean err = new OfertaResponseBean();
-				err.setStatus("401");
-				err.setErrorMsg("Token mal formado.");
-				ofertas.add(err);
+				try {
+					System.out.println("Token mal formado.");
+					OfertaResponseBean err = new OfertaResponseBean();
+					err.setStatus("401");
+					err.setErrorMsg("Token mal formado.");
+					ofertas.add(err);
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
 				return ofertas;
+				
 			}
 		}else {
 			System.out.println("Token no provisto.");
@@ -80,11 +90,11 @@ public class ApiWS {
 		}
 	}
 	
-	public ResponseBean insertTransaccion(String authToken, String fechaTransaccion, String nombreCliente, 
+	public ResponseBean notifyTransaccion(String authToken, String fechaTransaccion, String nombreCliente, 
 			String apellidoCliente, String emailCliente, 
 			Integer dniCliente, String tipoTransaccion, 
 			String modeloProducto, Integer idOferta, 
-			Float precioProducto) {
+			Float precioProducto, Float comision) {
 		
 		ResponseBean err = new ResponseBean();
 		
@@ -101,7 +111,8 @@ public class ApiWS {
 						System.out.println("Token valido");
 
 						if(fechaTransaccion == null || nombreCliente == null || apellidoCliente == null || emailCliente == null || 
-								dniCliente == null || tipoTransaccion == null || modeloProducto == null || precioProducto == null) {
+								dniCliente == null || comision == null || (tipoTransaccion.equals("ppOffer") && idOferta == null) || 
+								(tipoTransaccion.equals("ppClick") && (modeloProducto == null || precioProducto == null))) {
 							err.setStatus("400");
 							err.setErrorMsg("No se aportaron todos los datos requeridos.");
 						}else {
@@ -119,7 +130,8 @@ public class ApiWS {
 								System.out.print(modeloProducto+"\n");
 								System.out.print(idOferta+"\n");
 								System.out.print(precioProducto+"\n");
-							
+								System.out.print(comision+"\n");
+								
 								daf.setItem("fechaTransaccion", fechaTransaccion);
 								daf.setItem("nombreCliente", nombreCliente);
 								daf.setItem("apellidoCliente", apellidoCliente);
@@ -132,7 +144,9 @@ public class ApiWS {
 								if(idOferta != null)
 									daf.setItem("idOferta", idOferta.toString());
 								
-								dao.insert(daf);
+								daf.setItem("comision", comision.toString());
+								
+//								dao.insert(daf);
 
 								err.setStatus("200");
 								err.setErrorMsg("OK");

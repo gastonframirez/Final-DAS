@@ -1,16 +1,30 @@
-package ar.edu.ubp.das.src.comercio.forms;
+package ar.edu.ubp.das.src.orchestrator.forms;
 
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 
-public class OfertaForm extends DynaActionForm {
+public class OfferForm extends DynaActionForm {
+	
+	private String status;
+	private String errorMsg;
 	
 	private String fechaInicio;
 	private String fechaFin;
 	private String url;
 	private String imageURL;
 	private String idOferta;
-	private String ofertaURL;
 	
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public String getErrorMsg() {
+		return errorMsg;
+	}
+	public void setErrorMsg(String errorMsg) {
+		this.errorMsg = errorMsg;
+	}
 	public String getFechaInicio() {
 		return fechaInicio;
 	}
@@ -41,12 +55,8 @@ public class OfertaForm extends DynaActionForm {
 	public void setIdOferta(String idOferta) {
 		this.idOferta = idOferta;
 	}
-	public String getOfertaURL() {
-		return ofertaURL;
-	}
-	public void setOfertaURL(String ofertaURL) {
-		this.ofertaURL = ofertaURL;
-	}
+	
+	
 	
 	
 }

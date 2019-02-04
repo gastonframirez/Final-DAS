@@ -29,8 +29,9 @@
         <xs:sequence>
           <xs:element minOccurs="0" name="fechaFin" type="xs:string"/>
           <xs:element minOccurs="0" name="fechaInicio" type="xs:string"/>
-          <xs:element minOccurs="0" name="modeloProducto" type="xs:string"/>
-          <xs:element name="precioOferta" type="xs:float"/>
+          <xs:element minOccurs="0" name="idOferta" type="xs:string"/>
+          <xs:element minOccurs="0" name="imageURL" type="xs:string"/>
+          <xs:element minOccurs="0" name="url" type="xs:string"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -119,7 +120,7 @@
   </wsdl:binding>
   <wsdl:service name="ApiWSService">
     <wsdl:port name="ApiWSPort" binding="tns:ApiWSServiceSoapBinding">
-      <soap12:address location="http://localhost:8080/ComercioCXF/services/ApiWSPort"/>
+      <soap12:address location="http://localhost:8080/ComercioCXF/services"/>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
