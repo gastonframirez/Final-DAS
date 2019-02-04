@@ -61,42 +61,43 @@ create table productos
 go
 
 ----------------------------------------------------------------------------------------------
+use garbarino
+go
+drop table ofertas
 create table ofertas
 (
     id_oferta           smallint        not null        identity (1,1),
     fecha_inicio        DATETIME        not null,
     fecha_fin           DATETIME        not null,
-    precio_oferta       FLOAT           not null,
-    id_producto         integer         not null,
     url_oferta          varchar(500)    not null,
+    image_url           varchar(500)    not null,
     habilitada          BIT             not null        default 0,
 
-    constraint pk__oferta__end primary key (id_oferta),
-    constraint fk__oferta_producto__end foreign key (id_producto)
-        references productos (id_producto)
+    constraint pk__oferta__end primary key (id_oferta)
 )
 go
-
+-- insert into ofertas values ('2019-01-19 00:00:00', '2019-01-31 23:59:59', 'https://www.compumundo.com.ar/producto/smart-tv-lg-43-full-hd-43lk5700psc/3c66884d00', 'https://d34zlyc2cp9zm7.cloudfront.net/products/1779250837a13543779bc1f31d5c9b192475d0742a58a898f2b415923137e236.webp_500', 1);
 ----------------------------------------------------------------------------------------------
-
+drop table transacciones
+go
 create table transacciones
 (
     id_transaccion      integer         not null        identity (1,1),
     fecha               DATETIME        not null        default getdate(),
-    id_producto         integer         not null,
+    id_producto         varchar(500)    ,
     id_oferta           smallint,
-    tipo_transaccion  VARCHAR(100)    not null,
+    tipo_transaccion    VARCHAR(100)    not null,
     nombre_cliente      VARCHAR(200)    not null,
     apellido_cliente    varchar (200)   not null,
     email_cliente       varchar (500)   not null,
     dni                 integer         not null,
-    precio_producto     FLOAT           not null,
+    precio_producto     FLOAT,
+    precio_comision     float           not null,
 
     constraint pk__transaccion__end primary key (id_transaccion),
-    constraint fk__transaccion_producto__end foreign key (id_producto)
-        references productos(id_producto),
     constraint fk__transaccion_oferta__end foreign key (id_oferta)
         references ofertas(id_oferta)
+    -- Poner constraint por tipo y lo que puede ser null
 )
 go
 
@@ -122,7 +123,7 @@ create table tokens
     constraint pk__tokens__end primary key (id_token),
     constraint uk__tokens_hash__end unique(hash_token)
 )
-
+go
 -- insert into tokens values ('abbb4a0574aab5e145060b12379d88a3', 1)
 
 ----------------------------------------------------------------------------------------------
@@ -141,6 +142,7 @@ BEGIN
       where hash_token = @hash 
         and active = 1
 END
+go
 
 ---------------------------------------------------------------------------------------------- Guardar log
 -- drop procedure save_log
@@ -164,17 +166,15 @@ go
 drop procedure getOfertas
 go
 
-
 create procedure getOfertas
 as
 BEGIN
-    SELECT fecha_inicio, fecha_fin, precio_oferta, modelo, url_oferta, image_url 
+    SELECT id_oferta, fecha_inicio, fecha_fin, url_oferta, image_url 
         FROM ofertas
-            JOIN productos
-            ON productos.id_producto = ofertas.id_producto
         WHERE ofertas.habilitada = 1
 
 END
+GO
 
 EXECUTE getOfertas
 
@@ -189,10 +189,11 @@ create procedure saveTransaccion
     @apellidoCliente    varchar (200),
     @emailCliente       varchar (500),
     @dniCliente         integer,
-    @tipoTransaccion    varchar (2),
+    @tipoTransaccion    varchar (100),
     @modeloProducto     varchar (500),
     @precioProducto     float,
-    @idOferta           integer
+    @idOferta           integer,
+    @precioComision     float
 )
 as
 BEGIN
@@ -210,7 +211,8 @@ BEGIN
                                 apellido_cliente,
                                 email_cliente,
                                 dni,
-                                precio_producto)
+                                precio_producto,
+                                precio_comision)
     values (@fechaTransaccion,
             @idProducto,
             @idOferta,
@@ -219,9 +221,9 @@ BEGIN
             @apellidoCliente,
             @emailCliente,
             @dniCliente,
-            @precioProducto)
-
-    
+            @precioProducto,
+            @precioComision)
 END
+GO
 
 EXECUTE getOfertas

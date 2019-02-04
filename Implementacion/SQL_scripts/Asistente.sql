@@ -149,18 +149,17 @@ create table ofertas
     fecha_inicio        DATETIME        not null,
     fecha_fin           DATETIME        not null,
 	url_oferta			varchar (500)	not null,
-	precio_oferta		FLOAT			not null,
-	id_producto			integer			not null,
+	id_oferta_comercio	varchar (200)	not null,
+	actualizada			datetime		not null,
     habilitada          BIT             not null        default 0,
 
     constraint pk__oferta__end primary key (id_oferta, id_comercio),
     constraint fk__oferta__end foreign key (id_comercio)
         references comercios (id_comercio)
+	
 )
 go
 
--- insert into ofertas values (1, 'https://d34zlyc2cp9zm7.cloudfront.net/products/1779250837a13543779bc1f31d5c9b192475d0742a58a898f2b415923137e236.webp_500',
---  '2019-01-19 00:00:00', '2019-01-31 23:59:59', 'https://www.compumundo.com.ar/producto/smart-tv-lg-43-full-hd-43lk5700psc/3c66884d00', 12999, 1,1)
 ----------------------------------------------------------------------------------------------
 create table producto_comercio
 (
@@ -170,6 +169,7 @@ create table producto_comercio
     url_producto        varchar (500)   not null,
     fecha_actualizado   DATETIME        not null,
     image_url           varchar (500)   not null,
+	modelo_producto		varchar (500)	not null,
     habilitado          bit             not null        default 0,
 
     constraint pk__producto_comercio__end primary key (id_producto, id_comercio),
@@ -238,11 +238,12 @@ go
 insert into administradores values (1, 0,0)
 go
 ----------------------------------------------------------------------------------------------
+
 create table transacciones
 (
     id_transaccion      integer         not null        identity (1,1),
     fecha               DATETIME        not null        default getdate(),
-    id_producto         integer         not null,
+    id_producto         integer,
     id_tipo_transaccion SMALLINT        not null,
     id_comercio         SMALLINT        not null,
     id_usuario          INTEGER         not null,
@@ -262,6 +263,7 @@ create table transacciones
         references ofertas (id_oferta, id_comercio)
 )
 go
+-- insert into transacciones values (getdate(), null, 2, 1, 1, 2, 1);
 
 ----------------------------------------------------------------------------------------------
 create table comisiones_tipo_transacciones
@@ -308,9 +310,9 @@ create table tecnologias
 go
 insert into tecnologias (nombre,javaClass)
 values
-    ('Axis 2','ClienteAxis2'),
-    ('JAX-WS (CXF)','ClienteCXF'),
-    ('Jersey REST','ClienteRest')
+    ('Axis 2','Axis2Client'),
+    ('JAX-WS (CXF)','CXFClient'),
+    ('Jersey REST','RestClient')
 go
 ----------------------------------------------------------------------------------------------
 create table servicios
@@ -1115,6 +1117,7 @@ go
 drop procedure toggleCategoria
 go
 create procedure toggleCategoria
+
 (
 	@idCategoria		integer,
 	@habilitado			BIT
@@ -1125,6 +1128,7 @@ BEGIN
 	WHERE id_categoria =@idCategoria
 end
 go
+
 ---------------------------------------------------------------------------------------------- Editar Categoria
 drop procedure updateCategoria
 go
@@ -1210,15 +1214,11 @@ go
 create procedure getOfertas
 as
 begin
-    SELECT id_oferta, ofe.image_url as oferta_img_url, fecha_fin, fecha_inicio, url_oferta, precio as precio_normal, precio_oferta, prod.id_producto, ofe.id_comercio, logo_url as comercio_logo_url, nombre
+    SELECT id_oferta, ofe.image_url as oferta_img_url, fecha_fin, fecha_inicio, 
+	url_oferta, ofe.id_comercio, logo_url as comercio_logo_url, id_oferta_comercio
 	FROM ofertas ofe
 	JOIN comercios com
 		ON ofe.id_comercio = com.id_comercio
-	JOIN productos prod
-		ON ofe.id_producto = prod.id_producto
-	JOIN producto_comercio pc
-		ON pc.id_comercio = ofe.id_comercio
-		AND pc.id_producto = ofe.id_producto
 	WHERE habilitada = 1
 		
 end
@@ -1226,6 +1226,54 @@ go
 
 -- EXECUTE getOfertas
 -- go
+---------------------------------------------------------------------------------------------- Save Ofertas
+drop procedure saveOferta
+go
+
+create procedure saveOferta
+(
+	@idComercio 		integer,
+	@imageURL			varchar(500),
+	@fechaInicio		datetime,
+	@fechaFin			datetime,
+	@urlOferta			varchar(500),
+	@idOfertaCom		varchar(200)
+)
+as
+begin
+  IF EXISTS (SELECT * from ofertas WHERE id_comercio = @idComercio AND id_oferta_comercio = @idOfertaCom)
+	UPDATE ofertas set image_url = @imageURL, fecha_inicio = @fechaInicio, fecha_fin = @fechaFin,
+						url_oferta = @urlOferta, actualizada = getdate()
+		WHERE id_comercio = @idComercio AND id_oferta_comercio = @idOfertaCom
+  ELSE
+	INSERT INTO ofertas (id_comercio, image_url, fecha_inicio, fecha_fin, url_oferta, id_oferta_comercio, actualizada, habilitada)
+	VALUES (@idComercio, @imageURL, @fechaInicio, @fechaFin, @urlOferta, @idOfertaCom, getdate(), 1);
+end
+go
+
+---------------------------------------------------------------------------------------------- Save Ofertas
+drop procedure disableOfertas
+go
+
+create procedure disableOfertas
+(
+	@idComercio 		integer = null
+)
+as
+begin
+	IF @idComercio IS NOT NULL AND LEN(@idComercio) > 0
+		UPDATE ofertas SET habilitada = 0
+		WHERE id_comercio = @idComercio
+		AND DATEDIFF(minute,getdate(),actualizada) >= 60
+	ELSE
+		UPDATE ofertas SET habilitada = 0
+		WHERE DATEDIFF(minute,actualizada, getdate()) >= 60
+end
+go
+
+execute disableOfertas
+go
+
 
 ---------------------------------------------------------------------------------------------- Save Transaccion
 drop procedure saveTransaccion
@@ -1238,7 +1286,7 @@ create procedure saveTransaccion
     @idTipoTransaccion    	SMALLINT,
     @idComercio       		SMALLINT,
     @idUsuario         		INTEGER,
-    @idOferta    			integer,
+    @idOferta    			integer = null,
     @pending     			bit
 )
 as
@@ -1262,6 +1310,39 @@ BEGIN
     
 END
 go
+---------------------------------------------------------------------------------------------- List Pending Transaccion
+drop procedure listPendingTransaction
+go
+
+create procedure listPendingTransaction
+(
+    @idComercio   		integer
+)
+as
+BEGIN
+	SELECT tr.id_transaccion, tr.fecha, tr.pending, prod.modelo, prod.nombre as prod_name, pc.precio as precio_producto, 
+			tt.nombre as nombre_transaction, ctt.valor as commission, offers.id_oferta_comercio,
+			us.nombre as userName, us.apellido, us.email, us.dni FROM transacciones tr
+	LEFT JOIN producto_comercio pc
+		ON pc.id_producto = tr.id_producto
+		AND tr.id_comercio = pc.id_comercio
+	LEFT JOIN productos prod
+		ON tr.id_producto = prod.id_producto
+	JOIN tipo_transacciones tt
+		ON tr.id_tipo_transaccion = tt.id_tipo
+	JOIN comisiones_tipo_transacciones ctt
+		ON tr.id_tipo_transaccion = ctt.id_tipo
+		AND tr.id_comercio = ctt.id_comercio
+	LEFT JOIN ofertas offers
+		ON offers.id_oferta = tr.id_oferta
+	JOIN usuarios us
+		ON us.id_usuario = tr.id_usuario
+	WHERE tr.id_comercio = @idComercio
+	AND pending = 1
+END
+go
+
+execute listPendingTransaction @idComercio=1
 ---------------------------------------------------------------------------------------------- Release Pending Transaccion
 drop procedure releasePendingTransaction
 go
@@ -1510,7 +1591,7 @@ BEGIN
 END
 go
 
---  
+--  EXECUTE activeOffers @idComercio = 1
 
 ---------------------------------------------------------------------------------------------- Nuevos Users del mes
 drop procedure actionsByType
@@ -1718,3 +1799,21 @@ go
 declare @dt as datetime = datetimefromparts(2019,2,1,17,0,0,0)
 
 execute getComisionesTotal @mes=@dt, @comercioID=71
+
+---------------------------------------------------------------------------------------------- Obtener servicios
+drop procedure getServices
+GO
+
+create procedure getServices
+(
+	@idComercio		integer
+)
+AS
+BEGIN
+	SELECT * FROM servicios serv
+	JOIN tecnologias tech
+		ON serv.id_tecnologia = tech.id_tecnologia
+	WHERE id_comercio = @idComercio
+END
+
+execute getServices @idComercio=1
