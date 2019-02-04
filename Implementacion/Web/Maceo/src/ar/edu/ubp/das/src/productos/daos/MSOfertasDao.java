@@ -52,17 +52,14 @@ public class MSOfertasDao extends DaoImpl {
         while(result.next()) {
         	oferta = new OfertasForm();
         	oferta.setIdOferta(result.getInt("id_oferta"));
-        	oferta.setOfertaImageURL(result.getString("oferta_img_url"));
+        	oferta.setImageURL(result.getString("oferta_img_url"));
         	oferta.setFechaFin(result.getString("fecha_fin"));
         	oferta.setFechaInicio(result.getString("fecha_inicio"));
-        	oferta.setOfertaURL(result.getString("url_oferta"));
-        	oferta.setPrecioOferta(result.getFloat("precio_oferta"));
-        	oferta.setPrecioNormal(result.getFloat("precio_normal"));
-        	oferta.setIdProducto(result.getInt("id_producto"));
+        	oferta.setUrl(result.getString("url_oferta"));
         	oferta.setIdComercio(result.getInt("id_comercio"));
         	oferta.setLogoComercioURL(result.getString("comercio_logo_url"));
-        	oferta.setNombreProducto(result.getString("nombre"));
-        		
+        	oferta.setIdOfertaComercio(result.getString("id_oferta_comercio"));
+        	
         	ofertas.add(oferta);
         }
         

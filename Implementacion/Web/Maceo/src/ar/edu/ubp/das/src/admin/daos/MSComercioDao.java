@@ -49,8 +49,6 @@ public class MSComercioDao extends DaoImpl {
     		
     		this.getStatement().execute();		
      	
-//			this.commit();
-
 			this.setProcedure("dbo.getComercioID(?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 	
 			this.setParameter(1, form.getItem("CUIT"));
@@ -67,15 +65,12 @@ public class MSComercioDao extends DaoImpl {
 			result.close();
 			this.getStatement().close();
 			
-//			this.commit();
-
-
 			if(idComercio>0) {
 				this.autoCommit(false);
-//				// Ahora guardo el servicio
+				// Ahora guardo el servicio
 				this.setProcedure("dbo.saveServicesComercio(?,?,?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-				
-	    		this.setParameter(1, idComercio);
+
+				this.setParameter(1, idComercio);
 	    		this.setParameter(2, Integer.parseInt(form.getItem("techID")));
 	    		this.setParameter(3, form.getItem("baseURLOffers"));
 	    		this.setParameter(4, Integer.parseInt(form.getItem("portOffers")));
@@ -87,43 +82,43 @@ public class MSComercioDao extends DaoImpl {
 				
 	    		this.getStatement().execute();		
 	         	
-//				this.commit();
-				
 				this.getStatement().close();
 				
 				// Ahora guardo las comisiones
 				this.setProcedure("dbo.saveComisionesComercio(?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
-	    		this.setParameter(1, idComercio);
+				this.setParameter(1, idComercio);
 	    		this.setParameter(2, form.getItem("ppOffer"));
 	    		this.setParameter(3, form.getItem("ppProd"));
 				
 	    		this.getStatement().execute();		
-	         	
-//				this.commit();
-				
+	         					
 				this.getStatement().close();
 //				
 				// Ahora guardo datos del scraper - URL Categorias
 				
-
-				Map<String, Object> catIds = new HashMap<String, Object>();
-				catIds = form.getItems("urlCategories");
-				
-				for(String kClass : catIds.keySet()) {
-					if(catIds!=null && catIds.get(kClass) != null) {
-		    			this.setProcedure("dbo.saveScraperURLComercio(?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-						System.out.println("Sin error 0: "+kClass);
+				if(form.getItems("urlCategories")!=null) {
+					
+					Map<String, Object> catIds = new HashMap<String, Object>();
+					catIds = form.getItems("urlCategories");
+					
+					if(catIds.size()>0) {
+						for(String kClass : catIds.keySet()) {
+							if(catIds!=null && catIds.get(kClass) != null) {
+				    			this.setProcedure("dbo.saveScraperURLComercio(?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+								
+				    			this.setParameter(1, idComercio);
+					    		this.setParameter(2, kClass);
+					    		this.setParameter(3, catIds.get(kClass).toString());
+					    		
+					    		this.getStatement().execute();	
+					    		this.getStatement().close();
+				    		}
+						}
 						
-		    			this.setParameter(1, idComercio);
-			    		this.setParameter(2, kClass);
-			    		this.setParameter(3, catIds.get(kClass).toString());
-			    		
-			    		this.getStatement().execute();	
-//			    		this.commit();
-			    		this.getStatement().close();
-		    		}
+					}
 				}
+				
 				
 				
 				// Ahora guardo datos sobre la config del scraper
@@ -136,10 +131,8 @@ public class MSComercioDao extends DaoImpl {
 				Map<String, Object> searchInName = new HashMap<String, Object>();
 				searchInName = form.getItems("searchInName");
 				
-				
 				for(String kClass : classes.keySet()) {
 					this.setProcedure("dbo.saveScraperConfigComercio(?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-
 					this.setParameter(1, idComercio);
 		    		this.setParameter(2, classes.get(kClass).toString());
 		    		if(needsCrawl!=null && needsCrawl.get(kClass) != null) {
@@ -163,6 +156,7 @@ public class MSComercioDao extends DaoImpl {
 			
 			this.commit();
 		} catch (SQLException e) {
+			e.printStackTrace();
 			this.rollback();
 			throw e;
 		}finally {
@@ -173,7 +167,6 @@ public class MSComercioDao extends DaoImpl {
 
 	@Override
 	public void update(DynaActionForm form) throws SQLException {
-		// TODO Auto-generated method stub
 		try {
         	this.connectWAutoFalse();
         	Integer idComercio = Integer.valueOf(form.getItem("idComercio"));
@@ -240,24 +233,27 @@ public class MSComercioDao extends DaoImpl {
 //				
 				// Ahora guardo datos del scraper - URL Categorias
 				
-
-				Map<String, Object> catIds = new HashMap<String, Object>();
-				catIds = form.getItems("urlCategories");
-				
-				for(String kClass : catIds.keySet()) {
-					if(catIds!=null && catIds.get(kClass) != null) {
-		    			this.setProcedure("dbo.updateScraperURLComercio(?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-						System.out.println("Sin error 0: "+kClass);
-						
-		    			this.setParameter(1, idComercio);
-			    		this.setParameter(2, kClass);
-			    		this.setParameter(3, catIds.get(kClass).toString());
-			    		
-			    		this.getStatement().execute();	
-//			    		this.commit();
-			    		this.getStatement().close();
-		    		}
+				if(form.getItems("urlCategories")!=null) {
+					Map<String, Object> catIds = new HashMap<String, Object>();
+					catIds = form.getItems("urlCategories");
+					if(catIds.size()>0) {
+						for(String kClass : catIds.keySet()) {
+							if(catIds!=null && catIds.get(kClass) != null) {
+				    			this.setProcedure("dbo.updateScraperURLComercio(?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+								System.out.println("Sin error 0: "+kClass);
+								
+				    			this.setParameter(1, idComercio);
+					    		this.setParameter(2, kClass);
+					    		this.setParameter(3, catIds.get(kClass).toString());
+					    		
+					    		this.getStatement().execute();	
+//					    		this.commit();
+					    		this.getStatement().close();
+				    		}
+						}
+					}
 				}
+				
 				
 				
 				// Ahora guardo datos sobre la config del scraper
