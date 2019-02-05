@@ -6,20 +6,20 @@ $(function($) {
         title: 'Te estamos llevando a NOMBRE DE COMERCIO para que compres el producto:',
         text: 'DATOS DEL PRODUCTO',
         icon: 'success',
-        timer: 3000,
+        timer: 4000,
         closeOnClickOutside: false,
         closeOnEsc: false,
         button: false
         }).then(
           // handling the promise rejection
           function(dismiss) {
-            console.log('I was closed by the timer')
-            window.location.href="file:///Users/gframirez/Documents/UBP/Q10/DAS/Final-DAS/Implementacion/Maquetas/Dashboard-Home/index-cliente.html";
+            console.log('Cerrado por timer')
+            window.location.href="/Maceo";
           }
         )
     } else if (type === 'need-login') {
       swal({
-        title: 'Read the alert!',
+        title: 'ACA VA EL LOGIN!',
         text: 'Click OK to close this alert',
         button: {
           text: "OK",
@@ -79,7 +79,7 @@ $(function($) {
 	            closeOnClickOutside: false,
 	            closeOnEsc: false,
 	            button: false,
-	            icon: 'success',
+	            icon: icon,
 	            button: {
 	              text: "OK",
 	              value: true,

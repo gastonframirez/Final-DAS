@@ -54,12 +54,33 @@ public class MSGraficosDashboardDao extends DaoImpl {
     		this.setNull(1, Types.INTEGER);
     	}
     	ResultSet result = this.getStatement().executeQuery();
-  
+    	
+    	List<String> tipos = new LinkedList<String>();
+    	
         while(result.next()) {
         	estadistica = new EstadisticaForm();
         	estadistica.setNombre(result.getString("nombre"));
         	estadistica.setValor(result.getString("stats"));
+        	if(!tipos.contains(result.getString("nombre"))) {
+        		tipos.add(result.getString("nombre"));
+        	}
         	datosGrafico.add(estadistica);
+        }
+       
+        this.connect();
+		this.setProcedure("dbo.getTypes", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		
+    	
+    	result = this.getStatement().executeQuery();
+  
+        while(result.next()) {
+        	if(!tipos.contains(result.getString("nombre"))) {
+        		tipos.add(result.getString("nombre"));
+        		estadistica = new EstadisticaForm();
+            	estadistica.setNombre(result.getString("nombre"));
+            	estadistica.setValor("0");
+            	datosGrafico.add(estadistica);
+        	}
         }
        
 		this.disconnect();
