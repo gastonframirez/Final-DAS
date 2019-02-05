@@ -94,36 +94,46 @@ public class RestClient implements WSClient {
 	}
 
 	@Override
-	public void notificarTransaccion(DynaActionForm transaccion, String authToken, String url, String funcion) throws Exception{
+	public String notificarTransaccion(DynaActionForm transaccion, String authToken, String url, String funcion) throws Exception{
 		
 		HttpClient client = HttpClientBuilder.create().build();
 
 
-		URI uri = URI.create(url+"/ofertas");
-
+		URI uri = URI.create(url+"/transacciones");
+		System.out.println(uri);
 		HttpPost req = new HttpPost();
 		req.setURI(uri);
 		req.setHeader("Authorization", authToken);
 
+		System.out.println("Seteando form data");
 		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-		nvps.add(new BasicNameValuePair("idTransaccion", transaccion.getItem("idTransaccion")));
-		nvps.add(new BasicNameValuePair("fechaTransaccion", transaccion.getItem("fechaTransaccion")));
+
+		String resStatus = "400";
+		
 		nvps.add(new BasicNameValuePair("nombreCliente", transaccion.getItem("nombreCliente")));
 		nvps.add(new BasicNameValuePair("apellidoCliente", transaccion.getItem("apellidoCliente")));
+		nvps.add(new BasicNameValuePair("emailCliente", transaccion.getItem("emailCliente")));
 		nvps.add(new BasicNameValuePair("dniCliente", transaccion.getItem("dniCliente")));
-		nvps.add(new BasicNameValuePair("emailCliente", transaccion.getItem("tipoTransaccion")));
 		nvps.add(new BasicNameValuePair("tipoTransaccion", transaccion.getItem("tipoTransaccion")));
-		if(transaccion.getItem("modeloProducto")!=null)
-			nvps.add(new BasicNameValuePair("modeloProducto", transaccion.getItem("modeloProducto")));
-		if(transaccion.getItem("precioProducto")!=null)
-			nvps.add(new BasicNameValuePair("precioProducto",transaccion.getItem("precioProducto")));
-		if(transaccion.getItem("idOferta")!=null)
+		nvps.add(new BasicNameValuePair("fechaTransaccion", transaccion.getItem("fechaTransaccion")));
+		
+		if(!transaccion.getItem("idOferta").equals("null"))
 			nvps.add(new BasicNameValuePair("idOferta", transaccion.getItem("idOferta")));
+		
+		if(!transaccion.getItem("modeloProducto").equals("null"))
+			nvps.add(new BasicNameValuePair("modeloProducto", transaccion.getItem("modeloProducto")));
+		
+		if(!transaccion.getItem("precioProducto").equals("null"))
+			nvps.add(new BasicNameValuePair("precioProducto",transaccion.getItem("precioProducto")));
+		
 		nvps.add(new BasicNameValuePair("comision", transaccion.getItem("comision")));
-
+		
+//		System.out.println(nvps);
+//		System.out.println("Form data seteado");
+		
 		try {
 			req.setEntity(new UrlEncodedFormEntity(nvps));
-			
+
 			client = HttpClientBuilder.create().build();
 			HttpResponse resp = client.execute(req);
 
@@ -132,13 +142,17 @@ public class RestClient implements WSClient {
 
 			String restResp = EntityUtils.toString(responseEntity);
 			
+			System.out.println(restResp);
+
 			Gson gson = new Gson();
 			
-			Type listType = new TypeToken<ArrayList<ResponseBean>>(){}.getType();
-			ArrayList<ResponseBean> respuestas = gson.fromJson(restResp, listType);
+			ResponseBean respuestas = gson.fromJson(restResp, new TypeToken<ResponseBean>(){}.getType());
 
 			if(responseStatus.getStatusCode() != 200) {
+				resStatus = String.valueOf(responseStatus.getStatusCode());
 				throw new RuntimeException(restResp);
+			}else {
+				resStatus = "200";
 			}
 						
 		} catch (ClientProtocolException e) {
@@ -149,6 +163,7 @@ public class RestClient implements WSClient {
 			e.printStackTrace();
 		}
 		
+		return resStatus;
 	}
 
 

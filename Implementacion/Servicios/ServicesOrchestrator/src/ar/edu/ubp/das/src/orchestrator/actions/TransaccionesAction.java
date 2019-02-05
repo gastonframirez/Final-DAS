@@ -14,7 +14,7 @@ import ar.edu.ubp.das.src.orchestrator.forms.TransactionForm;
 
 public class TransaccionesAction {
 	public void init ()  throws SQLException{
-		System.out.println("Iniciando conexion a servicios...");
+		System.out.println("Iniciando conexion a servicios (transacciones)..");
 		
 		//Conectarse a cada comercio
 		DynaActionForm form = new DynaActionForm();
@@ -30,7 +30,7 @@ public class TransaccionesAction {
 			
 			// Conectarse a client
 			try {
-				System.out.println("Pidiendo ofertas al comercio");
+				System.out.println("Seteando transacciones en el comercio");
 
 				Dao daoTransacciones = DaoFactory.getDao( "Transactions", "ar.edu.ubp.das.src.orchestrator" );
 				form.setItem("idComercio", comercio.getIdComercio().toString());
@@ -40,12 +40,15 @@ public class TransaccionesAction {
 				for(DynaActionForm transaccion : transacciones) {
 					try {
 						WSClient comercioClient = ClientFactory.getClient(comercio.getJavaClass(), "ar.edu.ubp.das.src");
-						comercioClient.notificarTransaccion(transaccion, comercio.getAuthToken(), 
+						String status = comercioClient.notificarTransaccion(transaccion, "Token "+comercio.getAuthToken(), 
 									comercio.getBaseURLTransacciones(), comercio.getFuncionTransacciones());
-						daoTransacciones.update(transaccion);
+						if(status.equals("200")) {
+							System.out.println(status);
+							daoTransacciones.update(transaccion);
+						}
 					}catch (SQLException e) {
 						//Loguear
-					}
+					}//
 				}
 
 								

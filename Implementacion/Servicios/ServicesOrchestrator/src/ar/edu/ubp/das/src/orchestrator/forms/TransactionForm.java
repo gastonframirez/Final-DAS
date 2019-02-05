@@ -15,6 +15,7 @@ public class TransactionForm extends DynaActionForm {
 	private String userLastName;
 	private String userEmail;
 	private Integer userDni;
+	
 	public Integer getTransactionID() {
 		return transactionID;
 	}
