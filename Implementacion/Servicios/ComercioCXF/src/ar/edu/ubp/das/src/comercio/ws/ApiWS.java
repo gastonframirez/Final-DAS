@@ -22,10 +22,10 @@ public class ApiWS {
 	public List<OfertaResponseBean> getOfertas(@WebParam(name = "arg0") String authToken) {
 		List<OfertaResponseBean> ofertas = new LinkedList<OfertaResponseBean>();
 		List<DynaActionForm> ofertasDAF = new LinkedList<DynaActionForm>();
-		System.out.println(authToken);
+//		System.out.println(authToken);
 		if(authToken!=null) {
 			if(authToken.indexOf("Token")!=-1 && authToken.split(" ").length==2) {
-				System.out.println(authToken);
+//				System.out.println(authToken);
 				String token = authToken.split(" ")[1];
 	
 				DynaActionForm daf = new DynaActionForm();
@@ -35,7 +35,7 @@ public class ApiWS {
 				try {
 					MSOfertasDao dao = (MSOfertasDao)DaoFactory.getDao( "Ofertas", "ar.edu.ubp.das.src.comercio" );
 					if(dao.valid(daf)){
-						System.out.println("Token valido");
+//						System.out.println("Token valido");
 
 						ofertasDAF = dao.select(daf);
 						OfertaResponseBean oferta;
@@ -103,7 +103,7 @@ public class ApiWS {
 			@WebParam(name = "arg5") Integer dniCliente, @WebParam(name = "arg6") String tipoTransaccion, 
 			@WebParam(name = "arg7") String modeloProducto, @WebParam(name = "arg8") Integer idOferta, 
 			@WebParam(name = "arg9") Float precioProducto, @WebParam(name = "arg10") Float comision) {
-		
+
 		ResponseBean err = new ResponseBean();
 		
 		if(authToken!=null) {
@@ -149,17 +149,17 @@ public class ApiWS {
 								if(comision != null)
 									daf.setItem("comision", comision.toString());
 								
-								System.out.print(fechaTransaccion+"\n");
-								System.out.print(nombreCliente+"\n");
-								System.out.print(apellidoCliente+"\n");
-								System.out.print(emailCliente+"\n");
-								System.out.print(dniCliente+"\n");
-								System.out.print(tipoTransaccion+"\n");
-								System.out.print(modeloProducto+"\n");
-								System.out.print(idOferta+"\n");
-								System.out.print(precioProducto+"\n");
-								System.out.print(comision+"\n");
-								
+//								System.out.print(fechaTransaccion+"\n");
+//								System.out.print(nombreCliente+"\n");
+//								System.out.print(apellidoCliente+"\n");
+//								System.out.print(emailCliente+"\n");
+//								System.out.print(dniCliente+"\n");
+//								System.out.print(tipoTransaccion+"\n");
+//								System.out.print(modeloProducto+"\n");
+//								System.out.print(idOferta+"\n");
+//								System.out.print(precioProducto+"\n");
+//								System.out.print(comision+"\n");
+//								
 								
 								
 								

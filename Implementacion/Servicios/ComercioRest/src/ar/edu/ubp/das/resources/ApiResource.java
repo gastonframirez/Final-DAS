@@ -21,6 +21,7 @@ import com.google.gson.GsonBuilder;
 
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.db.DaoFactory;
+import ar.edu.ubp.das.src.beans.ResponseBean;
 import ar.edu.ubp.das.src.comercio.daos.MSOfertasDao;
 import ar.edu.ubp.das.src.comercio.daos.MSTransaccionDao;
 import ar.edu.ubp.das.src.comercio.forms.OfertaForm;
@@ -32,7 +33,7 @@ public class ApiResource {
 	
 	@POST
 	@Path("/transacciones")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED+";charset=utf-8")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	public Response insertTransaccion(@Context HttpHeaders headers, @FormParam("fechaTransaccion") String fechaTransaccion, @FormParam("nombreCliente") String nombreCliente, 
 			@FormParam("apellidoCliente") String apellidoCliente, @FormParam("emailCliente") String emailCliente, 
 			@FormParam("dniCliente") Integer dniCliente, @FormParam("tipoTransaccion") String tipoTransaccion, 
@@ -40,7 +41,9 @@ public class ApiResource {
 			@FormParam("precioProducto") Float precioProducto, @FormParam("comision") Float comision) {
 		
 		List<String> authToken = headers.getRequestHeader("Authorization");
-		
+		Gson gson = new GsonBuilder().create();
+		ResponseBean resp = new ResponseBean();
+		System.out.println("EN SERVICIO");
 		if(authToken!=null) {
 			if(authToken.get(0).indexOf("Token")!=-1 && authToken.get(0).split(" ").length==2) {
 				try {
@@ -56,9 +59,12 @@ public class ApiResource {
 						if(fechaTransaccion == null || nombreCliente == null || apellidoCliente == null || emailCliente == null || 
 								dniCliente == null || comision == null || (tipoTransaccion.equals("ppOffer") && idOferta == null) || 
 								(tipoTransaccion.equals("ppClick") && (modeloProducto == null || precioProducto == null))) {
-							return Response.status( Response.Status.BAD_REQUEST ).entity("No se aportaron todos los datos requeridos.").build();
+
+							resp.setStatus(String.valueOf(Response.Status.BAD_REQUEST.getStatusCode()));
+							resp.setErrorMsg("No se aportaron todos los datos requeridos.");
+							return Response.status( Response.Status.BAD_REQUEST ).entity(gson.toJson(resp)).build();
 						}else {
-							System.out.print("Obteniendo datos...\n");
+							System.out.print("Obteniendo datos de transaccion...\n");
 							
 							daf.setItem("fechaTransaccion", fechaTransaccion);
 							daf.setItem("nombreCliente", nombreCliente);
@@ -66,9 +72,10 @@ public class ApiResource {
 							daf.setItem("emailCliente", emailCliente);
 							daf.setItem("dniCliente", dniCliente.toString());
 							daf.setItem("tipoTransaccion", tipoTransaccion);
-							daf.setItem("modeloProducto", modeloProducto);	
 							
-
+							if(modeloProducto!=null) 
+								daf.setItem("modeloProducto", modeloProducto);	
+							
 							if(precioProducto!=null) {
 								daf.setItem("precioProducto", precioProducto.toString());
 							}
@@ -76,8 +83,8 @@ public class ApiResource {
 							if(idOferta != null)
 								daf.setItem("idOferta", idOferta.toString());
 							
-							if(comision != null)
-								daf.setItem("comision", comision.toString());
+							
+							daf.setItem("comision", comision.toString());
 							
 							System.out.print(fechaTransaccion+"\n");
 							System.out.print(nombreCliente+"\n");
@@ -89,30 +96,40 @@ public class ApiResource {
 							System.out.print(idOferta+"\n");
 							System.out.print(precioProducto+"\n");
 							System.out.print(comision+"\n");
-							
+		
 							
 							daoTransacciones.insert(daf);
-
-							return Response.status( Response.Status.OK ).entity("OK").build();
+							
+							resp.setStatus("200");
+							resp.setErrorMsg("OK");
+							return Response.status( Response.Status.OK ).entity(gson.toJson(resp)).build();
 							
 						}
 						
 					}else {
 						System.out.println("Token inexistente.");
-						return Response.status( Response.Status.UNAUTHORIZED ).entity("Token inexistente.").build();
+						resp.setStatus(String.valueOf(Response.Status.UNAUTHORIZED.getStatusCode()));
+						resp.setErrorMsg("Token inexistente.");
+						return Response.status( Response.Status.UNAUTHORIZED ).entity(gson.toJson(resp)).build();
 					}
 					
 					
 				} catch ( SQLException error ) {
-		    	    return Response.status( Response.Status.BAD_REQUEST ).entity( error.getMessage() ).build();
+					resp.setStatus(String.valueOf(Response.Status.BAD_REQUEST.getStatusCode()));
+					resp.setErrorMsg(error.getMessage());
+		    	    return Response.status( Response.Status.BAD_REQUEST ).entity( gson.toJson(resp) ).build();
 				}
 			}else {
 				System.out.println("Token mal formado.");
-				return Response.status( Response.Status.UNAUTHORIZED ).entity("Token mal formado.").build();
+				resp.setStatus(String.valueOf(Response.Status.UNAUTHORIZED.getStatusCode()));
+				resp.setErrorMsg("Token mal formado.");
+				return Response.status( Response.Status.UNAUTHORIZED ).entity(gson.toJson(resp)).build();
 			}
 		}else {
 			System.out.println("Token no provisto.");
-			return Response.status( Response.Status.UNAUTHORIZED ).entity("Token no provisto.").build();
+			resp.setStatus(String.valueOf(Response.Status.UNAUTHORIZED.getStatusCode()));
+			resp.setErrorMsg("Token no provisto.");
+			return Response.status( Response.Status.UNAUTHORIZED ).entity(gson.toJson(resp)).build();
 		}
 	
 	}

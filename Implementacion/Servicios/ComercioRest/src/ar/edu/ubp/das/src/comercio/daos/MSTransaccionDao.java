@@ -65,7 +65,7 @@ public class MSTransaccionDao extends DaoImpl {
     		
     		this.setParameter(10, form.getItem("comision"));
     		
-    		System.out.println("Parametros seteados. Ejecutando statement..");
+    		System.out.println("Parametros seteados. Ejecutando statement de transacciones..");
     		
     		this.getStatement().execute();		
      	
