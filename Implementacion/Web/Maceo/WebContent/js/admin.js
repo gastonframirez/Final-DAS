@@ -41,6 +41,7 @@ $(document).ready(function() {
 		var actionSuccessStr = "";
 		var actionErrorStr = "";
 		
+		console.log($("#addCategoriaForm").hasClass("editForm"));
 		if($("#addCategoriaForm").hasClass("editForm")){
 			actionSuccessStr = "successfullyEditCategory";
 			actionErrorStr = "errorEditCategory"

@@ -9,7 +9,7 @@
     $('.full-width').owlCarousel({
       loop: false,
       margin: 10,
-      items: 3,
+      items: 1,
       nav: true,
       autoplay: false,
       autoplayTimeout: 5500,

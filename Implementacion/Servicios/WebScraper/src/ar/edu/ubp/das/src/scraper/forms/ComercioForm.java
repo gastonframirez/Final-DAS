@@ -16,12 +16,6 @@ public class ComercioForm extends DynaActionForm {
 	private String cssPrecio;
 	private String cssImgURL;
 	private String cssProdURL;
-//	private Boolean cssImgURLNeedsCrawl;
-//	private Boolean cssImgURLInTitle;
-//	private Boolean cssMarcaNeedsCrawl;
-//	private Boolean cssMarcaInTitle;
-//	private Boolean cssModeloNeedsCrawl;
-//	private Boolean cssModeloInTitle;
 //	
 	private Map<String, Boolean> needsCrawl;
 	private Map<String, Boolean> searchInName;

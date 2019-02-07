@@ -20,13 +20,21 @@ $(document).ready(function() {
           type: "post",
           data: data,
           dataType: "html",
+//          error: function(hr){
+//              jUtils.hiding("resultRegistro");
+//              jUtils.showing("error", hr.responseText);
+//          },
+//          success: function(html) {
+//              jUtils.hiding("error");
+//              jUtils.showing("resultRegistro", html);
+//          }
           error: function(hr){
-              jUtils.hiding("resultRegistro");
-              jUtils.showing("error", hr.responseText);
+              jUtils.showing("error", hr.error);
+              showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop('errorRegisty'), '/Maceo', 'error');
           },
-          success: function(html) {
-              jUtils.hiding("error");
-              jUtils.showing("resultRegistro", html);
+          success: function(res) {        	 
+        	  console.log(res);
+        	  showSwal('agregado-correcto', 'success', $.i18n.prop('success'), $.i18n.prop('successfulRegistry'), '/Maceo', 'success');
           }
       });
 		
@@ -43,16 +51,24 @@ $(document).ready(function() {
           type: "post",
           data: data,
           dataType: "json",
+//          error: function(hr){
+//              jUtils.showing("error", hr.error);
+//          },
+//          success: function(res) {        	 
+//        	  if(res.redirect){
+//        		  window.location.replace(res.redirect);
+//        	  }else{
+//                  jUtils.showing("error", res.error);
+//        	  }
+//          }
           error: function(hr){
               jUtils.showing("error", hr.error);
+              showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop('errorLogin'), '', 'error');
           },
           success: function(res) {        	 
-        	  if(res.redirect){
-        		  window.location.replace(res.redirect);
-        	  }else{
-                  jUtils.showing("error", res.error);
-        	  }
+        	  window.location.href="/Maceo";
           }
+          
       });
 		
 		return false;
@@ -68,13 +84,21 @@ $(document).ready(function() {
           type: "post",
           data: data,
           dataType: "html",
+//          error: function(hr){
+//              jUtils.showing("error", hr.error);
+////              showSwal('agregado-correcto', 'danger', 'tituloo', 'textooo', './Home.do');
+//          },
+//          success: function(res) {        	 
+//        	  console.log(res);
+//        	  showSwal('agregado-correcto', 'success', 'Agregado con exito', 'Blah', './Home.do', 'success');
+//          }
           error: function(hr){
               jUtils.showing("error", hr.error);
-//              showSwal('agregado-correcto', 'danger', 'tituloo', 'textooo', './Home.do');
+              showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop('errorEditProfile'), '/Maceo', 'error');
           },
           success: function(res) {        	 
         	  console.log(res);
-        	  showSwal('agregado-correcto', 'success', 'Agregado con exito', 'Blah', './Home.do', 'success');
+        	  showSwal('agregado-correcto', 'success', $.i18n.prop('success'), $.i18n.prop('successfullyEditProfile'), '/Maceo', 'success');
           }
       });
 		
@@ -92,11 +116,11 @@ $(document).ready(function() {
           dataType: "html",
           error: function(hr){
               jUtils.showing("error", hr.error);
-//              showSwal('agregado-correcto', 'danger', 'tituloo', 'textooo', './Home.do');
+              showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop('errorEditProfile'), '/Maceo', 'error');
           },
           success: function(res) {        	 
         	  console.log(res);
-        	  showSwal('agregado-correcto', 'success', 'Agregado con exito', '', '/Maceo', 'success');
+        	  showSwal('agregado-correcto', 'success', $.i18n.prop('success'), $.i18n.prop('successfullyEditProfile'), '/Maceo', 'success');
           }
       });
 		

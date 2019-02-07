@@ -60,8 +60,8 @@ public class MSDatosCompletosComercioDao extends DaoImpl {
         	comercio.setLogoURL(result.getString("logo_url"));
         	comercio.setCantOffers(result.getInt("q_offers"));
         	comercio.setTotComisiones(result.getFloat("tot_comm"));
-        	comercio.setServiceStatus(result.getBoolean("serv_status"));
-        	comercio.setHabilitado(result.getBoolean("habilitado"));
+        	comercio.setServiceStatus((result.getString("serv_status").equals("0"))? false : true);
+        	comercio.setHabilitado((result.getInt("habilitado")==0)? false : true);
 
         	comercios.add(comercio);
         }

@@ -42,6 +42,7 @@ public class LoginAction implements Action{
 			
 		}else {
 			request.setAttribute("loginValidation", "w");
+			response.setStatus(400);
 			
 		}
 		return mapping.getForwardByName("success");

@@ -7,12 +7,12 @@
 
 
 ---------------------------------------------------------------------------------------------- Dropping tables
-drop table logs
-drop table transacciones
-drop table ofertas
-drop table productos
-drop table marcas
-drop table categorias_productos
+-- drop table logs
+-- drop table transacciones
+-- drop table ofertas
+-- drop table productos
+-- drop table marcas
+-- drop table categorias_productos
 go
 
 ----------------------------------------------------------------------------------------------
@@ -85,6 +85,7 @@ create table transacciones
     id_transaccion      integer         not null        identity (1,1),
     fecha               DATETIME        not null        default getdate(),
     id_producto         varchar(500)    ,
+    modelo_producto     varchar(500),
     id_oferta           smallint,
     tipo_transaccion    VARCHAR(100)    not null,
     nombre_cliente      VARCHAR(200)    not null,
@@ -190,9 +191,9 @@ create procedure saveTransaccion
     @emailCliente       varchar (500),
     @dniCliente         integer,
     @tipoTransaccion    varchar (100),
-    @modeloProducto     varchar (500),
-    @precioProducto     float,
-    @idOferta           integer,
+    @modeloProducto     varchar (500) = null,
+    @precioProducto     float = null,
+    @idOferta           integer = null,
     @precioComision     float
 )
 as
@@ -205,6 +206,7 @@ BEGIN
 
     insert into transacciones (fecha,
                                 id_producto,
+                                modelo_producto,
                                 id_oferta,
                                 tipo_transaccion,
                                 nombre_cliente,
@@ -215,6 +217,7 @@ BEGIN
                                 precio_comision)
     values (@fechaTransaccion,
             @idProducto,
+            @modeloProducto,
             @idOferta,
             @tipoTransaccion,
             @nombreCliente,

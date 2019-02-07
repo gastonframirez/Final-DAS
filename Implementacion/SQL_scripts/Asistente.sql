@@ -121,20 +121,20 @@ go
 
 -- insert into marcas values ('LG');
 ----------------------------------------------------------------------------------------------
+
 create table productos
 (
     id_producto         integer         not null        identity (1,1),
-    nombre              varchar (255)   not null,
-    id_marca            SMALLINT	    not null,
+    nombre_marca        varchar (255)   not null,
     modelo              varchar (255)   not null,
     id_categoria        smallint        not null,
 
     constraint pk__producto__end primary key (id_producto),
     constraint fk__productos__end foreign key (id_categoria)
         references categorias_productos (id_categoria),
-	constraint fk__productos_marca__end foreign key (id_marca)
-        references marcas (id_marca),
-	constraint uq__productos__end	unique(modelo, id_marca)
+	-- constraint fk__productos_marca__end foreign key (id_marca)
+    --     references marcas (id_marca),
+	constraint uq__productos__end	unique(modelo, nombre_marca)
     -- Checkear que no exista otro producto de la misma marca con el mismo numero de modelo en la misma categoria
 )
 go
@@ -170,6 +170,7 @@ create table producto_comercio
     fecha_actualizado   DATETIME        not null,
     image_url           varchar (500)   not null,
 	modelo_producto		varchar (500)	not null,
+	nombre				varchar (500) 	not null,
     habilitado          bit             not null        default 0,
 
     constraint pk__producto_comercio__end primary key (id_producto, id_comercio),
@@ -621,7 +622,7 @@ go
 -- end
 -- go
 
--- execute getComerciosExtra
+-- execute getComerciosExtra 
 
 drop procedure getComerciosExtra
 go
@@ -668,7 +669,7 @@ begin
 end
 go
 
-execute getComerciosExtra @idComercio = 71
+execute getComerciosExtra @idComercio = 1
 
 
 ---------------------------------------------------------------------------------------------- Obtener Datos de Comercio
@@ -1184,26 +1185,53 @@ go
 execute getProductos @categoria = 1
 go
 ---------------------------------------------------------------------------------------------- Guardar Producto
-drop procedure guardarProducto
+drop procedure saveProducto
 go
 
-create procedure guardarProducto
+create procedure saveProducto
 (
 	@nombre            	varchar(255),
     @marca            	varchar(255),
     @modelo            	varchar(255),
-    @id_categoria      	smallint,
-	@id_comercio		SMALLINT,
+	@modeloNativo		varchar(255),
+    @idCategoria      	smallint,
+	@idComercio			SMALLINT,
 	@precio				float,
-	@url_producto		varchar (500),
-	@image_url           varchar (500)
+	@urlProducto		varchar (500),
+	@imageUrl           varchar (500)
 )
 as
 BEGIN
 -- Insertar producto en productos y luego obtener el id del producto e insertar el resto de la info en producto_comercio. Poner habilitado = 1 en ambas tablas
+	IF NOT EXISTS (SELECT * FROM productos WHERE modelo = @modelo AND id_categoria = @idCategoria)
+		INSERT INTO productos (nombre_marca, modelo, id_categoria) VALUES (@marca, @modelo, @idCategoria);
+
+	declare @idProducto smallint;
+	
+	SET @idProducto = (SELECT id_producto from productos where modelo = @modelo AND nombre_marca = @marca);
+
+	IF NOT EXISTS (SELECT * FROM producto_comercio WHERE id_producto = @idProducto AND id_comercio = @idComercio)
+		INSERT INTO producto_comercio (id_producto, id_comercio, precio, url_producto, fecha_actualizado,
+										image_url, modelo_producto, nombre, habilitado)
+				VALUES (@idProducto, @idComercio, @precio, @urlProducto, getdate(), @imageUrl, @modeloNativo,
+						@nombre, 1);
+	ELSE
+		UPDATE producto_comercio SET precio = @precio, fecha_actualizado = getdate(), image_url = @imageUrl,
+									url_producto=@urlProducto, nombre = @nombre, habilitado = 1
+				WHERE id_producto = @idProducto AND id_comercio = @idComercio;
 END
 go
 
+
+-- exec saveProducto @nombre = 'Producto de prueba',
+--     @marca = 'Prueba',
+--     @modelo =  '1P2R3UEB4A',
+-- 	@modeloNativo ='1-P2R3EUB/4A',
+--     @idCategoria= 1,
+-- 	@idComercio= 1,
+-- 	@precio= 9000,
+-- 	@urlProducto= 'http://producto.com.ar',
+-- 	@imageUrl= 'https://gastonframirez.github.io/cdnDAS/logos/garbarino.svg'
 ---------------------------------------------------------------------------------------------- Update Producto
 -- Ver como hacer aca con los productos que tienen que ser deshabilitados..
 -- Quizas puedo correr el scrapper, y si el producto no aparece en ninguna página, lo deshabilito
@@ -1320,7 +1348,7 @@ create procedure listPendingTransaction
 )
 as
 BEGIN
-	SELECT tr.id_transaccion, tr.fecha, tr.pending, prod.modelo, prod.nombre as prod_name, pc.precio as precio_producto, 
+	SELECT tr.id_transaccion, tr.fecha, tr.pending, pc.modelo_producto, prod.nombre as prod_name, pc.precio as precio_producto, 
 			tt.nombre as nombre_transaction, ctt.valor as commission, offers.id_oferta_comercio,
 			us.nombre as userName, us.apellido, us.email, us.dni FROM transacciones tr
 	LEFT JOIN producto_comercio pc
@@ -1478,7 +1506,7 @@ BEGIN
 END
 go
 
--- execute monthlyTransactionsCount @date='2019-01-20', @comercioID=71
+-- execute monthlyTransactionsCount @date='2019-02-20', @comercioID=1
 
 
 ----------------------------------------------------------------------------------------------  Transacciones del mes
@@ -1606,7 +1634,7 @@ BEGIN
 	IF @comercioID IS NOT NULL AND LEN(@comercioID) > 0
 		SELECT nombre, count(*) as stats
 		FROM transacciones tr
-		JOIN tipo_transacciones tt
+		RIGHT JOIN tipo_transacciones tt
 			ON tr.id_tipo_transaccion = tt.id_tipo
 		WHERE id_comercio = @comercioID
 		AND Year(fecha) = Year(CURRENT_TIMESTAMP) 
@@ -1615,7 +1643,7 @@ BEGIN
 	ELSE
 		SELECT nombre, count(*) as stats
 		FROM transacciones tr 
-		JOIN tipo_transacciones tt
+		RIGHT JOIN tipo_transacciones tt
 			ON tr.id_tipo_transaccion = tt.id_tipo
 		WHERE Year(fecha) = Year(CURRENT_TIMESTAMP) 
 		AND Month(fecha) = Month(CURRENT_TIMESTAMP)
@@ -1623,8 +1651,18 @@ BEGIN
 END
 go
 -- execute actionsByType
--- execute actionsByType @comercioID=71
+-- execute actionsByType @comercioID=1
 
+drop procedure getTypes
+GO
+
+create procedure getTypes
+AS
+BEGIN
+	SELECT * FROM tipo_transacciones
+end
+go
+exec getTypes
 ---------------------------------------------------------------------------------------------- Cantidad de productos mostrados
 drop procedure cantProductosActivos
 go

@@ -20042,6 +20042,7 @@ code {
 /* Cards */
 .card {
   border: 0;
+  margin-bottom: 15px;
 }
 
 .card .card-body {
@@ -20058,6 +20059,7 @@ code {
   text-transform: capitalize;
   font-family: "ubuntu-medium", sans-serif;
   font-size: 1.125rem;
+  height: 2.25em;
 }
 
 .card .card-subtitle {
@@ -21613,6 +21615,10 @@ dl li {
 
 .client-home .ofertas-comercios .oferta-home:hover{
   text-decoration: none !important;
+}
+.client-home .ofertas-comercios .oferta-home img{
+	max-height: 400px;
+	max-width: 880px;
 }
 .client-home .owl-carousel.full-width .owl-nav .owl-prev {
     float: left;
