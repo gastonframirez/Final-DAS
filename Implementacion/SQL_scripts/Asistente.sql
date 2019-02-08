@@ -2,7 +2,6 @@
 use maceo
 go
 
-
 -- -------------------------------------------------------------------------------------------- Dropping tables
 -- drop table logs
 -- drop table administradores
@@ -49,6 +48,8 @@ create table idiomas_idiomas
 	traduccion			varchar (100)
 
 	constraint pk__idioma_idioma__end primary key (id_idioma, id_traduccion)
+    constraint fk__idioma_idioma__end foreign key (id_idioma)
+        references idiomas (id_idioma)
 )
 go
 insert into idiomas_idiomas values (1, 'Español')
@@ -102,24 +103,17 @@ create table categorias_idiomas
     id_idioma           SMALLINT	    not null,
     nombre             varchar (500)   not null,
     
-    constraint pk__categorias_idiomas__end primary key (id_categoria, id_idioma)
+    constraint pk__categorias_idiomas__end primary key (id_categoria, id_idioma),
+    constraint fk__idioma__end foreign key (id_idioma)
+        references idiomas (id_idioma),
+    constraint fk__cateogorias__end foreign key (id_categoria)
+        references categorias_productos (id_categoria)
 )
 go
 -- insert into categorias_idiomas values (1, 1, 'Televisores')
 -- insert into categorias_idiomas values (1, 2, 'TVs')
 -- insert into categorias_idiomas values (2, 1, 'Heladeras')
 -- insert into categorias_idiomas values (2, 2, 'Fridges')
-----------------------------------------------------------------------------------------------
-create table marcas
-(
-    id_marca        	smallint        not null        identity (1,1),
-    nombre              varchar (255)   not null 		unique,
-    
-    constraint pk__marca__end primary key (id_marca)
-)
-go
-
--- insert into marcas values ('LG');
 ----------------------------------------------------------------------------------------------
 
 create table productos
@@ -132,10 +126,7 @@ create table productos
     constraint pk__producto__end primary key (id_producto),
     constraint fk__productos__end foreign key (id_categoria)
         references categorias_productos (id_categoria),
-	-- constraint fk__productos_marca__end foreign key (id_marca)
-    --     references marcas (id_marca),
 	constraint uq__productos__end	unique(modelo, nombre_marca)
-    -- Checkear que no exista otro producto de la misma marca con el mismo numero de modelo en la misma categoria
 )
 go
 
@@ -180,13 +171,6 @@ create table producto_comercio
         references comercios (id_comercio)
 )
 go
-
--- insert into producto_comercio values (1, 1, 20999, 'https://www.compumundo.com.ar/producto/smart-tv-lg-43-full-hd-43lk5700psc/3c66884d00',
--- '2019-01-20 19:00:00', 'https://d34zlyc2cp9zm7.cloudfront.net/products/1779250837a13543779bc1f31d5c9b192475d0742a58a898f2b415923137e236.webp_1000',
--- 1)
--- insert into producto_comercio values (1, 1, 21999, 'https://www.compumundo.com.ar/producto/smart-tv-lg-43-full-hd-43lk5700psc/3c66884d00',
--- '2019-01-20 19:00:00', 'https://d34zlyc2cp9zm7.cloudfront.net/products/1779250837a13543779bc1f31d5c9b192475d0742a58a898f2b415923137e236.webp_1000',
--- 1)
 
 ----------------------------------------------------------------------------------------------
 create table tipo_transacciones
@@ -236,8 +220,8 @@ create table administradores
     constraint ch__administradores__1__end check (bloqueado in (1, 0) ) -- si, no
 )
 go
-insert into administradores values (1, 0,0)
-go
+-- insert into administradores values (1, 0,0)
+-- go
 ----------------------------------------------------------------------------------------------
 
 create table transacciones
@@ -316,21 +300,55 @@ values
     ('Jersey REST','RestClient')
 go
 ----------------------------------------------------------------------------------------------
+-- create table servicios
+-- (
+--     id_servicio         tinyint         not null    identity (1,1),
+--     id_comercio         smallint        not null,
+--     id_tecnologia       tinyint         not null,
+--     service_url_of      varchar (500)   not null,
+--     funcion_of          varchar (500)   not null,
+--     puerto_of           smallint        not null,
+-- 	service_url_trans   varchar (500)   not null,
+--     funcion_trans       varchar (500)   not null,
+--     puerto_trans        smallint        not null,
+-- 	auth_token			varchar (500)	not null
+
+--     constraint pk__servicios__end primary key (id_servicio),
+--     constraint uq__servicios__1__end unique (id_comercio),
+--     constraint fk__servicios__1__end foreign key (id_comercio)
+--         references comercios (id_comercio),
+--     constraint fk__servicios__2__end foreign key (id_tecnologia)
+--         references tecnologias (id_tecnologia)
+		
+-- )
+-- go
+create table tipo_servicios
+(
+    id_tipo_servicio         tinyint         not null    identity (1,1),
+    nombre                   varchar(100)    not null
+
+    constraint pk__tipo_servicios__end primary key (id_tipo_servicio)
+)
+go
+
+insert into tipo_servicios values ('ofertas')
+insert into tipo_servicios values ('transacciones')
+
 create table servicios
 (
     id_servicio         tinyint         not null    identity (1,1),
     id_comercio         smallint        not null,
+    id_tipo_servicio    tinyint         not null,
     id_tecnologia       tinyint         not null,
-    service_url_of      varchar (500)   not null,
-    funcion_of          varchar (500)   not null,
-    puerto_of           smallint        not null,
-	service_url_trans   varchar (500)   not null,
-    funcion_trans       varchar (500)   not null,
-    puerto_trans        smallint        not null,
+    service_url         varchar (500)   not null,
+    funcion             varchar (500)   not null,
+    puerto              smallint        not null,
 	auth_token			varchar (500)	not null
 
     constraint pk__servicios__end primary key (id_servicio),
-    constraint uq__servicios__1__end unique (id_comercio),
+    constraint uq__servicios__1__end unique (id_comercio, id_tipo_servicio),
+    constraint fk__servicios_tipos__end foreign key (id_tipo_servicio)
+        references tipo_servicios (id_tipo_servicio),
     constraint fk__servicios__1__end foreign key (id_comercio)
         references comercios (id_comercio),
     constraint fk__servicios__2__end foreign key (id_tecnologia)
@@ -357,7 +375,11 @@ create table scraper_categoria
 	id_categoria		smallint 		not null,
 	url_scrapping		varchar (500) 	not null,
 
-	constraint pk__scraper_categoria__end PRIMARY key (id_comercio, id_categoria)
+	constraint pk__scraper_categoria__end PRIMARY key (id_comercio, id_categoria),
+    constraint fk__comercio__end foreign key (id_comercio)
+        references comercios (id_comercio),
+    constraint fk__categoria__end foreign key (id_categoria)
+        references categorias_productos (id_categoria)
 )
 go
 
@@ -372,6 +394,8 @@ create table scraper_config
 	needs_crawl			BIT				not null		default 0,
 
 	constraint pk__scraper_config__end PRIMARY key (id_scrap_config, id_comercio),
+    constraint fk__comercio_scraper__end foreign key (id_comercio)
+        references comercios (id_comercio)
 )
 go
 
@@ -672,18 +696,15 @@ create procedure getDatosComercio
 as
 begin
     SELECT co.id_comercio, razon_social, cuit, direccion, nombre_publico, telefono, habilitado, 
-		logo_url, ua.fecha_productos, ua.fecha_ofertas, id_tecnologia, service_url_of, funcion_of,
-		puerto_of, service_url_trans, funcion_trans, puerto_trans, auth_token, cp
+		logo_url, ua.fecha_productos, ua.fecha_ofertas, cp
 	FROM comercios co
-	JOIN servicios serv
-		ON serv.id_comercio = co.id_comercio
 	LEFT JOIN ult_actualizacion ua
 		ON ua.id_comercio = co.id_comercio
 	WHERE co.id_comercio = @idComercio
 end
 go
 
-execute getDatosComercio @idComercio=71
+execute getDatosComercio @idComercio=4
 
 ---------------------------------------------------------------------------------------------- Obtener Datos de Scraping Comercio
 
@@ -752,6 +773,38 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Guardar Comercio
+-- drop procedure saveServicesComercio
+-- go
+
+-- create procedure saveServicesComercio
+-- (
+-- 	@idComercio integer,
+-- 	@idTecnologia integer,
+-- 	@baseURLOffers varchar (500),
+-- 	@portOffers integer,
+-- 	@funcionOffers varchar (500),
+	
+-- 	@baseURLTransacciones varchar (500),
+-- 	@portTransacciones integer,
+-- 	@funcionTransacciones varchar (500),
+-- 	@authToken		varchar(500)
+-- )
+-- AS
+-- begin
+-- --  id_servicio         tinyint         not null    identity (1,1),
+-- --     id_comercio         smallint        not null,
+-- --     id_tipo_servicio    tinyint         not null,
+-- --     id_tecnologia       tinyint         not null,
+-- --     service_url         varchar (500)   not null,
+-- --     funcion             varchar (500)   not null,
+-- --     puerto              smallint        not null,
+-- -- 	auth_token			varchar (500)	not null
+-- 	INSERT INTO servicios (id_comercio, id_tipo_servicio, id_tecnologia, service_url_of, puerto_of, funcion_of,
+-- 							service_url_trans, puerto_trans, funcion_trans, auth_token)
+-- 	VALUES (@idComercio, (SELECT@idTecnologia, @baseURLOffers, @portOffers, @funcionOffers,
+-- 	 @baseURLTransacciones, @portTransacciones, @funcionTransacciones, @authToken)
+-- end
+-- GO
 drop procedure saveServicesComercio
 go
 
@@ -759,21 +812,18 @@ create procedure saveServicesComercio
 (
 	@idComercio integer,
 	@idTecnologia integer,
-	@baseURLOffers varchar (500),
-	@portOffers integer,
-	@funcionOffers varchar (500),
-	
-	@baseURLTransacciones varchar (500),
-	@portTransacciones integer,
-	@funcionTransacciones varchar (500),
-	@authToken		varchar(500)
+	@baseURL varchar (500),
+	@port integer,
+	@funcion varchar (500),
+	@tipoServicio varchar (100),
+	@authToken		varchar(500)	
 )
 AS
 begin
-	INSERT INTO servicios (id_comercio, id_tecnologia, service_url_of, puerto_of, funcion_of,
-							service_url_trans, puerto_trans, funcion_trans, auth_token)
-	VALUES (@idComercio, @idTecnologia, @baseURLOffers, @portOffers, @funcionOffers,
-	 @baseURLTransacciones, @portTransacciones, @funcionTransacciones, @authToken)
+	declare @idTipo tinyint = (SELECT id_tipo_servicio from tipo_servicios WHERE nombre = @tipoServicio);
+
+	INSERT INTO servicios (id_comercio, id_tipo_servicio, id_tecnologia, service_url, puerto, funcion, auth_token)
+	VALUES (@idComercio, @idTipo, @idTecnologia, @baseURL, @port, @funcion, @authToken)
 end
 GO
 ---------------------------------------------------------------------------------------------- Guardar Comercio
@@ -894,6 +944,31 @@ begin
 	WHERE id_comercio = @idComercio 
 end
 GO
+
+drop procedure updateServicesComercio
+go
+
+create procedure updateServicesComercio
+(
+	@idComercio integer,
+	@idTecnologia integer,
+	@baseURL varchar (500),
+	@port integer,
+	@funcion varchar (500),
+	@tipoServicio varchar (100),
+	@authToken		varchar(500)	
+)
+AS
+begin
+	declare @idTipo tinyint = (SELECT id_tipo_servicio from tipo_servicios WHERE nombre = @tipoServicio);
+
+	UPDATE servicios SET id_tecnologia = @idTecnologia, service_url = @baseURL, puerto = @port,
+		funcion = @funcion, auth_token = @authToken
+	WHERE id_tipo_servicio = @idTipo
+	AND id_comercio = @idComercio
+end
+GO
+
 ---------------------------------------------------------------------------------------------- Editar Comercio
 drop procedure updateComisionesComercio
 go
@@ -1347,7 +1422,7 @@ begin
 end
 go
 
----------------------------------------------------------------------------------------------- Save Ofertas
+---------------------------------------------------------------------------------------------- Disable Ofertas
 drop procedure disableOfertas
 go
 
@@ -1360,16 +1435,37 @@ begin
 	IF @idComercio IS NOT NULL AND LEN(@idComercio) > 0
 		UPDATE ofertas SET habilitada = 0
 		WHERE id_comercio = @idComercio
-		AND DATEDIFF(minute,getdate(),actualizada) >= 60
+		AND DATEDIFF(minute,actualizada, getdate()) >= 60
 	ELSE
 		UPDATE ofertas SET habilitada = 0
 		WHERE DATEDIFF(minute,actualizada, getdate()) >= 60
 end
 go
 
-execute disableOfertas
+-- execute disableOfertas
+-- go
+
+---------------------------------------------------------------------------------------------- Disable Productos
+drop procedure disableProducts
 go
 
+create or alter procedure disableProducts
+(
+	@idComercio 		integer = null
+)
+as
+begin
+	IF @idComercio IS NOT NULL AND LEN(@idComercio) > 0
+		UPDATE producto_comercio SET habilitado = 0
+		WHERE id_comercio = @idComercio
+		AND DATEDIFF(hour,fecha_actualizado,getdate()) >= 12
+	ELSE
+		UPDATE producto_comercio SET habilitado = 0
+		WHERE DATEDIFF(hour,fecha_actualizado,getdate()) >= 12
+end
+go
+-- execute disableProducts
+-- go
 
 ---------------------------------------------------------------------------------------------- Save Transaccion
 drop procedure saveTransaccion
@@ -1919,16 +2015,32 @@ execute getComisionesTotal @mes=@dt, @comercioID=4
 drop procedure getServices
 GO
 
-create procedure getServices
+create or alter procedure getServices
 (
 	@idComercio		integer
 )
 AS
 BEGIN
-	SELECT * FROM servicios serv
+	SELECT id_servicio, id_comercio, tech.id_tecnologia, tech.javaClass, 
+	tech.nombre as tech_name, auth_token, puerto, funcion, service_url,
+	ts.nombre as tipo_nombre FROM servicios serv
+	JOIN tipo_servicios ts
+		ON ts.id_tipo_servicio = serv.id_tipo_servicio
 	JOIN tecnologias tech
 		ON serv.id_tecnologia = tech.id_tecnologia
 	WHERE id_comercio = @idComercio
 END
 
 execute getServices @idComercio=1
+
+---------------------------------------------------------------------------------------------- Obtener tipos servicios
+drop procedure getServicesTypes
+GO
+
+create or alter procedure getServicesTypes
+AS
+BEGIN
+	SELECT * FROM tipo_servicios
+END
+
+exec getServicesTypes
