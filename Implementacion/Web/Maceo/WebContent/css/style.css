@@ -21795,3 +21795,45 @@ dl li {
     color: #777;
     font-style: italic;
 }
+.box-redirect{
+	height: 100px;
+	display: inline-flex;
+	align-items: center;
+}
+.box-redirect img{
+	max-width: 100%;
+}
+
+.prodHeader{
+	font-size: 0.8em;
+    text-transform: uppercase;
+    margin: 0;
+}
+.prodName{
+	font-size: 1.5em;
+	font-weight: 300;
+}
+.prodPrice{
+	font-size: 2em;
+    font-weight: 600;
+    margin: 20px;
+}
+
+.backBtn{
+	position: absolute;
+    top: 15px;
+    left: 15px;
+    color: #FFFFFF;
+}
+.backBtn:hover{
+	text-decoration: underline;
+	color: #FFFFFF;
+}
+.switcher{
+	display: inline-block !important;
+}
+.habTitle{
+	display: inline-block;
+    vertical-align: 14px;
+    margin-left: 5px;
+}

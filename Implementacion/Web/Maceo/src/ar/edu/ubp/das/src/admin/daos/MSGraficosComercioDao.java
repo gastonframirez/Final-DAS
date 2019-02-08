@@ -67,8 +67,8 @@ public class MSGraficosComercioDao extends DaoImpl {
     		Float totOff = (float) 0.0;
     		
             while(result.next()) {
-            	System.out.println(result.getString("year_transaction"));
-            	System.out.println(result.getString("month_transaction"));
+//            	System.out.println(result.getString("year_transaction"));
+//            	System.out.println(result.getString("month_transaction"));
             	comisionMes = new HistoricoComisionForm();
             	if(result.getInt("tipo")==1) {
             		totProd+=result.getFloat("month_total");
@@ -84,7 +84,7 @@ public class MSGraficosComercioDao extends DaoImpl {
             comisionMes.setValuesOffer(valuesOffer);
             comisionMes.setValuesProduct(valuesProduct);
             comisionMes.setValuesTotal(valuesTotal);
-            System.out.println(valuesTotal);
+//            System.out.println(valuesTotal);
             datosGrafico.add(comisionMes);
     	}
 		this.disconnect();

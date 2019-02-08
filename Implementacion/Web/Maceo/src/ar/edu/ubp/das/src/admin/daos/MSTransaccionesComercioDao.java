@@ -66,6 +66,7 @@ public class MSTransaccionesComercioDao extends DaoImpl {
 	        	transaccion.setProdNombre(result.getString("nombre_prod"));
 	        	transaccion.setProdPrecio(result.getFloat("precio"));
 	        	transacciones.add(transaccion);
+	        	System.out.println(transaccion.getTransNombre());
 	        }
 
 		}

@@ -306,6 +306,28 @@ public class MSComercioDao extends DaoImpl {
 	@Override
 	public void delete(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
+		try {
+        	this.connectWAutoFalse();
+        	
+        	
+//        	Guardo el comercio
+    		this.setProcedure("dbo.toggleComercio(?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+    		Integer idComercio = Integer.valueOf(form.getItem("idComercio"));
+    		Integer habilitado = Integer.valueOf(form.getItem("habilitado"));
+    		
+    		this.setParameter(1, idComercio);
+    		this.setParameter(2, habilitado);
+    		
+    		this.getStatement().execute();		
+
+			this.commit();
+		} catch (SQLException e) {
+			this.rollback();
+			throw e;
+		}finally {
+			this.autoCommit(true);
+			this.disconnect();
+		}
 
 	}
 

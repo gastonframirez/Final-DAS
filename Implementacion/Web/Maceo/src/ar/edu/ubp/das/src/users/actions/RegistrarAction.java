@@ -70,9 +70,20 @@ public class RegistrarAction implements Action{
 			
 			
 		} catch (SQLException ex) {
-			throw ex;
+//			throw ex;
+			//VER COMO RESOLVER EL TEMA DE DUPLICATE KEYS PARA DAR MENSAJES CORRECTOS
+			ex.printStackTrace();
 		}
 		
+		Dao daoUserVal = DaoFactory.getDao( "User", "users" );
+
+		//Chequear que vengan todos los parametros
+		form.setItem("nombreUsuario", request.getParameter("username"));
+		form.setItem("password", request.getParameter("password1"));
+	
+		UserForm user = (UserForm) daoUserVal.valid(form);
+		request.getSession(true).setAttribute("userData", user);
+
 		return mapping.getForwardByName("success");
 	}
 

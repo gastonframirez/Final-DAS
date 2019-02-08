@@ -4,23 +4,15 @@ import java.util.LinkedList;
 
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 
-public class ProductoForm extends DynaActionForm {
-	private Integer idProducto;
-	private String modelo;
+public class RedirectProductoForm extends DynaActionForm {
+	private String modelo; //Modelo
 	private String nombre;
-	private LinkedList<ProductoForm> productosAlternativos;
 	private String imagenURL;
 	private Float precio;
 	private String productoURL;
 	private String logoComercio;
-	private Integer idComercio;
+	private String comercioNombre;
 	
-	public Integer getIdProducto() {
-		return idProducto;
-	}
-	public void setIdProducto(Integer idProducto) {
-		this.idProducto = idProducto;
-	}
 	
 	public String getModelo() {
 		return modelo;
@@ -35,12 +27,6 @@ public class ProductoForm extends DynaActionForm {
 		this.nombre = nombre;
 	}
 
-	public LinkedList<ProductoForm> getProductosAlternativos() {
-		return productosAlternativos;
-	}
-	public void setProductosAlternativos(LinkedList<ProductoForm> productosAlternativos) {
-		this.productosAlternativos = productosAlternativos;
-	}
 	public String getImagenURL() {
 		return imagenURL;
 	}
@@ -65,14 +51,11 @@ public class ProductoForm extends DynaActionForm {
 	public void setLogoComercio(String logoComercio) {
 		this.logoComercio = logoComercio;
 	}
-	public Integer getIdComercio() {
-		return idComercio;
+	public String getComercioNombre() {
+		return comercioNombre;
 	}
-	public void setIdComercio(Integer idComercio) {
-		this.idComercio = idComercio;
+	public void setComercioNombre(String comercioNombre) {
+		this.comercioNombre = comercioNombre;
 	}
-	
-	
-	
 	
 }

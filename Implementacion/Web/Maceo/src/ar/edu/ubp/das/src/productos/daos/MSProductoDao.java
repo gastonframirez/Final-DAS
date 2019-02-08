@@ -63,25 +63,28 @@ public class MSProductoDao extends DaoImpl {
     	
         while(result.getRow() > 0) {
         	producto = new ProductoForm();
-        	producto.setIdProducto(result.getString("modelo"));
+        	producto.setIdProducto(result.getInt("id_producto"));
+        	producto.setModelo(result.getString("modelo"));
         	producto.setNombre(result.getString("nombre"));
         	producto.setImagenURL(result.getString("image_url"));
         	producto.setPrecio(result.getFloat("precio"));
         	producto.setProductoURL(result.getString("url_producto"));
         	producto.setLogoComercio(result.getString("logo_url"));
-        	
+        	producto.setIdComercio(result.getInt("id_comercio"));
         	productosAlternativos = new LinkedList<ProductoForm>();
 
         	modelo = result.getString("modelo");
         	result.next();
         	while(result.getRow() > 0 && modelo.equals(result.getString("modelo"))) {
         		productoAux = new ProductoForm();
-        		productoAux.setIdProducto(result.getString("modelo"));
+        		productoAux.setIdProducto(result.getInt("id_producto"));
+        		productoAux.setModelo(result.getString("modelo"));
         		productoAux.setNombre(result.getString("nombre"));
         		productoAux.setImagenURL(result.getString("image_url"));
         		productoAux.setPrecio(result.getFloat("precio"));
         		productoAux.setProductoURL(result.getString("url_producto"));
         		productoAux.setLogoComercio(result.getString("logo_url"));
+        		productoAux.setIdComercio(result.getInt("id_comercio"));
         		
             	productosAlternativos.add(productoAux);
             	

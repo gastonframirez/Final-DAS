@@ -20,21 +20,13 @@ $(document).ready(function() {
           type: "post",
           data: data,
           dataType: "html",
-//          error: function(hr){
-//              jUtils.hiding("resultRegistro");
-//              jUtils.showing("error", hr.responseText);
-//          },
-//          success: function(html) {
-//              jUtils.hiding("error");
-//              jUtils.showing("resultRegistro", html);
-//          }
           error: function(hr){
               jUtils.showing("error", hr.error);
-              showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop('errorRegisty'), '/Maceo', 'error');
+              showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop('errorRegisty'), '/Maceo', 'error');
           },
           success: function(res) {        	 
         	  console.log(res);
-        	  showSwal('agregado-correcto', 'success', $.i18n.prop('success'), $.i18n.prop('successfulRegistry'), '/Maceo', 'success');
+        	  showSwal('redirect', 'success', $.i18n.prop('success'), $.i18n.prop('successfulRegistry'), '/Maceo', 'success');
           }
       });
 		

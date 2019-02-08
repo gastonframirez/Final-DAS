@@ -839,6 +839,22 @@ begin
 	VALUES (@idComercio, @name, @cssClass, @searchInName, @needsCrawl)
 end
 go
+---------------------------------------------------------------------------------------------- Toggle Categoria
+drop procedure toggleComercio
+go
+create procedure toggleComercio
+
+(
+	@idComercio		integer,
+	@habilitado			BIT
+)
+AS
+BEGIN
+	UPDATE comercios set habilitado = @habilitado
+	WHERE id_comercio =@idComercio
+end
+go
+
 ---------------------------------------------------------------------------------------------- Editar Comercio
 drop procedure updateComercio
 go
@@ -1170,21 +1186,42 @@ create procedure getProductos
 )
 as
 begin
-    SELECT prod.id_producto, nombre, modelo, precio, url_producto, fecha_actualizado, image_url, logo_url
+    SELECT prod.id_producto, nombre, modelo, precio, url_producto, fecha_actualizado, image_url, logo_url, prodc.id_comercio
 	FROM productos prod
 	JOIN producto_comercio prodc
 		ON prodc.id_producto = prod.id_producto
 	JOIN comercios co
 		ON prodc.id_comercio = co.id_comercio
-	WHERE prodc.habilitado = 1
+	WHERE co.habilitado = 1
 	AND prod.id_categoria = @categoria
-	ORDER BY prodc.precio, prod.modelo
+	ORDER BY prod.id_producto, prodc.precio, prod.modelo
 
 end
 go
 execute getProductos @categoria = 1
 go
+---------------------------------------------------------------------------------------------- Obtener Producto
+drop procedure getProducto
+go
+
+create procedure getProducto
+(
+	@idProducto integer,
+	@idComercio	integer
+)
+as
+begin
+	SELECT pc.modelo_producto, pc.nombre, image_url, precio, url_producto, 
+			logo_url, co.nombre_publico FROM producto_comercio pc
+	JOIN comercios co
+		ON pc.id_comercio = co.id_comercio
+	WHERE id_producto = @idProducto
+		AND pc.id_comercio = @idComercio
+end
+
+exec getProducto @idProducto=2, @idComercio=4
 ---------------------------------------------------------------------------------------------- Guardar Producto
+
 drop procedure saveProducto
 go
 
@@ -1254,6 +1291,28 @@ go
 
 -- EXECUTE getOfertas
 -- go
+---------------------------------------------------------------------------------------------- Obtener Oferta
+drop procedure getOferta
+go
+
+create procedure getOferta
+(
+	@idOferta integer,
+	@idComercio	integer
+)
+as
+begin
+    SELECT nombre_publico, logo_url from ofertas offers
+	JOIN comercios co
+		ON offers.id_comercio = co.id_comercio
+	WHERE offers.id_comercio = @idComercio
+		AND offers.id_oferta = @idOferta
+		
+end
+go
+
+-- EXECUTE getOferta @idOferta=2, @idComercio=1
+-- go
 ---------------------------------------------------------------------------------------------- Save Ofertas
 drop procedure saveOferta
 go
@@ -1310,7 +1369,7 @@ go
 create procedure saveTransaccion
 (
     @fechaTransaccion   	varchar(100),
-    @idProducto      		integer,
+    @idProducto      		integer = null,
     @idTipoTransaccion    	SMALLINT,
     @idComercio       		SMALLINT,
     @idUsuario         		INTEGER,
@@ -1521,40 +1580,40 @@ create procedure monthlyTransactionsList
 AS
 BEGIN
 	IF @comercioID IS NOT NULL AND LEN(@comercioID) > 0
-		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, prod.nombre as nombre_prod, pc.precio
+		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
 			FROM transacciones tr
 		JOIN tipo_transacciones tt
 			ON tt.id_tipo = tr.id_tipo_transaccion
 		JOIN comisiones_tipo_transacciones ctt
 			ON tr.id_tipo_transaccion = ctt.id_tipo
 			AND tr.id_comercio = ctt.id_comercio
-		JOIN producto_comercio pc
+		LEFT JOIN producto_comercio pc
 			ON pc.id_producto = tr.id_producto
 			AND pc.id_comercio = tr.id_comercio
-		JOIN productos prod
+		LEFT JOIN productos prod
 			ON tr.id_producto = prod.id_producto
 		WHERE Year(fecha) = Year(@date) 
     		AND Month(fecha) = Month(@date)
 			AND tr.id_comercio = @comercioID
 	ELSE
-		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, prod.nombre as nombre_prod, pc.precio
+		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
 			FROM transacciones tr
 		JOIN tipo_transacciones tt
 			ON tt.id_tipo = tr.id_tipo_transaccion
 		JOIN comisiones_tipo_transacciones ctt
 			ON tr.id_tipo_transaccion = ctt.id_tipo
 			AND tr.id_comercio = ctt.id_comercio
-		JOIN producto_comercio pc
+		LEFT JOIN producto_comercio pc
 			ON pc.id_producto = tr.id_producto
 			AND pc.id_comercio = tr.id_comercio
-		JOIN productos prod
+		LEFT JOIN productos prod
 			ON tr.id_producto = prod.id_producto
 		WHERE Year(fecha) = Year(@date) 
 			AND Month(fecha) = Month(@date)
 END
 go
 
--- execute monthlyTransactionsList @date='2019-02-20', @comercioID=71
+-- execute monthlyTransactionsList @date='2019-02-20', @comercioID=1
 
 ----------------------------------------------------------------------------------------------  Transacciones historicas
 drop procedure historicalTransactionsList
@@ -1567,36 +1626,36 @@ create procedure historicalTransactionsList
 AS
 BEGIN
 	IF @comercioID IS NOT NULL AND LEN(@comercioID) > 0
-		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, prod.nombre as nombre_prod, pc.precio
+		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
 			FROM transacciones tr
 		JOIN tipo_transacciones tt
 			ON tt.id_tipo = tr.id_tipo_transaccion
 		JOIN comisiones_tipo_transacciones ctt
 			ON tr.id_tipo_transaccion = ctt.id_tipo
 			AND tr.id_comercio = ctt.id_comercio
-		JOIN producto_comercio pc
+		LEFT JOIN producto_comercio pc
 			ON pc.id_producto = tr.id_producto
 			AND pc.id_comercio = tr.id_comercio
-		JOIN productos prod
+		LEFT JOIN productos prod
 			ON tr.id_producto = prod.id_producto
 		WHERE tr.id_comercio = @comercioID
 	ELSE
-		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, prod.nombre as nombre_prod, pc.precio
+		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
 			FROM transacciones tr
 		JOIN tipo_transacciones tt
 			ON tt.id_tipo = tr.id_tipo_transaccion
 		JOIN comisiones_tipo_transacciones ctt
 			ON tr.id_tipo_transaccion = ctt.id_tipo
 			AND tr.id_comercio = ctt.id_comercio
-		JOIN producto_comercio pc
+		LEFT JOIN producto_comercio pc
 			ON pc.id_producto = tr.id_producto
 			AND pc.id_comercio = tr.id_comercio
-		JOIN productos prod
+		LEFT JOIN productos prod
 			ON tr.id_producto = prod.id_producto
 END
 go
 
--- execute historicalTransactionsList @comercioID=71
+-- execute historicalTransactionsList @comercioID=1
 ---------------------------------------------------------------------------------------------- Nuevos Users del mes
 drop procedure activeOffers
 go
@@ -1831,12 +1890,13 @@ begin
 			AND ctt.id_tipo=tr.id_tipo_transaccion
 		WHERE MONTH(fecha) = MONTH(@mes)
 		AND YEAR(fecha) = YEAR(@mes)
+		AND tr.id_comercio = @comercioID
 end
 go
 
 declare @dt as datetime = datetimefromparts(2019,2,1,17,0,0,0)
 
-execute getComisionesTotal @mes=@dt, @comercioID=71
+execute getComisionesTotal @mes=@dt, @comercioID=1
 
 ---------------------------------------------------------------------------------------------- Obtener servicios
 drop procedure getServices

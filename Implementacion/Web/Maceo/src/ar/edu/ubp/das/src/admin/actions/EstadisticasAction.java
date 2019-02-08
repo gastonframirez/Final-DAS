@@ -20,22 +20,27 @@ public class EstadisticasAction implements Action{
 		// TODO Auto-generated method stub
 		
 		if(request.getParameter("idComercio")!=null) {
-			form.setItem("idComercio", request.getParameter("idComercio"));
-			
-			Dao daoComercios = DaoFactory.getDao( "EstadisticasComercio", "admin" );
-			request.setAttribute("estadisticas", daoComercios.select(form));
+			try {
+				form.setItem("idComercio", request.getParameter("idComercio"));
+				
+				Dao daoComercios = DaoFactory.getDao( "EstadisticasComercio", "admin" );
+				request.setAttribute("estadisticas", daoComercios.select(form));
 
-			Dao daoTransacciones = DaoFactory.getDao( "TransaccionesComercio", "admin" );
-			request.setAttribute("transacciones", daoTransacciones.select(form));
+				Dao daoTransacciones = DaoFactory.getDao( "TransaccionesComercio", "admin" );
+				request.setAttribute("transacciones", daoTransacciones.select(form));
+				
+				Dao daoTransaccionesHistoricas = DaoFactory.getDao( "TransaccionesHistoricasComercio", "admin" );
+				request.setAttribute("transaccionesHistoricas", daoTransaccionesHistoricas.select(form));
+				
+				Dao daoGraficos = DaoFactory.getDao( "GraficosDashboard", "admin" );
+				request.setAttribute("graficos", daoGraficos.select(form));
+				
+				Dao daoGraficosComercio = DaoFactory.getDao( "GraficosComercio", "admin" );
+				request.setAttribute("graficosC", daoGraficosComercio.select(form));
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
 			
-			Dao daoTransaccionesHistoricas = DaoFactory.getDao( "TransaccionesHistoricasComercio", "admin" );
-			request.setAttribute("transaccionesHistoricas", daoTransaccionesHistoricas.select(form));
-			
-			Dao daoGraficos = DaoFactory.getDao( "GraficosDashboard", "admin" );
-			request.setAttribute("graficos", daoGraficos.select(form));
-			
-			Dao daoGraficosComercio = DaoFactory.getDao( "GraficosComercio", "admin" );
-			request.setAttribute("graficosC", daoGraficosComercio.select(form));
 			
 		}
 

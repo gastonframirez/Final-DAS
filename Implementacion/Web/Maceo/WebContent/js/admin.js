@@ -1,6 +1,33 @@
 $(document).ready(function() {
 
-	 
+	$("#enabled").on("change", function(e){
+		
+		var enable = "";
+		
+		if($(this).is(":checked")){
+			enable = "enabled";
+		}else{
+			enable = "disabled";
+		}
+		
+		$.ajax({
+	          url: "/Maceo/admin/ToggleComercio.do",
+	          type: "post",
+	          data: $("#addComercioForm").serialize(),
+	          dataType: "html",
+	          error: function(hr){
+	              jUtils.showing("error", hr.error);
+	              showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop("errorTogglingStore1") + " " + $.i18n.prop(enable) + 
+	            		  " " + $.i18n.prop("errorTogglingStore2") , '', 'error');
+	          },
+	          success: function(res) {        	 
+	        	  console.log(res);
+	        	  showSwal('error', 'success', $.i18n.prop('success'),  $.i18n.prop("successTogglingStore1") + " " + $.i18n.prop(enable) + 
+	            		  " " + $.i18n.prop("successTogglingStore2"), '', 'success');
+	          }
+	      });
+	});
+	
 	 $("#addComercioForm").on("submit", function(e){
 		e.preventDefault();
 		
