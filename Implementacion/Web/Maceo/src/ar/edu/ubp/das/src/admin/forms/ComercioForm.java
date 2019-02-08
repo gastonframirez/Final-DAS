@@ -23,14 +23,10 @@ public class ComercioForm extends DynaActionForm {
 	
 	private String authToken;
 
-	private String baseURLOffers;
-	private Integer portOffers;
-	private	String funcionOffers;
-	
-	private String baseURLTransacciones;
-	private Integer portTransacciones;
-	private	String funcionTransacciones;
-	
+	private Map<String, String>  baseURL;
+	private Map<String, String>  port;
+	private	Map<String, String>  funcion;
+
 	private Float offerComm;
 	private Float productComm;
 	
@@ -146,42 +142,6 @@ public class ComercioForm extends DynaActionForm {
 	public void setLogoURL(String logoURL) {
 		this.logoURL = logoURL;
 	}
-	public String getBaseURLOffers() {
-		return baseURLOffers;
-	}
-	public void setBaseURLOffers(String baseURLOffers) {
-		this.baseURLOffers = baseURLOffers;
-	}
-	public Integer getPortOffers() {
-		return portOffers;
-	}
-	public void setPortOffers(Integer portOffers) {
-		this.portOffers = portOffers;
-	}
-	public String getFuncionOffers() {
-		return funcionOffers;
-	}
-	public void setFuncionOffers(String funcionOffers) {
-		this.funcionOffers = funcionOffers;
-	}
-	public String getBaseURLTransacciones() {
-		return baseURLTransacciones;
-	}
-	public void setBaseURLTransacciones(String baseURLTransacciones) {
-		this.baseURLTransacciones = baseURLTransacciones;
-	}
-	public Integer getPortTransacciones() {
-		return portTransacciones;
-	}
-	public void setPortTransacciones(Integer portTransacciones) {
-		this.portTransacciones = portTransacciones;
-	}
-	public String getFuncionTransacciones() {
-		return funcionTransacciones;
-	}
-	public void setFuncionTransacciones(String funcionTransacciones) {
-		this.funcionTransacciones = funcionTransacciones;
-	}
 	public Float getOfferComm() {
 		return offerComm;
 	}
@@ -259,6 +219,24 @@ public class ComercioForm extends DynaActionForm {
 	}
 	public void setAuthToken(String authToken) {
 		this.authToken = authToken;
+	}
+	public Map<String, String> getBaseURL() {
+		return baseURL;
+	}
+	public void setBaseURL(Map<String, String> baseURL) {
+		this.baseURL = baseURL;
+	}
+	public Map<String, String> getPort() {
+		return port;
+	}
+	public void setPort(Map<String, String> port) {
+		this.port = port;
+	}
+	public Map<String, String> getFuncion() {
+		return funcion;
+	}
+	public void setFuncion(Map<String, String> funcion) {
+		this.funcion = funcion;
 	}
 
 	

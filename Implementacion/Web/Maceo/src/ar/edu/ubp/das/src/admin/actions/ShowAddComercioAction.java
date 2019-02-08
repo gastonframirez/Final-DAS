@@ -25,6 +25,9 @@ public class ShowAddComercioAction implements Action{
 		Dao daoTecnologias = DaoFactory.getDao( "Tecnologia", "admin" );
 		request.setAttribute("tecnologias", daoTecnologias.select(form));
 		
+		Dao daoServicios= DaoFactory.getDao( "Servicios", "admin" );
+		request.setAttribute("servicios", daoServicios.select(form));
+		
 		if(request.getParameter("idComercio")!=null) {
 			Dao daoComercio = DaoFactory.getDao( "Comercio", "admin" );
 			

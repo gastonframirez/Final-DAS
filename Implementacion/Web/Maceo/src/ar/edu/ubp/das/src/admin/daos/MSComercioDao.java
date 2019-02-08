@@ -29,23 +29,15 @@ public class MSComercioDao extends DaoImpl {
 		try {
         	this.connectWAutoFalse();
 
-//        	Guardo el comercio
     		this.setProcedure("dbo.saveComercio(?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
     		this.setParameter(1, form.getItem("razonSocial"));
-//    		System.out.println(form.getItem("razonSocial"));
     		this.setParameter(2, form.getItem("CUIT"));
-//    		System.out.println(form.getItem("CUIT"));
     		this.setParameter(3, form.getItem("address"));
-//    		System.out.println(form.getItem("address"));
     		this.setParameter(4, form.getItem("publicName"));  	
-//    		System.out.println(form.getItem("publicName"));
     		this.setParameter(5, form.getItem("phone"));
-//    		System.out.println(form.getItem("phone"));
     		this.setParameter(6, form.getItem("logoURL"));
-//    		System.out.println(form.getItem("logoURL"));
     		this.setParameter(7, Integer.parseInt(form.getItem("zipCode")));
-//    		System.out.println(form.getItem("logoURL"));
     		
     		this.getStatement().execute();		
      	
@@ -68,22 +60,38 @@ public class MSComercioDao extends DaoImpl {
 			if(idComercio>0) {
 				this.autoCommit(false);
 				// Ahora guardo el servicio
-				this.setProcedure("dbo.saveServicesComercio(?,?,?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
-				this.setParameter(1, idComercio);
-	    		this.setParameter(2, Integer.parseInt(form.getItem("techID")));
-	    		this.setParameter(3, form.getItem("baseURLOffers"));
-	    		this.setParameter(4, Integer.parseInt(form.getItem("portOffers")));
-	    		this.setParameter(5, form.getItem("functionOffers"));  	
-	    		this.setParameter(6, form.getItem("baseURLTrsct"));
-	    		this.setParameter(7, Integer.parseInt(form.getItem("portTrsct")));
-	    		this.setParameter(8, form.getItem("functionTrsct"));
-    			this.setParameter(9, form.getItem("authToken"));
-				
-	    		this.getStatement().execute();		
-	         	
-				this.getStatement().close();
-				
+				if(form.getItems("tipos")!=null) {
+					Map<String, Object> tipos = new HashMap<String, Object>();
+					tipos = form.getItems("tipos");
+					Map<String, Object> bases = new HashMap<String, Object>();
+					bases = form.getItems("bases");
+					Map<String, Object> funciones = new HashMap<String, Object>();
+					funciones = form.getItems("funciones");
+					Map<String, Object> puertos = new HashMap<String, Object>();
+					puertos = form.getItems("puertos");
+					
+					if(tipos.size()>0) {
+						for(String kTipo : tipos.keySet()) {
+							System.out.println(kTipo);
+							this.setProcedure("dbo.saveServicesComercio(?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+							
+			    			this.setParameter(1, idComercio);
+			    			this.setParameter(2, Integer.parseInt(form.getItem("techID")));
+				    		this.setParameter(3, bases.get(kTipo).toString());
+				    		this.setParameter(4, puertos.get(kTipo).toString());
+				    		this.setParameter(5, funciones.get(kTipo).toString());
+				    		this.setParameter(6, kTipo);
+				    		this.setParameter(7, form.getItem("authToken"));
+				    		this.getStatement().execute();	
+				    		this.getStatement().close();
+						}
+						
+					}
+				}else {
+					//Tirar error
+				}
+
 				// Ahora guardo las comisiones
 				this.setProcedure("dbo.saveComisionesComercio(?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
@@ -198,21 +206,40 @@ public class MSComercioDao extends DaoImpl {
     		this.getStatement().execute();		
 
 			if(idComercio>0) {
-				this.autoCommit(false);
-//				// Ahora guardo el servicio
-				this.setProcedure("dbo.updateServicesComercio(?,?,?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-				
-	    		this.setParameter(1, idComercio);
-	    		this.setParameter(2, Integer.parseInt(form.getItem("techID")));
-	    		this.setParameter(3, form.getItem("baseURLOffers"));
-	    		this.setParameter(4, Integer.parseInt(form.getItem("portOffers")));
-	    		this.setParameter(5, form.getItem("functionOffers"));  	
-	    		this.setParameter(6, form.getItem("baseURLTrsct"));
-	    		this.setParameter(7, Integer.parseInt(form.getItem("portTrsct")));
-	    		this.setParameter(8, form.getItem("functionTrsct"));
-    			this.setParameter(9, form.getItem("authToken"));
-				
-	    		this.getStatement().execute();		
+				this.autoCommit(false);	
+	    		
+	    		if(form.getItems("tipos")!=null) {
+					Map<String, Object> tipos = new HashMap<String, Object>();
+					tipos = form.getItems("tipos");
+					Map<String, Object> bases = new HashMap<String, Object>();
+					bases = form.getItems("bases");
+					Map<String, Object> funciones = new HashMap<String, Object>();
+					funciones = form.getItems("funciones");
+					Map<String, Object> puertos = new HashMap<String, Object>();
+					puertos = form.getItems("puertos");
+					
+					if(tipos.size()>0) {
+						for(String kTipo : tipos.keySet()) {
+							System.out.println(kTipo);
+							this.setProcedure("dbo.updateServicesComercio(?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+							
+			    			this.setParameter(1, idComercio);
+			    			this.setParameter(2, Integer.parseInt(form.getItem("techID")));
+				    		this.setParameter(3, bases.get(kTipo).toString());
+				    		this.setParameter(4, puertos.get(kTipo).toString());
+				    		this.setParameter(5, funciones.get(kTipo).toString());
+				    		this.setParameter(6, kTipo);
+				    		this.setParameter(7, form.getItem("authToken"));
+				    		
+				    		this.getStatement().execute();	
+				    		this.getStatement().close();
+						}
+						
+					}
+				}else {
+					//Tirar error
+				}
+
 	         	
 //				this.commit();
 				
@@ -359,17 +386,34 @@ public class MSComercioDao extends DaoImpl {
         	comercio.setNombre(result.getString("nombre_publico"));
         	comercio.setTelefono(result.getString("telefono"));
         	comercio.setLogoURL(result.getString("logo_url"));
-        	comercio.setTecnologiaID(Integer.parseInt(result.getString("id_tecnologia")));
         	comercio.setHabilitado(result.getBoolean("habilitado"));
-        	comercio.setBaseURLOffers(result.getString("service_url_of"));
-        	comercio.setBaseURLTransacciones(result.getString("service_url_trans"));
-        	comercio.setFuncionOffers(result.getString("funcion_of"));
-        	comercio.setFuncionTransacciones(result.getString("funcion_trans"));
-        	comercio.setPortOffers(result.getInt("puerto_of"));
-        	comercio.setPortTransacciones(result.getInt("puerto_trans"));
-        	comercio.setAuthToken(result.getString("auth_token"));
+        	
         }
 
+        this.setProcedure("dbo.getServices(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+		this.setParameter(1, idComercio);
+		Map<String, String> tipos = new HashMap<String, String>();
+		Map<String, String> bases = new HashMap<String, String>();
+		Map<String, String> funciones = new HashMap<String, String>();
+		Map<String, String> puertos = new HashMap<String, String>();
+
+		result = this.getStatement().executeQuery();
+        
+        while(result.next()) {
+        	tipos.put(result.getString("tipo_nombre"), result.getString("tipo_nombre"));
+        	bases.put(result.getString("tipo_nombre"), result.getString("service_url"));
+        	funciones.put(result.getString("tipo_nombre"), result.getString("funcion"));
+        	puertos.put(result.getString("tipo_nombre"), result.getString("puerto"));
+        	comercio.setTecnologiaID(Integer.parseInt(result.getString("id_tecnologia")));
+        	comercio.setAuthToken(result.getString("auth_token"));
+        }
+        comercio.setBaseURL(bases);
+        comercio.setFuncion(funciones);
+        comercio.setPort(puertos);
+        
+
+    	
         
         this.setProcedure("dbo.getValoresComisionesComercio(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
