@@ -273,7 +273,7 @@ create table comisiones_tipo_transacciones
     id_tipo             SMALLINT        not null,
     id_comercio         SMALLINT        not null,
     fecha_inicio        DATETIME        not null,
-    fecha_fin           DATETIME        not null,
+    fecha_fin           DATETIME        ,
     valor               FLOAT           not null,
 
     constraint pk__comision__end primary key (id_comision, id_tipo, id_comercio),
@@ -609,20 +609,7 @@ go
 
 -- execute getComercios
 
----------------------------------------------------------------------------------------------- Obtener Lista de Comercios con datos extra
--- drop procedure getComerciosExtra
--- go
-
--- create procedure getComerciosExtra
--- as
--- begin
---     SELECT id_comercio, (SELECT COUNT(*) FROM ofertas offer
--- 		WHERE offer.id_comercio = com.id_comercio AND offer.habilitada=1) as q_offers, 
--- 		nombre_publico as nombre, habilitado, logo_url, com.telefono as tot_comm, com.direccion as serv_status FROM comercios com	
--- end
--- go
-
--- execute getComerciosExtra 
+---------------------------------------------------------------------------------------------- Obtener Lista de Comercios con datos extr
 
 drop procedure getComerciosExtra
 go
@@ -640,6 +627,7 @@ begin
 				JOIN comisiones_tipo_transacciones ctt
 					ON ctt.id_tipo = tr.id_tipo_transaccion
 					AND ctt.id_comercio = tr.id_comercio
+					AND tr.fecha >= ctt.fecha_inicio and tr.fecha<ISNULL(ctt.fecha_fin, CURRENT_TIMESTAMP) 
 				WHERE tr.id_comercio=com.id_comercio
 					AND Year(tr.fecha) = Year(CURRENT_TIMESTAMP) 
 					AND Month(tr.fecha) = Month(CURRENT_TIMESTAMP)
@@ -657,6 +645,7 @@ begin
 					JOIN comisiones_tipo_transacciones ctt
 						ON ctt.id_tipo = tr.id_tipo_transaccion
 						AND ctt.id_comercio = tr.id_comercio
+						AND tr.fecha >= ctt.fecha_inicio and tr.fecha<ISNULL(ctt.fecha_fin, CURRENT_TIMESTAMP) 
 					WHERE tr.id_comercio=com.id_comercio
 						AND Year(tr.fecha) = Year(CURRENT_TIMESTAMP) 
 						AND Month(tr.fecha) = Month(CURRENT_TIMESTAMP)
@@ -713,13 +702,15 @@ begin
 	RIGHT JOIN (SELECT nombre, fecha_inicio, fecha_fin, valor, id_comercio, tt.id_tipo FROM comisiones_tipo_transacciones ctt
 				JOIN tipo_transacciones tt
 					ON tt.id_tipo = ctt.id_tipo
-				WHERE ctt.id_comercio = @idComercio) comi
+				WHERE ctt.id_comercio = @idComercio
+				AND ctt.fecha_inicio<CURRENT_TIMESTAMP
+				AND (ISNULL(ctt.fecha_fin,CURRENT_TIMESTAMP+1) >CURRENT_TIMESTAMP)) comi
 		ON comi.id_comercio = co.id_comercio
 	WHERE co.id_comercio = @idComercio
 end
 go
 
-EXECUTE getValoresComisionesComercio @idComercio=71
+EXECUTE getValoresComisionesComercio @idComercio=1
 
 ---------------------------------------------------------------------------------------------- Get Comercio ID
 drop procedure getComercioID
@@ -798,9 +789,9 @@ create procedure saveComisionesComercio
 AS
 begin
 	INSERT INTO comisiones_tipo_transacciones
-	VALUES (1, @idComercio, getdate(), getdate(), @productComm);
+	VALUES (1, @idComercio, getdate(), null, @productComm);
 	INSERT INTO comisiones_tipo_transacciones
-	VALUES (2, @idComercio, getdate(), getdate(), @offerComm)
+	VALUES (2, @idComercio, getdate(), null, @offerComm)
 end
 go
 
@@ -915,17 +906,34 @@ create procedure updateComisionesComercio
 )
 AS
 begin
-	UPDATE comisiones_tipo_transacciones
-		SET fecha_inicio=getdate(), fecha_fin=getdate(), valor = @productComm
-	WHERE id_comercio = @idComercio
-		AND id_tipo = 1;
-	UPDATE comisiones_tipo_transacciones
-		SET fecha_inicio=getdate(), fecha_fin=getdate(), valor = @offerComm
-	WHERE id_comercio = @idComercio
-		AND id_tipo = 2;	
+	IF ((SELECT valor FROM comisiones_tipo_transacciones WHERE id_tipo=1 AND id_comercio=@idComercio) <> @productComm)
+		INSERT into comisiones_tipo_transacciones values(1, @idComercio, getdate(), null, @productComm);
+	IF ((SELECT valor FROM comisiones_tipo_transacciones WHERE id_tipo=2 AND id_comercio=@idComercio) <> @offerComm)
+		INSERT into comisiones_tipo_transacciones values(2, @idComercio, getdate(), null, @offerComm);
 end
 go
 
+-----TRIGGER
+drop trigger tu_ru_comisiones
+go
+
+CREATE OR ALTER TRIGGER tu_ru_comisiones 
+ON comisiones_tipo_transacciones
+FOR insert
+as
+begin
+	IF EXISTS (SELECT * FROM comisiones_tipo_transacciones ctt
+				JOIN inserted i
+				ON i.id_tipo = ctt.id_tipo
+				AND ctt.id_comercio = i.id_comercio )
+	UPDATE comisiones_tipo_transacciones
+		SET fecha_fin=(SELECT fecha_inicio from Inserted i)
+		WHERE id_comercio = (SELECT id_comercio from Inserted i)
+		AND id_tipo = (SELECT id_tipo from inserted i)
+		AND valor <> (SELECT valor from inserted i)
+	
+end
+go
 ---------------------------------------------------------------------------------------------- Editar Comercio
 drop procedure updateScraperURLComercio
 go
@@ -1193,6 +1201,7 @@ begin
 	JOIN comercios co
 		ON prodc.id_comercio = co.id_comercio
 	WHERE co.habilitado = 1
+	AND prodc.habilitado = 1
 	AND prod.id_categoria = @categoria
 	ORDER BY prod.id_producto, prodc.precio, prod.modelo
 
@@ -1420,6 +1429,7 @@ BEGIN
 	JOIN comisiones_tipo_transacciones ctt
 		ON tr.id_tipo_transaccion = ctt.id_tipo
 		AND tr.id_comercio = ctt.id_comercio
+		AND tr.fecha >= ctt.fecha_inicio and tr.fecha<ISNULL(ctt.fecha_fin, CURRENT_TIMESTAMP) 
 	LEFT JOIN ofertas offers
 		ON offers.id_oferta = tr.id_oferta
 	JOIN usuarios us
@@ -1572,7 +1582,7 @@ go
 drop procedure monthlyTransactionsList
 go
 
-create procedure monthlyTransactionsList
+create or alter procedure monthlyTransactionsList
 (
 	@date 	DATETIME,
 	@comercioID	integer = null
@@ -1587,6 +1597,7 @@ BEGIN
 		JOIN comisiones_tipo_transacciones ctt
 			ON tr.id_tipo_transaccion = ctt.id_tipo
 			AND tr.id_comercio = ctt.id_comercio
+			AND tr.fecha >= ctt.fecha_inicio and tr.fecha<ISNULL(ctt.fecha_fin, CURRENT_TIMESTAMP) 
 		LEFT JOIN producto_comercio pc
 			ON pc.id_producto = tr.id_producto
 			AND pc.id_comercio = tr.id_comercio
@@ -1603,6 +1614,7 @@ BEGIN
 		JOIN comisiones_tipo_transacciones ctt
 			ON tr.id_tipo_transaccion = ctt.id_tipo
 			AND tr.id_comercio = ctt.id_comercio
+			AND tr.fecha >= ctt.fecha_inicio and tr.fecha<ISNULL(ctt.fecha_fin, CURRENT_TIMESTAMP) 
 		LEFT JOIN producto_comercio pc
 			ON pc.id_producto = tr.id_producto
 			AND pc.id_comercio = tr.id_comercio
@@ -1612,14 +1624,13 @@ BEGIN
 			AND Month(fecha) = Month(@date)
 END
 go
-
--- execute monthlyTransactionsList @date='2019-02-20', @comercioID=1
+-- execute monthlyTransactionsList @date='2019-02-10', @comercioID=4
 
 ----------------------------------------------------------------------------------------------  Transacciones historicas
 drop procedure historicalTransactionsList
 go
 
-create procedure historicalTransactionsList
+create or alter procedure historicalTransactionsList
 (
 	@comercioID	integer = null
 )
@@ -1633,6 +1644,7 @@ BEGIN
 		JOIN comisiones_tipo_transacciones ctt
 			ON tr.id_tipo_transaccion = ctt.id_tipo
 			AND tr.id_comercio = ctt.id_comercio
+			AND tr.fecha >= ctt.fecha_inicio and tr.fecha<ISNULL(ctt.fecha_fin, CURRENT_TIMESTAMP) 
 		LEFT JOIN producto_comercio pc
 			ON pc.id_producto = tr.id_producto
 			AND pc.id_comercio = tr.id_comercio
@@ -1647,6 +1659,7 @@ BEGIN
 		JOIN comisiones_tipo_transacciones ctt
 			ON tr.id_tipo_transaccion = ctt.id_tipo
 			AND tr.id_comercio = ctt.id_comercio
+			AND tr.fecha >= ctt.fecha_inicio and tr.fecha<ISNULL(ctt.fecha_fin, CURRENT_TIMESTAMP) 
 		LEFT JOIN producto_comercio pc
 			ON pc.id_producto = tr.id_producto
 			AND pc.id_comercio = tr.id_comercio
@@ -1655,7 +1668,7 @@ BEGIN
 END
 go
 
--- execute historicalTransactionsList @comercioID=1
+-- execute historicalTransactionsList @comercioID=4
 ---------------------------------------------------------------------------------------------- Nuevos Users del mes
 drop procedure activeOffers
 go
@@ -1801,7 +1814,7 @@ go
 drop procedure comissionsEvolution
 go
 
-create procedure comissionsEvolution
+create or alter procedure comissionsEvolution
 (
 	@comercioID	integer = null
 )
@@ -1817,6 +1830,7 @@ BEGIN
 	JOIN comisiones_tipo_transacciones ctt 
 		ON  ctt.id_comercio=@comercioID 
 		AND ctt.id_tipo=tr.id_tipo_transaccion
+		AND tr.fecha >= ctt.fecha_inicio and tr.fecha<ISNULL(ctt.fecha_fin, CURRENT_TIMESTAMP) 
     where tr.id_comercio = @comercioID
     group by YEAR(fecha), Month(fecha), id_tipo
 ) t
@@ -1836,7 +1850,7 @@ execute comissionsEvolution @comercioID=71
 drop procedure getComisiones
 go
 
-create procedure getComisiones
+create or alter procedure getComisiones
 (
 	@mes	datetime,
 	@comercioID	smallint,
@@ -1850,6 +1864,7 @@ begin
 				JOIN comisiones_tipo_transacciones ctt 
 					ON  ctt.id_comercio=@comercioID 
 					AND ctt.id_tipo=tr.id_tipo_transaccion
+					AND tr.fecha >= ctt.fecha_inicio and tr.fecha<ISNULL(ctt.fecha_fin, CURRENT_TIMESTAMP) 
 				WHERE id_tipo = @idTipo
 				AND MONTH(fecha) = MONTH(@mes)
 				AND YEAR(fecha) = YEAR(@mes)
@@ -1860,6 +1875,7 @@ begin
 				JOIN comisiones_tipo_transacciones ctt 
 					ON  ctt.id_comercio=@comercioID 
 					AND ctt.id_tipo=tr.id_tipo_transaccion
+					AND tr.fecha >= ctt.fecha_inicio and tr.fecha<ISNULL(ctt.fecha_fin, CURRENT_TIMESTAMP) 
 				WHERE MONTH(fecha) = MONTH(@mes)
 				AND YEAR(fecha) = YEAR(@mes)
 				GROUP BY id_tipo
@@ -1876,7 +1892,7 @@ go
 drop procedure getComisionesTotal
 go
 
-create procedure getComisionesTotal
+create or alter procedure getComisionesTotal
 (
 	@mes	datetime,
 	@comercioID	smallint
@@ -1888,6 +1904,7 @@ begin
 		JOIN comisiones_tipo_transacciones ctt 
 			ON  ctt.id_comercio=@comercioID 
 			AND ctt.id_tipo=tr.id_tipo_transaccion
+			AND tr.fecha >= ctt.fecha_inicio and tr.fecha<ISNULL(ctt.fecha_fin, CURRENT_TIMESTAMP) 
 		WHERE MONTH(fecha) = MONTH(@mes)
 		AND YEAR(fecha) = YEAR(@mes)
 		AND tr.id_comercio = @comercioID
@@ -1896,7 +1913,7 @@ go
 
 declare @dt as datetime = datetimefromparts(2019,2,1,17,0,0,0)
 
-execute getComisionesTotal @mes=@dt, @comercioID=1
+execute getComisionesTotal @mes=@dt, @comercioID=4
 
 ---------------------------------------------------------------------------------------------- Obtener servicios
 drop procedure getServices
