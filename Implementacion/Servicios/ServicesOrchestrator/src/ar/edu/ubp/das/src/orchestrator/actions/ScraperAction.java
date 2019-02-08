@@ -53,28 +53,18 @@ public class ScraperAction {
 		if(productos.size()>0) {
 			System.out.println("Guardando prods");
 			Dao daoProductos = DaoFactory.getDao( "Products", "ar.edu.ubp.das.src.orchestrator" );
-			try {
 			for(ProductForm producto : productos) {
 				daoProductos.insert(producto);
-//				System.out.println("Nuevo producto");
-//				System.out.println(producto.getNombre());
-//				System.out.println(producto.getMarca());
-//				System.out.println(producto.getNativeModelo());
-//				System.out.println(producto.getModelo());
-//				System.out.println(producto.getPrecio());
-//				System.out.println(producto.getImgURL());
-//				System.out.println(producto.getProdURL());
-//				System.out.println("\n");
 			}
-			}catch(SQLException ex) {
-				ex.printStackTrace();
-			}
+			
 		}
 		
 		
 	}
-	public void unableUnavailableProducts() {
+	public void unableUnavailableProducts() throws SQLException {
 		// Checkear si hay productos que no se actualizaron en ningun comercio
-		
+		Dao daoProductos = DaoFactory.getDao( "Products", "ar.edu.ubp.das.src.orchestrator" );
+		DynaActionForm daf = new DynaActionForm();
+		daoProductos.delete(daf);
 	}
 }

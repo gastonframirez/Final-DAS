@@ -30,6 +30,7 @@ public class Main {
 					
 				}catch(Exception ex) {
 					//Loguear error
+					ex.printStackTrace();
 				}
 				
 			}	    
@@ -71,6 +72,7 @@ public class Main {
 					
 				}catch(Exception ex) {
 					//Loguear error
+					ex.printStackTrace();
 				}
 			}	    
 		};	 

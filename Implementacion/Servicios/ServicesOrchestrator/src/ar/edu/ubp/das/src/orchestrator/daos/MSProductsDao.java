@@ -64,7 +64,26 @@ public class MSProductsDao extends DaoImpl {
 	@Override
 	public void delete(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
+		try {
+        	this.connectWAutoFalse();
 
+    		this.setProcedure("dbo.disableProducts", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+    		this.getStatement().execute();		
+    		this.getStatement().close();
+    		
+			this.commit();
+			
+			System.out.println("Productos deshabilitados");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			this.rollback();
+			throw e;
+		}finally {
+			this.autoCommit(true);
+			this.disconnect();
+		}
 	}
 
 	@Override
