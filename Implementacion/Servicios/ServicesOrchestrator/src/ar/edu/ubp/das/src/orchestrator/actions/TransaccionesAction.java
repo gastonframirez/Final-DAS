@@ -41,7 +41,7 @@ public class TransaccionesAction {
 					try {
 						WSClient comercioClient = ClientFactory.getClient(comercio.getJavaClass(), "ar.edu.ubp.das.src");
 						String status = comercioClient.notificarTransaccion(transaccion, "Token "+comercio.getAuthToken(), 
-									comercio.getBaseURLTransacciones(), comercio.getFuncionTransacciones());
+									comercio.getBaseURL().get("transacciones"), comercio.getFuncion().get("transacciones"));
 						if(status.equals("200")) {
 							System.out.println(status);
 							daoTransacciones.update(transaccion);

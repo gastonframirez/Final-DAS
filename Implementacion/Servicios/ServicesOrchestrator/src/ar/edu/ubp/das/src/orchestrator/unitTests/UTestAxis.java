@@ -11,7 +11,7 @@ public class UTestAxis {
 		
 		JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 
-		Client client = dcf.createClient("http://localhost:8080/ComercioAxis/services/ApiWS?wsdl");
+		Client client = dcf.createClient("http://localhost:8080/ComercioAxis2/services/ApiWS?wsdl");
 		 
 		Object[] res = null;
 		try {

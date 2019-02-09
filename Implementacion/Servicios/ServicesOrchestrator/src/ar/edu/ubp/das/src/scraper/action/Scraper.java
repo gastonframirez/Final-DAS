@@ -23,7 +23,8 @@ public class Scraper {
 		for(String mapUrl : categories.keySet()) {
 			System.out.println(categories.get(mapUrl));
 //			System.out.println(mapUrl);
-			productos = this.scrap(comercio, Integer.valueOf(mapUrl), categories.get(mapUrl), 1);
+			if(!categories.get(mapUrl).equals("-"))
+				productos = this.scrap(comercio, Integer.valueOf(mapUrl), categories.get(mapUrl), 1);
 		}
 		
 //		for(ProductForm producto : productos) {

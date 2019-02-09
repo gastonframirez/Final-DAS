@@ -33,7 +33,7 @@ import ar.edu.ubp.das.src.orchestrator.forms.OfferForm;
 public class RestClient implements WSClient {
 	
 	@Override
-	public List<DynaActionForm> getOfertas(String authToken, String funcion, String url) {
+	public List<DynaActionForm> getOfertas(String authToken, String url, String funcion) {
 		// TODO Auto-generated method stub
 		
 		HttpClient client = HttpClientBuilder.create().build();

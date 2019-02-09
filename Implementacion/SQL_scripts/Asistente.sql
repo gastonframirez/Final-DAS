@@ -16,7 +16,6 @@ go
 -- drop table scraper_categoria
 -- drop table ofertas
 -- drop table productos
--- drop table marcas
 -- drop table categorias_productos
 -- drop table comercios
 -- drop table idiomas
@@ -300,28 +299,6 @@ values
     ('Jersey REST','RestClient')
 go
 ----------------------------------------------------------------------------------------------
--- create table servicios
--- (
---     id_servicio         tinyint         not null    identity (1,1),
---     id_comercio         smallint        not null,
---     id_tecnologia       tinyint         not null,
---     service_url_of      varchar (500)   not null,
---     funcion_of          varchar (500)   not null,
---     puerto_of           smallint        not null,
--- 	service_url_trans   varchar (500)   not null,
---     funcion_trans       varchar (500)   not null,
---     puerto_trans        smallint        not null,
--- 	auth_token			varchar (500)	not null
-
---     constraint pk__servicios__end primary key (id_servicio),
---     constraint uq__servicios__1__end unique (id_comercio),
---     constraint fk__servicios__1__end foreign key (id_comercio)
---         references comercios (id_comercio),
---     constraint fk__servicios__2__end foreign key (id_tecnologia)
---         references tecnologias (id_tecnologia)
-		
--- )
--- go
 create table tipo_servicios
 (
     id_tipo_servicio         tinyint         not null    identity (1,1),
@@ -920,30 +897,31 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Editar Comercio
-drop procedure updateServicesComercio
-go
+-- drop procedure updateServicesComercio
+-- go
 
-create procedure updateServicesComercio
-(
-	@idComercio integer,
-	@idTecnologia integer,
-	@baseURLOffers varchar (500),
-	@portOffers integer,
-	@funcionOffers varchar (500),
+-- create procedure updateServicesComercio
+-- (
+-- 	@idComercio integer,
+-- 	@idTecnologia integer,
+-- 	@baseURLOffers varchar (500),
+-- 	@portOffers integer,
+-- 	@funcionOffers varchar (500),
 	
-	@baseURLTransacciones varchar (500),
-	@portTransacciones integer,
-	@funcionTransacciones varchar (500),
-	@authToken		varchar(500)
-)
-AS
-begin
-	UPDATE servicios set id_tecnologia = @idTecnologia, service_url_of = @baseURLOffers, puerto_of = @portOffers,
-		funcion_of = @funcionOffers, service_url_trans = @baseURLTransacciones, puerto_trans = @portTransacciones,
-		funcion_trans = @funcionTransacciones, auth_token = @authToken
-	WHERE id_comercio = @idComercio 
-end
-GO
+-- 	@baseURLTransacciones varchar (500),
+-- 	@portTransacciones integer,
+-- 	@funcionTransacciones varchar (500),
+-- 	@authToken		varchar(500)
+-- )
+-- AS
+-- begin
+-- 	UPDATE servicios set id_tecnologia = @idTecnologia, service_url_of = @baseURLOffers, puerto_of = @portOffers,
+-- 		funcion_of = @funcionOffers, service_url_trans = @baseURLTransacciones, puerto_trans = @portTransacciones,
+-- 		funcion_trans = @funcionTransacciones, auth_token = @authToken
+-- 	WHERE id_comercio = @idComercio 
+-- 	AND id_tipo_servicio = 
+-- end
+-- GO
 
 drop procedure updateServicesComercio
 go
@@ -981,12 +959,14 @@ create procedure updateComisionesComercio
 )
 AS
 begin
-	IF ((SELECT valor FROM comisiones_tipo_transacciones WHERE id_tipo=1 AND id_comercio=@idComercio) <> @productComm)
+	IF ((SELECT valor FROM comisiones_tipo_transacciones WHERE id_tipo=1 AND id_comercio=@idComercio AND getdate() >= fecha_inicio and getdate()<ISNULL(fecha_fin, CURRENT_TIMESTAMP+1)) <> @productComm)
 		INSERT into comisiones_tipo_transacciones values(1, @idComercio, getdate(), null, @productComm);
-	IF ((SELECT valor FROM comisiones_tipo_transacciones WHERE id_tipo=2 AND id_comercio=@idComercio) <> @offerComm)
+	IF ((SELECT valor FROM comisiones_tipo_transacciones WHERE id_tipo=2 AND id_comercio=@idComercio AND getdate() >= fecha_inicio and getdate()<ISNULL(fecha_fin, CURRENT_TIMESTAMP+1)) <> @offerComm)
 		INSERT into comisiones_tipo_transacciones values(2, @idComercio, getdate(), null, @offerComm);
 end
 go
+
+SELECT valor FROM comisiones_tipo_transacciones WHERE id_tipo=1 AND id_comercio=4 AND getdate() >= fecha_inicio and getdate()<ISNULL(fecha_fin, CURRENT_TIMESTAMP+1) 
 
 -----TRIGGER
 drop trigger tu_ru_comisiones
@@ -1426,7 +1406,7 @@ go
 drop procedure disableOfertas
 go
 
-create procedure disableOfertas
+create or alter procedure disableOfertas
 (
 	@idComercio 		integer = null
 )
@@ -2031,7 +2011,7 @@ BEGIN
 	WHERE id_comercio = @idComercio
 END
 
-execute getServices @idComercio=1
+execute getServices @idComercio=4
 
 ---------------------------------------------------------------------------------------------- Obtener tipos servicios
 drop procedure getServicesTypes

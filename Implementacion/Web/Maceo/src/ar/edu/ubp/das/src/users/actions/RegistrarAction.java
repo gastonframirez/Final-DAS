@@ -54,6 +54,8 @@ public class RegistrarAction implements Action{
 						user.setNombre(request.getParameter("nombre"));
 						user.setEmail(request.getParameter("email"));
 						user.setDni(Integer.valueOf(request.getParameter("dni")));
+						System.out.println("UPDATING");
+
 						request.getSession(true).setAttribute("userData", user);
 						
 					}else {

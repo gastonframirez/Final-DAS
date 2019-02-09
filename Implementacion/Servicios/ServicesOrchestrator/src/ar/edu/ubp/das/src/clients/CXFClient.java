@@ -21,17 +21,16 @@ import ar.edu.ubp.das.src.orchestrator.forms.TransactionForm;
 public class CXFClient implements WSClient {
 
 	@Override
-	public List<DynaActionForm> getOfertas(String authToken, String funcion, String url) {
-
+	public List<DynaActionForm> getOfertas(String authToken, String url, String funcion) {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		
 		JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 		List<DynaActionForm> ofertas = new LinkedList<DynaActionForm>();
 		
 		try {
 			Client client = dcf.createClient(url);
-			 
 			Object[] resSOAP = client.invoke(funcion, authToken);
 			List<Object> results = (List<Object>) resSOAP[0];
-			
 			if(results.size()>0) {
 				Method m1 = results.get(0).getClass().getMethod("getStatus"); 
 				Method m2 = results.get(0).getClass().getMethod("getErrorMsg");
@@ -60,12 +59,13 @@ public class CXFClient implements WSClient {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		Thread.currentThread().setContextClassLoader(classLoader);
 		return ofertas;
 	}
 
 	@Override
 	public String notificarTransaccion(DynaActionForm transaccion, String authToken, String url, String funcion) throws Exception{
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		
 		JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 		
@@ -125,7 +125,7 @@ public class CXFClient implements WSClient {
 			resStatus="400";
 			e.printStackTrace();
 		}
-		
+		Thread.currentThread().setContextClassLoader(classLoader);
 		return resStatus;
 	}
 

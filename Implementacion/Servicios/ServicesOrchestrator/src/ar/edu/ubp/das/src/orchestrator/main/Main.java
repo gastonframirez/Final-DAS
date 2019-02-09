@@ -6,6 +6,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import ar.edu.ubp.das.src.clients.ClientFactory;
+import ar.edu.ubp.das.src.clients.WSClient;
 import ar.edu.ubp.das.src.orchestrator.actions.OfertasAction;
 import ar.edu.ubp.das.src.orchestrator.actions.ScraperAction;
 import ar.edu.ubp.das.src.orchestrator.actions.TransaccionesAction;
@@ -36,7 +38,7 @@ public class Main {
 			}	    
 		};	    	    
 		ScheduledExecutorService serviceScraper = Executors.newSingleThreadScheduledExecutor();	    
-		serviceScraper.scheduleAtFixedRate(runnableScraper, 0, 12, TimeUnit.HOURS);
+//		serviceScraper.scheduleAtFixedRate(runnableScraper, 0, 12, TimeUnit.HOURS);
 
 		
 		Runnable runnableOffers = new Runnable() {	      
@@ -58,7 +60,7 @@ public class Main {
 			}	    
 		};	 
 		ScheduledExecutorService serviceOffers = Executors.newSingleThreadScheduledExecutor();	    
-//		serviceOffers.scheduleAtFixedRate(runnableOffers, 0, 30, TimeUnit.MINUTES);
+		serviceOffers.scheduleAtFixedRate(runnableOffers, 0, 30, TimeUnit.MINUTES);
 		
 		
 		Runnable runnablePending = new Runnable() {	      

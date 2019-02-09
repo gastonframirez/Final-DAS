@@ -1,26 +1,23 @@
 package ar.edu.ubp.das.src.clients;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;
+import javax.jws.WebService;
 
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
-import ar.edu.ubp.das.src.orchestrator.actions.OfertasAction;
-import ar.edu.ubp.das.src.orchestrator.beans.OfertaResponseBean;
 import ar.edu.ubp.das.src.orchestrator.beans.ResponseBean;
 import ar.edu.ubp.das.src.orchestrator.forms.OfferForm;
 import ar.edu.ubp.das.src.orchestrator.forms.TransactionForm;
 
 public class Axis2Client implements WSClient {
 	@Override
-	public List<DynaActionForm> getOfertas(String authToken, String funcion, String url) {
+	public List<DynaActionForm> getOfertas(String authToken, String url, String funcion) {
 		
 		JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 		List<DynaActionForm> ofertas = new LinkedList<DynaActionForm>();

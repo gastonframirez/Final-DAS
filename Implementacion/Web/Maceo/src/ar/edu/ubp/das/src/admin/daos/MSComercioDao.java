@@ -184,20 +184,20 @@ public class MSComercioDao extends DaoImpl {
     		
     		this.setParameter(1, idComercio);
     		this.setParameter(2, form.getItem("razonSocial"));
-    		System.out.println(form.getItem("razonSocial"));
+//    		System.out.println(form.getItem("razonSocial"));
     		this.setParameter(3, form.getItem("CUIT"));
-    		System.out.println(form.getItem("CUIT"));
+//    		System.out.println(form.getItem("CUIT"));
     		this.setParameter(4, form.getItem("address"));
-    		System.out.println(form.getItem("address"));
+//    		System.out.println(form.getItem("address"));
     		this.setParameter(5, form.getItem("publicName"));  	
-    		System.out.println(form.getItem("publicName"));
+//    		System.out.println(form.getItem("publicName"));
     		this.setParameter(6, form.getItem("phone"));
-    		System.out.println(form.getItem("phone"));
+//    		System.out.println(form.getItem("phone"));
     		this.setParameter(7, form.getItem("logoURL"));
-    		System.out.println(form.getItem("logoURL"));
+//    		System.out.println(form.getItem("logoURL"));
     		if(form.getItem("zipCode")!=null) {
     			this.setParameter(8, Integer.parseInt(form.getItem("zipCode")));
-    			System.out.println(form.getItem("zipCode"));
+//    			System.out.println(form.getItem("zipCode"));
     		}else {
     			this.setNull(8, Types.INTEGER);
     		}
@@ -220,7 +220,7 @@ public class MSComercioDao extends DaoImpl {
 					
 					if(tipos.size()>0) {
 						for(String kTipo : tipos.keySet()) {
-							System.out.println(kTipo);
+//							System.out.println(kTipo);
 							this.setProcedure("dbo.updateServicesComercio(?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 							
 			    			this.setParameter(1, idComercio);

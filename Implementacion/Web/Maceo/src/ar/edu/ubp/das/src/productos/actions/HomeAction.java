@@ -25,6 +25,11 @@ public class HomeAction implements Action {
 		Dao daoOfertas = DaoFactory.getDao( "Ofertas", "productos" );
 		request.setAttribute("ofertas", daoOfertas.select(form));
 		
+		System.out.println(request.getAttribute("userData"));
+		if(request.getSession(true).getAttribute("userData")!=null) {
+			request.setAttribute("userData", request.getSession(true).getAttribute("userData"));
+		}
+		
 		
 		return mapping.getForwardByName("success");
 	}

@@ -37,4 +37,25 @@
     <servlet-name>AxisAdminServlet</servlet-name>
     <url-pattern>/axis2-admin/*</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description>Apache CXF Endpoint</description>
+    <display-name>cxf</display-name>
+    <servlet-name>cxf</servlet-name>
+    <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>cxf</servlet-name>
+    <url-pattern>/services/*</url-pattern>
+  </servlet-mapping>
+  <session-config>
+    <session-timeout>60</session-timeout>
+  </session-config>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>WEB-INF/cxf-beans.xml</param-value>
+  </context-param>
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
 </web-app>

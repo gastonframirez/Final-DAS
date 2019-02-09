@@ -17,7 +17,8 @@ go
 
 ----------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------- Create tables
-
+use garbarino
+go
 ----------------------------------------------------------------------------------------------
 create table categorias_productos
 (
@@ -56,14 +57,11 @@ create table productos
         references categorias_productos (id_categoria),
     constraint fk__productos_2__end foreign key (id_marca)
         references marcas (id_marca)
-    -- Checkear que no exista otro producto de la misma marca con el mismo numero de modelo en la misma categoria
 )
 go
 
 ----------------------------------------------------------------------------------------------
-use garbarino
-go
-drop table ofertas
+
 create table ofertas
 (
     id_oferta           smallint        not null        identity (1,1),
@@ -76,15 +74,13 @@ create table ofertas
     constraint pk__oferta__end primary key (id_oferta)
 )
 go
--- insert into ofertas values ('2019-01-19 00:00:00', '2019-01-31 23:59:59', 'https://www.compumundo.com.ar/producto/smart-tv-lg-43-full-hd-43lk5700psc/3c66884d00', 'https://d34zlyc2cp9zm7.cloudfront.net/products/1779250837a13543779bc1f31d5c9b192475d0742a58a898f2b415923137e236.webp_500', 1);
+-- insert into ofertas values ('2019-01-19 00:00:00:00', '2019-02-31 23:59:59:00', 'https://www.compumundo.com.ar/producto/smart-tv-lg-43-full-hd-43lk5700psc/3c66884d00', 'https://d34zlyc2cp9zm7.cloudfront.net/products/1779250837a13543779bc1f31d5c9b192475d0742a58a898f2b415923137e236.webp_500', 1);
 ----------------------------------------------------------------------------------------------
-drop table transacciones
-go
 create table transacciones
 (
     id_transaccion      integer         not null        identity (1,1),
     fecha               DATETIME        not null        default getdate(),
-    id_producto         varchar(500)    ,
+    id_producto         integer    ,
     modelo_producto     varchar(500),
     id_oferta           smallint,
     tipo_transaccion    VARCHAR(100)    not null,
@@ -97,7 +93,9 @@ create table transacciones
 
     constraint pk__transaccion__end primary key (id_transaccion),
     constraint fk__transaccion_oferta__end foreign key (id_oferta)
-        references ofertas(id_oferta)
+        references ofertas(id_oferta),
+    constraint fk__transaccion_producto__end foreign key (id_producto)
+        references productos(id_producto)
     -- Poner constraint por tipo y lo que puede ser null
 )
 go
@@ -228,5 +226,3 @@ BEGIN
             @precioComision)
 END
 GO
-
-EXECUTE getOfertas

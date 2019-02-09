@@ -63,18 +63,26 @@ public class MSComerciosDao extends DaoImpl {
         	
         	ResultSet resultServices = this.getStatement().executeQuery();
         	
-        	
-        	if(resultServices.next()) {
-        		comercio.setAuthToken(resultServices.getString("auth_token"));
-        		comercio.setBaseURLOffers(resultServices.getString("service_url_of"));
-        		comercio.setPortOffers(resultServices.getInt("puerto_of"));
-        		comercio.setFuncionOffers(resultServices.getString("funcion_of"));
-        		comercio.setBaseURLTransacciones(resultServices.getString("service_url_trans"));
-        		comercio.setPortTransacciones(resultServices.getInt("puerto_trans"));
-        		comercio.setFuncionTransacciones(resultServices.getString("funcion_trans"));
-        		comercio.setJavaClass(resultServices.getString("javaClass"));
-            }
-        	
+     		Map<String, String> tipos = new HashMap<String, String>();
+     		Map<String, String> bases = new HashMap<String, String>();
+     		Map<String, String> funciones = new HashMap<String, String>();
+     		Map<String, String> puertos = new HashMap<String, String>();
+
+     		resultServices = this.getStatement().executeQuery();
+             
+             while(resultServices.next()) {
+             	tipos.put(resultServices.getString("tipo_nombre"), resultServices.getString("tipo_nombre"));
+             	bases.put(resultServices.getString("tipo_nombre"), resultServices.getString("service_url"));
+             	funciones.put(resultServices.getString("tipo_nombre"), resultServices.getString("funcion"));
+             	puertos.put(resultServices.getString("tipo_nombre"), resultServices.getString("puerto"));
+             	comercio.setTecnologiaID(Integer.parseInt(resultServices.getString("id_tecnologia")));
+             	comercio.setAuthToken(resultServices.getString("auth_token"));
+             	comercio.setJavaClass(resultServices.getString("javaClass"));
+             }
+             comercio.setBaseURL(bases);
+             comercio.setFuncion(funciones);
+             comercio.setPort(puertos);
+             
         	
         	//Obteniendo URLs a scrapear
         	this.setProcedure("dbo.getComerciosURLScraper(?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);

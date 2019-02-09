@@ -76,14 +76,6 @@ $(document).ready(function() {
           type: "post",
           data: data,
           dataType: "html",
-//          error: function(hr){
-//              jUtils.showing("error", hr.error);
-////              showSwal('agregado-correcto', 'danger', 'tituloo', 'textooo', './Home.do');
-//          },
-//          success: function(res) {        	 
-//        	  console.log(res);
-//        	  showSwal('agregado-correcto', 'success', 'Agregado con exito', 'Blah', './Home.do', 'success');
-//          }
           error: function(hr){
               jUtils.showing("error", hr.error);
               showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop('errorEditProfile'), '/Maceo', 'error');
