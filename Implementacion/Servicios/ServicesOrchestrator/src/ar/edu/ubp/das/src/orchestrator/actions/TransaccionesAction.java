@@ -21,7 +21,8 @@ public class TransaccionesAction {
 		Dao daoComercios = DaoFactory.getDao( "Comercios", "ar.edu.ubp.das.src.orchestrator" );
 		
 		List<DynaActionForm> comercios = daoComercios.select(form);
-
+		Dao daoLogs =  DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.orchestrator" );
+		
 		for(DynaActionForm cf : comercios) {
 			ComercioForm comercio = (ComercioForm)cf;
 
@@ -48,6 +49,10 @@ public class TransaccionesAction {
 						}
 					}catch (SQLException e) {
 						//Loguear
+						
+						form.setItem("logStr", "Error en conexion al servicio del comercio ID:" + comercio.getIdComercio().toString() + 
+								"al intentar obtener ofertas.");
+						daoLogs.insert(form);
 					}//
 				}
 
@@ -55,6 +60,8 @@ public class TransaccionesAction {
 			} catch (Exception e) {
 				e.printStackTrace();
 				//Guardar log de error log
+				form.setItem("logStr", "Error al intentar obtener las transacciones para enviar a comercios.");
+				daoLogs.insert(form);
 			}
 		}		
 	}

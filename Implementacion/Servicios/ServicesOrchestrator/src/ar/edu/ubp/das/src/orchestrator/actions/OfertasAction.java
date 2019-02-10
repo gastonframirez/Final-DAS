@@ -22,6 +22,8 @@ public class OfertasAction {
 		
 		List<DynaActionForm> comercios = daoComercios.select(form);
 
+		Dao daoLogs =  DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.orchestrator" );
+		
 		for(DynaActionForm cf : comercios) {
 			ComercioForm comercio = (ComercioForm)cf;
 
@@ -59,6 +61,9 @@ public class OfertasAction {
 					}else {
 						// Guardar error en log
 						System.out.println("Error en conexion a comercio");
+						form.setItem("logStr", "Error en conexion al servicio del comercio ID:" + comercio.getIdComercio().toString() + 
+								"al intentar obtener ofertas.");
+						daoLogs.insert(form);
 					}
 					
 				}
@@ -66,6 +71,8 @@ public class OfertasAction {
 			} catch (Exception e) {
 				e.printStackTrace();
 				//Guardar log de error log
+				form.setItem("logStr", "Error al intentar obtener ofertas.");
+				daoLogs.insert(form);
 			}
 		}		
 	}
@@ -74,7 +81,15 @@ public class OfertasAction {
 		// Checkear si hay ofertas que no existen mas
 		Dao daoOfertas = DaoFactory.getDao( "Offers", "ar.edu.ubp.das.src.orchestrator" );
 		DynaActionForm daf = new DynaActionForm();
-		daoOfertas.delete(daf);
+		try {
+			daoOfertas.delete(daf);
+		}catch(Exception e) {
+			DynaActionForm form = new DynaActionForm();
+			Dao daoLogs =  DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.orchestrator" );
+			form.setItem("logStr", "Error al intentar deshabilitar ofertas.");
+			daoLogs.insert(form);
+		}
+		
 //		disableOferta
 		
 		

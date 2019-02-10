@@ -381,10 +381,10 @@ go
 
 
 ---------------------------------------------------------------------------------------------- Guardar log
-drop procedure save_log
+drop procedure saveLog
 go
 
-create procedure save_log
+create procedure saveLog
 (
     @descripcion    varchar(500)
 )
@@ -1381,7 +1381,7 @@ go
 drop procedure saveOferta
 go
 
-create procedure saveOferta
+create or alter procedure saveOferta
 (
 	@idComercio 		integer,
 	@imageURL			varchar(500),

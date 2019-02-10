@@ -35,6 +35,8 @@ public class ScraperAction {
 		//Conectarse a cada comercio
 		
 		DynaActionForm form = new DynaActionForm();
+		
+		Dao daoLogs =  DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.orchestrator" );
 
 		Dao daoComercios = DaoFactory.getDao( "Comercios", "ar.edu.ubp.das.src.orchestrator" );
 		List<DynaActionForm> comercios = daoComercios.select(form);
@@ -54,7 +56,13 @@ public class ScraperAction {
 			System.out.println("Guardando prods");
 			Dao daoProductos = DaoFactory.getDao( "Products", "ar.edu.ubp.das.src.orchestrator" );
 			for(ProductForm producto : productos) {
-				daoProductos.insert(producto);
+				try {
+					daoProductos.insert(producto);
+				}catch(Exception e) {
+					form.setItem("logStr", "Error al intentar guardar el producto:" + producto.getNombre() + 
+							"en la DB.");
+					daoLogs.insert(form);
+				}
 			}
 			
 		}
@@ -66,5 +74,13 @@ public class ScraperAction {
 		Dao daoProductos = DaoFactory.getDao( "Products", "ar.edu.ubp.das.src.orchestrator" );
 		DynaActionForm daf = new DynaActionForm();
 		daoProductos.delete(daf);
+		try {
+			daoProductos.delete(daf);
+		}catch(Exception e) {
+			DynaActionForm form = new DynaActionForm();
+			Dao daoLogs =  DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.orchestrator" );
+			form.setItem("logStr", "Error al intentar deshabilitar productos.");
+			daoLogs.insert(form);
+		}
 	}
 }

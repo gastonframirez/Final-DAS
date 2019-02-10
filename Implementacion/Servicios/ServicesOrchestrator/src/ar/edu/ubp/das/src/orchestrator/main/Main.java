@@ -1,11 +1,15 @@
 package ar.edu.ubp.das.src.orchestrator.main;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import ar.edu.ubp.das.mvc.action.DynaActionForm;
+import ar.edu.ubp.das.mvc.db.Dao;
+import ar.edu.ubp.das.mvc.db.DaoFactory;
 import ar.edu.ubp.das.src.clients.ClientFactory;
 import ar.edu.ubp.das.src.clients.WSClient;
 import ar.edu.ubp.das.src.orchestrator.actions.OfertasAction;
@@ -33,6 +37,15 @@ public class Main {
 				}catch(Exception ex) {
 					//Loguear error
 					ex.printStackTrace();
+					DynaActionForm form = new DynaActionForm();
+					Dao daoLogs;
+					try {
+						daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.orchestrator" );
+						form.setItem("logStr", "Error al intentar generar daos de scraper.");
+						daoLogs.insert(form);
+					} catch (SQLException e) {
+
+					}
 				}
 				
 			}	    
@@ -56,6 +69,15 @@ public class Main {
 				}catch(Exception ex) {
 					//Loguear error
 					ex.printStackTrace();
+					DynaActionForm form = new DynaActionForm();
+					Dao daoLogs;
+					try {
+						daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.orchestrator" );
+						form.setItem("logStr", "Error al intentar generar daos de ofertas.");
+						daoLogs.insert(form);
+					} catch (SQLException e) {
+
+					}
 				}
 			}	    
 		};	 
@@ -75,6 +97,16 @@ public class Main {
 				}catch(Exception ex) {
 					//Loguear error
 					ex.printStackTrace();
+					DynaActionForm form = new DynaActionForm();
+					Dao daoLogs;
+					try {
+						daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.orchestrator" );
+						form.setItem("logStr", "Error al intentar generar daos de transacciones.");
+						daoLogs.insert(form);
+					} catch (SQLException e) {
+
+					}
+					
 				}
 			}	    
 		};	 
