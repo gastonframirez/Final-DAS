@@ -1394,7 +1394,7 @@ as
 begin
   IF EXISTS (SELECT * from ofertas WHERE id_comercio = @idComercio AND id_oferta_comercio = @idOfertaCom)
 	UPDATE ofertas set image_url = @imageURL, fecha_inicio = @fechaInicio, fecha_fin = @fechaFin,
-						url_oferta = @urlOferta, actualizada = getdate()
+						url_oferta = @urlOferta, actualizada = getdate(), habilitada = 1
 		WHERE id_comercio = @idComercio AND id_oferta_comercio = @idOfertaCom
   ELSE
 	INSERT INTO ofertas (id_comercio, image_url, fecha_inicio, fecha_fin, url_oferta, id_oferta_comercio, actualizada, habilitada)
@@ -1422,6 +1422,7 @@ begin
 end
 go
 
+SELECT * from ofertas where dATEDIFF(minute,actualizada, getdate()) >= 60
 -- execute disableOfertas
 -- go
 
