@@ -67,6 +67,7 @@ create table comercios
     telefono            varchar (20)    not null,
     logo_url            varchar (500)   not null,
 	cp					integer			not null,
+	totalCrawl			bit				not null 		default 0,
     habilitado          bit             not null        default 0, -- 0: False, 1: True
     
     
@@ -375,6 +376,19 @@ create table scraper_config
         references comercios (id_comercio)
 )
 go
+
+
+----------------------------------------------------------------------------------------------
+create table orchestrator_config
+(
+	id_config		integer 		not NULL		identity(1,1),
+	tipo_config			INTEGER			not null,
+	palabra_ignorar		varchar(500)	not null
+
+	constraint pk__orchestrator_config__end PRIMARY key (id_config),
+)
+go
+
 
 ----------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------- Create procedures
@@ -732,7 +746,7 @@ GO
 drop procedure saveComercio
 go
 
-create procedure saveComercio
+create or alter procedure saveComercio
 (
 	@razonSocial varchar (255),
 	@CUIT varchar (12),
@@ -740,12 +754,13 @@ create procedure saveComercio
 	@nombre varchar( 255),
 	@telefono varchar (13),
 	@logoURL varchar (500),
-	@CP	integer
+	@CP	integer, 
+	@totalCrawl		integer
 )
 AS
 begin
-	INSERT INTO comercios (razon_social, cuit, direccion, nombre_publico, cp, telefono, logo_url, habilitado)
-	VALUES (@razonSocial, @CUIT, @direccion, @nombre, @CP, @telefono, @logoURL, 1)
+	INSERT INTO comercios (razon_social, cuit, direccion, nombre_publico, cp, telefono, logo_url, totalCrawl, habilitado)
+	VALUES (@razonSocial, @CUIT, @direccion, @nombre, @CP, @telefono, @logoURL, @totalCrawl, 1)
 end
 go
 
@@ -877,7 +892,7 @@ go
 drop procedure updateComercio
 go
 
-create procedure updateComercio
+create or alter procedure updateComercio
 (
 	@idComercio integer,
 	@razonSocial varchar (255),
@@ -886,12 +901,13 @@ create procedure updateComercio
 	@nombre varchar( 255),
 	@telefono varchar (13),
 	@logoURL varchar (500),
-	@CP	integer
+	@CP	integer,
+	@totalCrawl		integer
 )
 AS
 begin
 	UPDATE comercios set razon_social = @razonSocial, cuit = @CUIT, direccion = @direccion, nombre_publico = @nombre,
-		telefono = @telefono, logo_url=@logoURL
+		telefono = @telefono, logo_url=@logoURL, totalCrawl=@totalCrawl
 	WHERE id_comercio = @idComercio
 end
 go
