@@ -212,6 +212,7 @@ create table administradores
     id_usuario          INTEGER		 not null,
     intentos_fallidos   tinyint      not null   default 0,
     bloqueado           BIT          not null   default 0,
+	fecha_bloqueo		datetime,
 
     constraint pk__administradores__end primary key (id_administrador),
 	constraint fk__administradores_user__end foreign key (id_usuario)
@@ -219,6 +220,29 @@ create table administradores
     constraint ch__intentos_fallidos__end check (intentos_fallidos >= 0),
     constraint ch__administradores__1__end check (bloqueado in (1, 0) ) -- si, no
 )
+go
+
+create or alter trigger tu_ru_block_administradores
+on administradores
+for update
+as
+begin
+	if (select intentos_fallidos from inserted) = 5
+	begin
+		update administradores
+		set fecha_bloqueo = getdate(), bloqueado=1, intentos_fallidos=5
+		where id_usuario = (select id_usuario from inserted)
+		insert into logs values(getdate(), 'El usuario ' + convert(varchar(30),(select id_usuario from inserted)) + ' fue bloqueado luego de 5 intentos.' )
+		raiserror('ERROR: usuario bloqueado luego de 5 intentos' ,16,1)
+	end
+	-- ELSE
+	-- begin
+	-- 	update administradores
+	-- 	set fecha_bloqueo = (SELECT fecha_bloqueo from inserted), 
+	-- 		bloqueado=(SELECT bloqueado from inserted), 
+	-- 		intentos_fallidos=(SELECT intentos_fallidos from inserted)
+	-- end
+end
 go
 -- insert into administradores values (1, 0,0)
 -- go
@@ -351,7 +375,7 @@ create table scraper_categoria
 (
 	id_comercio			SMALLINT		not NULL,
 	id_categoria		smallint 		not null,
-	url_scrapping		varchar (500) 	not null,
+	url_scrapping		varchar (500),
 
 	constraint pk__scraper_categoria__end PRIMARY key (id_comercio, id_categoria),
     constraint fk__comercio__end foreign key (id_comercio)
@@ -451,15 +475,18 @@ go
 drop procedure validateLoginInverse
 go
 
-create procedure validateLoginInverse
+create or alter procedure validateLoginInverse
 (
 	@nombreusuario	varchar (255)
 )
 as
 begin
-    SELECT id_usuario, usuario, usuario_password, isAdmin, nombre, apellido, dni, email
-	FROM usuarios
+    SELECT u.id_usuario, usuario, usuario_password, isAdmin, nombre, apellido, dni, email, a.bloqueado
+	FROM usuarios u 
+	LEFT JOIN administradores a
+		ON u.id_usuario = a.id_usuario
 	WHERE usuario = @nombreusuario
+	
 	OR email = @nombreusuario
 end
 go
@@ -468,7 +495,7 @@ go
 drop procedure increaseAdminAttempts
 go
 
-create procedure increaseAdminAttempts
+create or alter procedure increaseAdminAttempts
 (
 	@nombreusuario	varchar (255)
 )
@@ -477,31 +504,26 @@ begin
 	declare @idUsuario smallint;
 	SET @idUsuario = (SELECT id_usuario from usuarios where usuario = @nombreusuario);
 
-	UPDATE administradores
-	SET intentos_fallidos = (SELECT intentos_fallidos from administradores a WHERE a.id_usuario = @idUsuario) + 1
-	WHERE id_usuario = @idUsuario
-	-- HACER TRIGGER EN UPDATE, SI PASO DE 5, BLOQUEO. ADEMAS, AGREGAR COLUMNNA date_blocked
+	IF (SELECT intentos_fallidos from administradores a WHERE a.id_usuario = @idUsuario)<5
+		UPDATE administradores
+		SET intentos_fallidos = (SELECT intentos_fallidos from administradores a WHERE a.id_usuario = @idUsuario) + 1
+		WHERE id_usuario = @idUsuario
 end
 go
 
 ---------------------------------------------------------------------------------------------- Aumentar intentos Adminn
-drop procedure unlockBlockedAdmin
+drop procedure unlockBlockedAdmins
 go
 
-create procedure unlockBlockedAdmin
-(
-	@nombreusuario	varchar (255)
-)
+create or alter procedure unlockBlockedAdmins
 as
 begin
-	declare @idUsuario smallint;
-	SET @idUsuario = (SELECT id_usuario from usuarios where usuario = @nombreusuario);
-
-	UPDATE administradores
-	SET intentos_fallidos = 0, bloqueado = 0
-	WHERE id_usuario = @idUsuario
+	UPDATE administradores set fecha_bloqueo=NULL, bloqueado = 0, intentos_fallidos = 0
+	WHERE DATEDIFF(minute,fecha_bloqueo, getdate()) >= 15
 end
 go
+
+exec  unlockBlockedAdmins
 ---------------------------------------------------------------------------------------------- Registrar User
 drop procedure registerUser
 go
@@ -767,38 +789,6 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Guardar Comercio
--- drop procedure saveServicesComercio
--- go
-
--- create procedure saveServicesComercio
--- (
--- 	@idComercio integer,
--- 	@idTecnologia integer,
--- 	@baseURLOffers varchar (500),
--- 	@portOffers integer,
--- 	@funcionOffers varchar (500),
-	
--- 	@baseURLTransacciones varchar (500),
--- 	@portTransacciones integer,
--- 	@funcionTransacciones varchar (500),
--- 	@authToken		varchar(500)
--- )
--- AS
--- begin
--- --  id_servicio         tinyint         not null    identity (1,1),
--- --     id_comercio         smallint        not null,
--- --     id_tipo_servicio    tinyint         not null,
--- --     id_tecnologia       tinyint         not null,
--- --     service_url         varchar (500)   not null,
--- --     funcion             varchar (500)   not null,
--- --     puerto              smallint        not null,
--- -- 	auth_token			varchar (500)	not null
--- 	INSERT INTO servicios (id_comercio, id_tipo_servicio, id_tecnologia, service_url_of, puerto_of, funcion_of,
--- 							service_url_trans, puerto_trans, funcion_trans, auth_token)
--- 	VALUES (@idComercio, (SELECT@idTecnologia, @baseURLOffers, @portOffers, @funcionOffers,
--- 	 @baseURLTransacciones, @portTransacciones, @funcionTransacciones, @authToken)
--- end
--- GO
 drop procedure saveServicesComercio
 go
 
@@ -1160,7 +1150,7 @@ go
 ---------------------------------------------------------------------------------------------- Guardar Categoria
 drop procedure saveCategoria
 go
-create procedure saveCategoria
+create or alter procedure saveCategoria
 (
 	@esp				varchar (255),
 	@eng				varchar (255),
@@ -1169,7 +1159,7 @@ create procedure saveCategoria
 AS
 BEGIN
 	INSERT into categorias_productos (nombre, habilitado,image_url)
-	VALUES (@esp,0, @image_url);
+	VALUES (@esp,1, @image_url);
 	declare @idCategoria integer = (SELECT id_categoria
 								FROM categorias_productos
 								WHERE nombre = @esp);
@@ -2106,3 +2096,5 @@ begin
 	SELECT * FROM orchestrator_config WHERE habilitado = 1
 end
 go
+
+
