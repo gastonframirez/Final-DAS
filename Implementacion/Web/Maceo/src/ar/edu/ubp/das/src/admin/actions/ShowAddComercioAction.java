@@ -36,6 +36,10 @@ public class ShowAddComercioAction implements Action{
 				request.setAttribute("comercio", daoComercio.select(form).get(0));
 			}catch(SQLException ex) {
 				ex.printStackTrace();
+				DynaActionForm formLogs = new DynaActionForm();
+				Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
+				formLogs.setItem("logStr", "Error al intentar obtener los datos del comercio ID:"+request.getParameter("idComercio"));
+				daoLogs.insert(formLogs);
 			}
 		}
 		

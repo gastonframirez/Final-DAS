@@ -18,6 +18,7 @@ public class DashboardAction implements Action{
 	public ForwardConfig execute(ActionMapping mapping, DynaActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws SQLException, RuntimeException {
 		// TODO Auto-generated method stub
+		try {
 		Dao daoComercios = DaoFactory.getDao( "DatosCompletosComercio", "admin" );
 		request.setAttribute("comercios", daoComercios.select(form));
 		
@@ -26,6 +27,12 @@ public class DashboardAction implements Action{
 		
 		Dao daoGraficos = DaoFactory.getDao( "GraficosDashboard", "admin" );
 		request.setAttribute("graficos", daoGraficos.select(form));
+		}catch(SQLException ex) {
+			DynaActionForm formLogs = new DynaActionForm();
+			Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
+			formLogs.setItem("logStr", "Error al intentar obtener datos para el dashboard de admin.");
+			daoLogs.insert(formLogs);
+		}
 		
 		return mapping.getForwardByName("success");
 	}

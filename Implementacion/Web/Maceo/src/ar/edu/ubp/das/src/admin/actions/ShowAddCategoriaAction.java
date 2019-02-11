@@ -19,11 +19,18 @@ public class ShowAddCategoriaAction implements Action{
 			HttpServletResponse response) throws SQLException, RuntimeException {
 		// TODO Auto-generated method stub
 		if(request.getParameter("idCategoria")!=null) {
+			try {
 			Dao daoCategorias = DaoFactory.getDao( "Categoria", "admin" );
 			
 			form.setItem("idCategoria", request.getParameter("idCategoria"));
 			
 			request.setAttribute("categoria", daoCategorias.select(form).get(0));
+			}catch(SQLException ex) {
+				DynaActionForm formLogs = new DynaActionForm();
+				Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
+				formLogs.setItem("logStr", "Error al intentar obtner los datos de la categoria ID:"+request.getParameter("idCategoria"));
+				daoLogs.insert(formLogs);
+			}
 		}
 		return mapping.getForwardByName("success");
 		

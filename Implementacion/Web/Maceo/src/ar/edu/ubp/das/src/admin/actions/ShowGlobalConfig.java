@@ -9,24 +9,13 @@ import ar.edu.ubp.das.mvc.action.Action;
 import ar.edu.ubp.das.mvc.action.ActionMapping;
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.config.ForwardConfig;
-import ar.edu.ubp.das.mvc.db.Dao;
-import ar.edu.ubp.das.mvc.db.DaoFactory;
 
-public class ListComerciosAction implements Action{
+public class ShowGlobalConfig implements Action{
 
 	@Override
 	public ForwardConfig execute(ActionMapping mapping, DynaActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws SQLException, RuntimeException {
 		// TODO Auto-generated method stub
-		try {
-		Dao daoComercios = DaoFactory.getDao( "DatosCompletosComercio", "admin" );
-		request.setAttribute("comercios", daoComercios.select(form));
-		}catch(SQLException ex) {
-			DynaActionForm formLogs = new DynaActionForm();
-			Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
-			formLogs.setItem("logStr", "Error al intentar obtener lista de comercios");
-			daoLogs.insert(formLogs);
-		}
 		return mapping.getForwardByName("success");
 	}
 

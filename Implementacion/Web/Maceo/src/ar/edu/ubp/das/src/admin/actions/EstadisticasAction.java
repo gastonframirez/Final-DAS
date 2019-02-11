@@ -37,8 +37,14 @@ public class EstadisticasAction implements Action{
 				
 				Dao daoGraficosComercio = DaoFactory.getDao( "GraficosComercio", "admin" );
 				request.setAttribute("graficosC", daoGraficosComercio.select(form));
+			
+				
 			}catch(Exception e) {
 				e.printStackTrace();
+				DynaActionForm formLogs = new DynaActionForm();
+				Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
+				formLogs.setItem("logStr", "Error al intentar obtener datos de estadistísticas para comercio ID:"+request.getParameter("idComercio"));
+				daoLogs.insert(formLogs);
 			}
 			
 			

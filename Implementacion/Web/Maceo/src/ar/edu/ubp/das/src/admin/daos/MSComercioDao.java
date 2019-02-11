@@ -29,7 +29,7 @@ public class MSComercioDao extends DaoImpl {
 		try {
         	this.connectWAutoFalse();
 
-    		this.setProcedure("dbo.saveComercio(?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+    		this.setProcedure("dbo.saveComercio(?,?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
     		this.setParameter(1, form.getItem("razonSocial"));
     		this.setParameter(2, form.getItem("CUIT"));
@@ -38,7 +38,12 @@ public class MSComercioDao extends DaoImpl {
     		this.setParameter(5, form.getItem("phone"));
     		this.setParameter(6, form.getItem("logoURL"));
     		this.setParameter(7, Integer.parseInt(form.getItem("zipCode")));
-    		
+    		if(form.getItem("totalCrawl")!=null) {
+    			System.out.println("Tiene total DAO");
+    			this.setParameter(8, 1);
+    		}else {
+    			this.setParameter(8, 0);
+    		}
     		this.getStatement().execute();		
      	
 			this.setProcedure("dbo.getComercioID(?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -180,7 +185,7 @@ public class MSComercioDao extends DaoImpl {
         	Integer idComercio = Integer.valueOf(form.getItem("idComercio"));
         	
 //        	Guardo el comercio
-    		this.setProcedure("dbo.updateComercio(?,?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+    		this.setProcedure("dbo.updateComercio(?,?,?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
     		
     		this.setParameter(1, idComercio);
     		this.setParameter(2, form.getItem("razonSocial"));
@@ -200,6 +205,12 @@ public class MSComercioDao extends DaoImpl {
 //    			System.out.println(form.getItem("zipCode"));
     		}else {
     			this.setNull(8, Types.INTEGER);
+    		}
+    		
+    		if(form.getItem("totalCrawl")!=null) {
+    			this.setParameter(9, 1);
+    		}else {
+    			this.setParameter(9, 0);
     		}
     		
     		
@@ -387,6 +398,7 @@ public class MSComercioDao extends DaoImpl {
         	comercio.setTelefono(result.getString("telefono"));
         	comercio.setLogoURL(result.getString("logo_url"));
         	comercio.setHabilitado(result.getBoolean("habilitado"));
+        	comercio.setTotalCrawl(result.getInt("totalCrawl")==1);
         	
         }
 
@@ -459,45 +471,51 @@ public class MSComercioDao extends DaoImpl {
         while(result.next()) {
         	
         	switch (result.getString("prop_name")) {
-			case "brand":
-				comercio.setCssMarca(result.getString("class_name"));
-				if(result.getInt("is_in_title")==1)  {
-					inTitle.put(result.getString("prop_name"), true);
-				}
-				if(result.getInt("needs_crawl")==1) {
-					needsCrawl.put(result.getString("prop_name"), true);
-				}
-				break;
-			case "model":
-				comercio.setCssModelo(result.getString("class_name"));	
-				if(result.getInt("is_in_title")==1) {
-					inTitle.put(result.getString("prop_name"), true);
-				}
-				if(result.getInt("needs_crawl")==1)  {
-					needsCrawl.put(result.getString("prop_name"), true);
-				}
-				break;
-			case "imgURL":
-				comercio.setCssImgURL(result.getString("class_name"));
-				if(result.getInt("needs_crawl")==1)  {
-					needsCrawl.put(result.getString("prop_name"), true);
-				}
-				break;
-			case "iterator":
-				comercio.setCssIterator(result.getString("class_name"));
-				break;
-			case "name":
-				comercio.setCssNombre(result.getString("class_name"));
-				break;
-			case "price":
-				comercio.setCssPrecio(result.getString("class_name"));
-				break;
-			case "prodURL":
-				comercio.setCssProdURL(result.getString("class_name"));
-				break;
-
-			default:
-				break;
+				case "brand":
+					comercio.setCssMarca(result.getString("class_name"));
+					if(result.getInt("is_in_title")==1)  {
+						inTitle.put(result.getString("prop_name"), true);
+					}
+					if(result.getInt("needs_crawl")==1) {
+						needsCrawl.put(result.getString("prop_name"), true);
+					}
+					break;
+				case "model":
+					comercio.setCssModelo(result.getString("class_name"));	
+					if(result.getInt("is_in_title")==1) {
+						inTitle.put(result.getString("prop_name"), true);
+					}
+					if(result.getInt("needs_crawl")==1)  {
+						needsCrawl.put(result.getString("prop_name"), true);
+					}
+					break;
+				case "imgURL":
+					comercio.setCssImgURL(result.getString("class_name"));
+					if(result.getInt("needs_crawl")==1)  {
+						needsCrawl.put(result.getString("prop_name"), true);
+					}
+					break;
+				case "iterator":
+					comercio.setCssIterator(result.getString("class_name"));
+					break;
+				case "name":
+					comercio.setCssNombre(result.getString("class_name"));
+					break;
+				case "price":
+					comercio.setCssPrecio(result.getString("class_name"));
+					break;
+				case "prodURL":
+					comercio.setCssProdURL(result.getString("class_name"));
+					break;
+				case "pagNext":
+					comercio.setPaginationNext(result.getString("class_name"));
+					break;
+				case "pagParam":
+					comercio.setPaginationParam(result.getString("class_name"));
+					break;
+	
+				default:
+					break;
 			} 
         	comercio.setNeedsCrawl(needsCrawl);
         	comercio.setSearchInName(inTitle);

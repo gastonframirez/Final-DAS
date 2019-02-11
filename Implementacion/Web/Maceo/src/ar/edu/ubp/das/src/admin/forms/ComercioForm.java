@@ -20,6 +20,7 @@ public class ComercioForm extends DynaActionForm {
 	private Integer cp;
 	private String telefono;
 	private String logoURL;
+	private Boolean totalCrawl;
 	
 	private String authToken;
 
@@ -44,6 +45,8 @@ public class ComercioForm extends DynaActionForm {
 	private Boolean cssMarcaInTitle;
 	private Boolean cssModeloNeedsCrawl;
 	private Boolean cssModeloInTitle;
+	private String paginationParam;
+	private String paginationNext;
 	
 	private Integer tecnologiaID;
 	
@@ -237,6 +240,24 @@ public class ComercioForm extends DynaActionForm {
 	}
 	public void setFuncion(Map<String, String> funcion) {
 		this.funcion = funcion;
+	}
+	public Boolean getTotalCrawl() {
+		return totalCrawl;
+	}
+	public void setTotalCrawl(Boolean totalCrawl) {
+		this.totalCrawl = totalCrawl;
+	}
+	public String getPaginationParam() {
+		return paginationParam;
+	}
+	public void setPaginationParam(String paginationParam) {
+		this.paginationParam = paginationParam;
+	}
+	public String getPaginationNext() {
+		return paginationNext;
+	}
+	public void setPaginationNext(String paginationNext) {
+		this.paginationNext = paginationNext;
 	}
 
 	

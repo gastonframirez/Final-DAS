@@ -18,7 +18,7 @@ public class ToggleComercioAction implements Action{
 	public ForwardConfig execute(ActionMapping mapping, DynaActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws SQLException, RuntimeException {
 		// TODO Auto-generated method stub
-		
+		try {
 		form.setItem("idComercio", request.getParameter("idComercio"));
 		if(request.getParameter("enabled")!=null) {
 			form.setItem("habilitado", "1");
@@ -28,7 +28,12 @@ public class ToggleComercioAction implements Action{
 		Dao daoComercio = DaoFactory.getDao( "Comercio", "admin" );
 		
 		daoComercio.delete(form);
-		
+		}catch(SQLException ex) {
+			DynaActionForm formLogs = new DynaActionForm();
+			Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
+			formLogs.setItem("logStr", "Error al intentar deshabilitar el comercio ID:"+request.getParameter("idComercio"));
+			daoLogs.insert(formLogs);
+		}
 		return mapping.getForwardByName("success");
 	}
 

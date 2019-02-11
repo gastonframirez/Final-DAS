@@ -18,9 +18,15 @@ public class ListCategoriasAction implements Action{
 	public ForwardConfig execute(ActionMapping mapping, DynaActionForm form, HttpServletRequest request,
 			HttpServletResponse response) throws SQLException, RuntimeException {
 		// TODO Auto-generated method stub
-		
-		Dao daoCategorias = DaoFactory.getDao( "Categoria", "admin" );
-		request.setAttribute("categorias", daoCategorias.select(form));
+		try {
+			Dao daoCategorias = DaoFactory.getDao( "Categoria", "admin" );
+			request.setAttribute("categorias", daoCategorias.select(form));
+		}catch(SQLException ex) {
+			DynaActionForm formLogs = new DynaActionForm();
+			Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
+			formLogs.setItem("logStr", "Error al intentar obtener lista de categorias");
+			daoLogs.insert(formLogs);
+		}
 		
 		return mapping.getForwardByName("success");
 	}

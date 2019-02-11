@@ -37,6 +37,10 @@ public class AddCategoriaAction implements Action{
 			}
 		}catch (SQLException ex){
 			System.out.println(ex.getMessage());
+			DynaActionForm formLogs = new DynaActionForm();
+			Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
+			formLogs.setItem("logStr", "Error al intentar agregrar una categoria.");
+			daoLogs.insert(formLogs);
 			return mapping.getForwardByName("error");
 		}
 		

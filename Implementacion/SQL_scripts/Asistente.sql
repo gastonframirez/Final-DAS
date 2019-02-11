@@ -680,14 +680,14 @@ execute getComerciosExtra @idComercio = 1
 drop procedure getDatosComercio
 go
 
-create procedure getDatosComercio
+create or alter procedure getDatosComercio
 (
 	@idComercio smallint
 )
 as
 begin
     SELECT co.id_comercio, razon_social, cuit, direccion, nombre_publico, telefono, habilitado, 
-		logo_url, ua.fecha_productos, ua.fecha_ofertas, cp
+		logo_url, ua.fecha_productos, ua.fecha_ofertas, cp, totalCrawl
 	FROM comercios co
 	LEFT JOIN ult_actualizacion ua
 		ON ua.id_comercio = co.id_comercio
@@ -1032,7 +1032,7 @@ GO
 drop procedure updateScraperConfigComercio
 go
 
-create procedure updateScraperConfigComercio
+create or alter procedure updateScraperConfigComercio
 (
 	@idComercio integer,
 	@cssClass varchar (255),
@@ -1042,12 +1042,17 @@ create procedure updateScraperConfigComercio
 )
 AS
 begin
-	UPDATE scraper_config
-		SET class_name = @cssClass, needs_crawl = @needsCrawl,
-		is_in_title = @searchInName
-	WHERE id_comercio = @idComercio
-	AND prop_name = @name
-end
+	IF EXISTS (SELECT * FROM scraper_config WHERE id_comercio = @idComercio
+	AND prop_name = @name)
+		UPDATE scraper_config
+			SET class_name = @cssClass, needs_crawl = @needsCrawl,
+			is_in_title = @searchInName
+		WHERE id_comercio = @idComercio
+		AND prop_name = @name
+	ELSE
+		exec saveScraperConfigComercio @idComercio=@idComercio, @cssClass = @cssClass, 
+			@needsCrawl = @needsCrawl, @searchInName = @searchInName, @name = @name
+END
 go
 ---------------------------------------------------------------------------------------------- Obtener Lista de Categorias
 drop procedure getCategorias

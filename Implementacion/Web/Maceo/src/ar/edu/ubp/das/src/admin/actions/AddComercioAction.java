@@ -33,6 +33,10 @@ public class AddComercioAction implements Action{
 			form.setItem("phone", request.getParameter("phone"));
 			form.setItem("logoURL", request.getParameter("logoURL"));
 		
+			if(request.getParameter("totalCrawl")!=null) {
+				System.out.println("Tiene total");
+				form.setItem("totalCrawl", "1");
+			}
 			
 			form.setItem("ppProd", request.getParameter("ppProd"));
 			form.setItem("ppOffer", request.getParameter("ppOffer"));
@@ -47,6 +51,9 @@ public class AddComercioAction implements Action{
 			classes.put("price", request.getParameter("cssPrice"));
 			classes.put("imgURL", request.getParameter("cssImgURL"));
 			classes.put("prodURL", request.getParameter("cssProductURL"));
+			classes.put("pagNext", request.getParameter("paginationNext"));
+			classes.put("pagParam", request.getParameter("paginationParam"));
+			
 			form.setItems("cssClasses", classes);
 	
 			
@@ -62,14 +69,7 @@ public class AddComercioAction implements Action{
 				}
 				form.setItems("urlCategories", catIds);
 			}
-	//		
-	//		form.setItem("baseURLOffers", request.getParameter("baseURLOffers"));
-	//		form.setItem("portOffers", request.getParameter("portOffers"));
-	//		form.setItem("functionOffers", request.getParameter("functionOffers"));
-	//		form.setItem("baseURLTrsct", request.getParameter("baseURLTrsct"));
-	//		form.setItem("portTrsct", request.getParameter("portTrsct"));
-	//		form.setItem("functionTrsct", request.getParameter("functionTrsct"));
-	//		
+
 			Map<String, DynaActionForm> services = new HashMap<String, DynaActionForm>();
 			System.out.println(request.getParameterValues("baseURL").length);
 			if(request.getParameterValues("baseURL")!=null) {
@@ -148,6 +148,10 @@ public class AddComercioAction implements Action{
 			}
 		}catch (SQLException ex){
 			System.out.println(ex.getMessage());
+			DynaActionForm formLogs = new DynaActionForm();
+			Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
+			formLogs.setItem("logStr", "Error al intentar agregrar un comercio");
+			daoLogs.insert(formLogs);
 		}
 		
 		

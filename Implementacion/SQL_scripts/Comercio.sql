@@ -74,7 +74,7 @@ create table ofertas
     constraint pk__oferta__end primary key (id_oferta)
 )
 go
--- insert into ofertas values ('2019-01-19 00:00:00:00', '2019-02-31 23:59:59:00', 'https://www.compumundo.com.ar/producto/smart-tv-lg-43-full-hd-43lk5700psc/3c66884d00', 'https://d34zlyc2cp9zm7.cloudfront.net/products/1779250837a13543779bc1f31d5c9b192475d0742a58a898f2b415923137e236.webp_500', 1);
+-- insert into ofertas values (getdate(), getdate()+100, 'https://www.compumundo.com.ar/producto/smart-tv-lg-43-full-hd-43lk5700psc/3c66884d00', 'https://d34zlyc2cp9zm7.cloudfront.net/products/1779250837a13543779bc1f31d5c9b192475d0742a58a898f2b415923137e236.webp_500', 1);
 ----------------------------------------------------------------------------------------------
 create table transacciones
 (

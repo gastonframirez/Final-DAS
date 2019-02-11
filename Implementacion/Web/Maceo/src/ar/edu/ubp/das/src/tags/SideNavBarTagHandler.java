@@ -94,7 +94,7 @@ public class SideNavBarTagHandler extends SimpleTagSupport {
 				"            </a>\n" + 
 				"          </li>");
 		out.println("<li class=\"nav-item border-bottom\">\n" + 
-				"            <a class=\"nav-link \" href=\"/Maceo/admin/Categorias.do\">\n" + 
+				"            <a class=\"nav-link \" href=\"/Maceo/admin//Configuracion.do\">\n" + 
 				"              <span class=\"menu-title\">Configuracion de Scraper</span>\n" + 
 				"              <i class=\"mdi mdi-settings menu-icon\"></i>\n" + 
 				"            </a>\n" + 

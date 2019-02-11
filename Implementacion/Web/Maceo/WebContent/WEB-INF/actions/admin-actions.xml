@@ -31,6 +31,12 @@
         <action path="/AddCategoria.do" type="AddCategoriaAction">
             <forward name="success" path="/admin/sqlResults.jsp"/>
         </action>
+         <action path="/Configuracion.do" type="ShowGlobalConfig">
+            <forward name="success" path="/admin/globalConfig.jsp"/>
+        </action>
+        <action path="/AddConfiguracion.do" type="AddGlobalConfig">
+            <forward name="success" path="/admin/sqlResults.jsp"/>
+        </action>
          <action path="/ToggleComercio.do" type="ToggleComercioAction">
             <forward name="success" path="/admin/sqlResults.jsp"/>
         </action>
