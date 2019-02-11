@@ -102,7 +102,28 @@ public class MSCategoriaDao extends DaoImpl {
 	@Override
 	public void delete(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
+		try {
+        	this.connectWAutoFalse();
+        	
+        	
+//        	Guardo el comercio
+    		this.setProcedure("dbo.toggleCategoria(?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+    		Integer idCategoria = Integer.valueOf(form.getItem("idCategoria"));
+    		Integer habilitada = Integer.valueOf(form.getItem("habilitada"));
+    		
+    		this.setParameter(1, idCategoria);
+    		this.setParameter(2, habilitada);
+    		
+    		this.getStatement().execute();		
 
+			this.commit();
+		} catch (SQLException e) {
+			this.rollback();
+			throw e;
+		}finally {
+			this.autoCommit(true);
+			this.disconnect();
+		}
 	}
 
 	@Override
@@ -133,20 +154,23 @@ public class MSCategoriaDao extends DaoImpl {
         	categoriaTranslated.setHabilitada(result.getBoolean("habilitado"));
         	categoriaTranslated.setImageURL(result.getString("image_url"));
         	
-        	if(form.getItem("idCategoria")!=null) {
-        		this.setProcedure("dbo.checkHabilitable(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-    			this.setParameter(1, form.getItem("idCategoria"));
-    			
-    			ResultSet result2 = this.getStatement().executeQuery();
-    			if(!result2.next()) {
-    				categoriaTranslated.setIsQualifiable(true);
-    			}else {
-    				categoriaTranslated.setIsQualifiable(false);
-    			}
-    			result2.close();
-    		}else {
-    			categoriaTranslated.setIsQualifiable(false);
-    		}
+//        	if(form.getItem("idCategoria")!=null) {
+//        		
+//        		this.setProcedure("dbo.checkHabilitable(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+//    			this.setParameter(1, form.getItem("idCategoria"));
+//    			
+//    			ResultSet result2 = this.getStatement().executeQuery();
+//    			if(!result2.next()) {
+//    				categoriaTranslated.setIsQualifiable(true);
+//    			}else {
+//    				categoriaTranslated.setIsQualifiable(false);
+//    			}
+//    			result2.close();
+//    		}else {
+//    			categoriaTranslated.setIsQualifiable(false);
+//    		}
+        	
+        	categoriaTranslated.setIsQualifiable(true);
         	
         	translations = new HashMap<String, String>();
         	

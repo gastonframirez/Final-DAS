@@ -21837,3 +21837,8 @@ dl li {
     vertical-align: 14px;
     margin-left: 5px;
 }
+
+.btn-testConn{
+	margin-top:50px;
+	float:right;
+}

@@ -39,7 +39,7 @@ public class RestClient implements WSClient {
 		HttpClient client = HttpClientBuilder.create().build();
 
 
-		URI uri = URI.create(url+"/ofertas");
+		URI uri = URI.create(url+"/"+funcion);
 
 		HttpGet req = new HttpGet();
 		req.setURI(uri);
@@ -99,7 +99,7 @@ public class RestClient implements WSClient {
 		HttpClient client = HttpClientBuilder.create().build();
 
 
-		URI uri = URI.create(url+"/transacciones");
+		URI uri = URI.create(url+"/"+funcion);
 		System.out.println(uri);
 		HttpPost req = new HttpPost();
 		req.setURI(uri);

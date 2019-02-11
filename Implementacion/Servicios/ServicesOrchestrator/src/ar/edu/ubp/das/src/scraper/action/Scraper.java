@@ -55,7 +55,7 @@ public class Scraper {
 //			System.out.println(document);
 
 			for(Element prod : document.select(comercio.getCssIterator())) {
-				if(!prod.hasClass("helperComplement")) {
+				if(!prod.hasClass("helperComplement") || !prod.select(comercio.getCssNombre()).text().contains("combo")) {
 					producto = new ProductForm();
 					producto.setIdCategoria(idCat);
 					producto.setIdComercio(comercio.getIdComercio());

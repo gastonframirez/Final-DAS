@@ -35,7 +35,8 @@ public class ComercioForm extends DynaActionForm {
 	
 	private Map<String, Boolean> needsCrawl;
 	private Map<String, Boolean> searchInName;
-	
+	private Boolean totalCrawl;
+
 	
 	
 	public String getCssIterator() {
@@ -181,6 +182,12 @@ public class ComercioForm extends DynaActionForm {
 	}
 	public void setFuncion(Map<String, String> funcion) {
 		this.funcion = funcion;
+	}
+	public Boolean getTotalCrawl() {
+		return totalCrawl;
+	}
+	public void setTotalCrawl(Boolean totalCrawl) {
+		this.totalCrawl = totalCrawl;
 	}
 	
 	

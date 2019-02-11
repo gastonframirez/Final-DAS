@@ -108,6 +108,25 @@ public class Main {
 					}
 					
 				}
+				
+				try {
+					Dao daoUser = DaoFactory.getDao( "User", "ar.edu.ubp.das.src.orchestrator" );
+					daoUser.update(new DynaActionForm());
+				}catch(Exception ex) {
+					//Loguear error
+					ex.printStackTrace();
+					DynaActionForm form = new DynaActionForm();
+					Dao daoLogs;
+					try {
+						daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.orchestrator" );
+						form.setItem("logStr", "Error al intentar desbloquear usuarios.");
+						daoLogs.insert(form);
+					} catch (SQLException e) {
+
+					}
+					
+				}
+				//USAR ESTE PARA DESBLOQUEAR USUARIOS.
 			}	    
 		};	 
 		

@@ -11,6 +11,7 @@ public class UserForm extends DynaActionForm {
     private String password;
     private Integer dni;
     private Boolean isAdmin;
+    private Boolean isBlocked;
     private Integer idUser;
     
 	public String getNombreUsuario() {
@@ -64,6 +65,12 @@ public class UserForm extends DynaActionForm {
 	}
 	public void setIdUser(Integer idUser) {
 		this.idUser = idUser;
+	}
+	public Boolean getIsBlocked() {
+		return isBlocked;
+	}
+	public void setIsBlocked(Boolean isBlocked) {
+		this.isBlocked = isBlocked;
 	}
 	
     

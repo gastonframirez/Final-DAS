@@ -52,7 +52,7 @@ public class MSTecnologiaDao extends DaoImpl{
         	tecnologia = new TecnologiaForm();
         	tecnologia.setId(result.getString("id_tecnologia"));
         	tecnologia.setNombre(result.getString("nombre"));
-
+        	tecnologia.setJavaClass(result.getString("javaClass"));
         	tecnologias.add(tecnologia);
         }
         

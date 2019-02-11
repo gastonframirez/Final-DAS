@@ -40,11 +40,17 @@
          <action path="/ToggleComercio.do" type="ToggleComercioAction">
             <forward name="success" path="/admin/sqlResults.jsp"/>
         </action>
+         <action path="/ToggleCategoria.do" type="ToggleCategoriaAction">
+            <forward name="success" path="/admin/sqlResults.jsp"/>
+        </action>
         <action path="/EditarCategoria.do" type="ShowAddCategoriaAction">
             <forward name="success" path="/admin/addCategoria.jsp"/>
         </action>
         <action path="/Editar.do" type="ShowPerfilAction">
             <forward name="success" path="/admin/profileEdit.jsp"/>
+        </action>
+        <action path="/TestConnection.do" type="CheckConnectionAction">
+            <forward name="success" path="/admin/testConn.jsp"/>
         </action>
     </action-mappings>
 </actions>

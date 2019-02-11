@@ -98,6 +98,24 @@ public class MSUserDao extends DaoImpl {
 	@Override
 	public void delete(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
+		try {
+        	this.connectWAutoFalse();
+
+    		this.setProcedure("dbo.increaseAdminAttempts(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+
+    		this.setParameter(1, form.getItem("nombreUsuario"));
+
+    		this.getStatement().execute();		
+     	
+			this.commit();
+			
+		} catch (SQLException e) {
+			this.rollback();
+			throw e;
+		}finally {
+			this.autoCommit(true);
+			this.disconnect();
+		}
 
 	}
 
@@ -132,10 +150,17 @@ public class MSUserDao extends DaoImpl {
 				user.setEmail(result.getString("email"));
 				user.setIdUser(result.getInt("id_usuario"));
 				user.setNombreUsuario(result.getString("usuario"));
+				if(user.isAdmin()) {
+					user.setIsBlocked(result.getBoolean("bloqueado"));
+				}
 				
 				return user;
 			}
 			else {
+				if(result.getBoolean("isAdmin")) {
+					System.out.println("Es admin");
+					this.delete(form); //Usado para incrementar error en login
+				}
 				//ACA HACER EL INCREMENTO DE ATTEMPTS PARA ADMIN
 				return null;
 			}

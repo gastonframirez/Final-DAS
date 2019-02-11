@@ -122,7 +122,11 @@ public class MSComercioDao extends DaoImpl {
 								
 				    			this.setParameter(1, idComercio);
 					    		this.setParameter(2, kClass);
-					    		this.setParameter(3, catIds.get(kClass).toString());
+					    		if(catIds.get(kClass)!=null) {
+						    		this.setParameter(3, catIds.get(kClass).toString());
+					    		}else {
+					    			this.setNull(3, Types.VARCHAR);
+					    		}
 					    		
 					    		this.getStatement().execute();	
 					    		this.getStatement().close();
@@ -282,7 +286,11 @@ public class MSComercioDao extends DaoImpl {
 								
 				    			this.setParameter(1, idComercio);
 					    		this.setParameter(2, kClass);
-					    		this.setParameter(3, catIds.get(kClass).toString());
+					    		if(catIds.get(kClass)!=null) {
+						    		this.setParameter(3, catIds.get(kClass).toString());
+					    		}else {
+					    			this.setNull(3, Types.VARCHAR);
+					    		}
 					    		
 					    		this.getStatement().execute();	
 //					    		this.commit();

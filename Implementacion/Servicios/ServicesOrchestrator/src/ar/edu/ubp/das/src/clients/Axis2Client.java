@@ -18,7 +18,8 @@ import ar.edu.ubp.das.src.orchestrator.forms.TransactionForm;
 public class Axis2Client implements WSClient {
 	@Override
 	public List<DynaActionForm> getOfertas(String authToken, String url, String funcion) {
-		
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
 		JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 		List<DynaActionForm> ofertas = new LinkedList<DynaActionForm>();
 		
@@ -56,13 +57,13 @@ public class Axis2Client implements WSClient {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		Thread.currentThread().setContextClassLoader(classLoader);
 		return ofertas;
 	}
 
 	@Override
 	public String notificarTransaccion(DynaActionForm transaccion, String authToken, String url, String funcion) throws Exception{
-
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 		
 		String resStatus = "400";
@@ -121,7 +122,7 @@ public class Axis2Client implements WSClient {
 			resStatus="400";
 			e.printStackTrace();
 		}
-		
+		Thread.currentThread().setContextClassLoader(classLoader);
 		return resStatus;
 	}
 

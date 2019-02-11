@@ -54,8 +54,9 @@ $(document).ready(function() {
 //        	  }
 //          }
           error: function(hr){
-              jUtils.showing("error", hr.error);
-              showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop('errorLogin'), '', 'error');
+        	  console.log(hr.responseJSON.error);
+              jUtils.showing("error", hr.responseJSON.error);
+              showSwal('error', 'danger', $.i18n.prop('error'), hr.responseJSON.error, '', 'error');
           },
           success: function(res) {        	 
         	  window.location.href="/Maceo";
