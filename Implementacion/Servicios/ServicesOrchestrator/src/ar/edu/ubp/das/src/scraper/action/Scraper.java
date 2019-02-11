@@ -12,6 +12,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import ar.edu.ubp.das.mvc.action.DynaActionForm;
+import ar.edu.ubp.das.mvc.db.Dao;
+import ar.edu.ubp.das.mvc.db.DaoFactory;
+import ar.edu.ubp.das.src.orchestrator.forms.ConfigsForm;
 import ar.edu.ubp.das.src.orchestrator.forms.ComercioForm;
 import ar.edu.ubp.das.src.orchestrator.forms.ProductForm;
 
@@ -108,48 +112,54 @@ public class Scraper {
 					Boolean searchInName = comercio.getSearchInName().get("brand")!=null || comercio.getSearchInName().get("model")!=null || comercio.getSearchInName().get("imgURL")!=null;
 
 					if(searchInName) {
-					
+						
+						Dao daoConfigs = DaoFactory.getDao( "Config", "ar.edu.ubp.das.src.orchestrator" );
+						
+						List<DynaActionForm> configsList = daoConfigs.select(new DynaActionForm());
+						ConfigsForm configs = (ConfigsForm)configsList.get(0);
 						
 						List<String> excludeList = new ArrayList<>();
-					    
-					    excludeList.add("plateado");
-					    excludeList.add("plateada");
-					    excludeList.add("platinum");
-					    excludeList.add("plata");
-					    excludeList.add("inoxidable");
-					    excludeList.add("inox.");
-					    excludeList.add("inox");
-					    excludeList.add("acero");
-					    excludeList.add("negro");
-					    excludeList.add("negra");
-					    excludeList.add("blanca");
-					    excludeList.add("blanco");
-					    excludeList.add("azul");
-					    excludeList.add("rojo");
-					    excludeList.add("roja");
-					    
-					    excludeList.add("full");
-					    
-					    excludeList.add("uhd");
-					    excludeList.add("hd");
-					    excludeList.add("4k");
-					    excludeList.add("ultra");
-					    excludeList.add("gris");
-					    excludeList.add("silver");
-					    excludeList.add("frost");
-					    excludeList.add("no");
-					    excludeList.add("ap");
-					    excludeList.add("ab");
+					    excludeList.addAll(configs.getWords());
 					    excludeList.add(producto.getMarca());
-					    excludeList.add(".");
+					    
+//					    excludeList.add("plateado");
+//					    excludeList.add("plateada");
+//					    excludeList.add("platinum");
+//					    excludeList.add("plata");
+//					    excludeList.add("inoxidable");
+//					    excludeList.add("inox.");
+//					    excludeList.add("inox");
+//					    excludeList.add("acero");
+//					    excludeList.add("negro");
+//					    excludeList.add("negra");
+//					    excludeList.add("blanca");
+//					    excludeList.add("blanco");
+//					    excludeList.add("azul");
+//					    excludeList.add("rojo");
+//					    excludeList.add("roja");
+//					    
+//					    excludeList.add("full");
+//					    
+//					    excludeList.add("uhd");
+//					    excludeList.add("hd");
+//					    excludeList.add("4k");
+//					    excludeList.add("ultra");
+//					    excludeList.add("gris");
+//					    excludeList.add("silver");
+//					    excludeList.add("frost");
+//					    excludeList.add("no");
+//					    excludeList.add("ap");
+//					    excludeList.add("ab");
+//					    excludeList.add(".");
 					    
 					    List<String> regexList = new ArrayList<>();
-					    regexList.add("\\s([0-9])+\\s?(lts)(.)?");
-					    regexList.add("\\s(con)*\\s*(grill)");
-					    regexList.add("\\s(para)\\s[0-9]+\\s(botellas)");
-					    regexList.add("\\s[0-9]+\\s(botellas)");
-					    regexList.add("\\s[0-9]+\\s(bts)");
-					    regexList.add("\\s(ultra)\\s(hd)");
+					    regexList.addAll(configs.getRegex());
+//					    regexList.add("\\s([0-9])+\\s?(lts)(.)?");
+//					    regexList.add("\\s(con)*\\s*(grill)");
+//					    regexList.add("\\s(para)\\s[0-9]+\\s(botellas)");
+//					    regexList.add("\\s[0-9]+\\s(botellas)");
+//					    regexList.add("\\s[0-9]+\\s(bts)");
+//					    regexList.add("\\s(ultra)\\s(hd)");
 					    
 					    String titleAux = producto.getNombre().toLowerCase();
 				        

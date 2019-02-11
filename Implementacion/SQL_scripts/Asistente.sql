@@ -379,11 +379,13 @@ go
 
 
 ----------------------------------------------------------------------------------------------
-create table orchestrator_config
+create  table orchestrator_config
 (
 	id_config		integer 		not NULL		identity(1,1),
 	tipo_config			INTEGER			not null,
-	palabra_ignorar		varchar(500)	not null
+	palabra_ignorar		varchar(500)	not null,
+	habilitado			BIT				not NULL	default(1),
+	actualizado			datetime		not null,
 
 	constraint pk__orchestrator_config__end PRIMARY key (id_config),
 )
@@ -1609,7 +1611,7 @@ end
 go
 
 
-EXECUTE getComerciosCSSScraper @idComercio = 71
+EXECUTE getComerciosCSSScraper @idComercio = 4
 go
 -- insert into scraper_config values(71, 'prodURL', '.itemBox--price .value-item', 0, 0)
 
@@ -2046,3 +2048,61 @@ BEGIN
 END
 
 exec getServicesTypes
+
+---------------------------------------------------------------------------------------------- Guardar configuraciones
+drop procedure saveOrchConfig
+GO
+
+create or alter procedure saveOrchConfig
+(
+	@tipoConfig		integer,
+	@word			varchar(500)
+)
+AS
+begin
+	IF NOT EXISTS (SELECT * FROM orchestrator_config WHERE palabra_ignorar=@word and tipo_config=@tipoConfig)
+		INSERT INTO orchestrator_config values (@tipoConfig, @word)
+	ELSE
+end
+go
+
+---------------------------------------------------------------------------------------------- Guardar configuraciones
+drop procedure saveOrchConfig
+GO
+
+create or alter procedure saveOrchConfig
+(
+	@tipoConfig		integer,
+	@word			varchar(500)
+)
+AS
+begin
+	IF NOT EXISTS (SELECT * FROM orchestrator_config WHERE palabra_ignorar=@word and tipo_config=@tipoConfig)
+		INSERT INTO orchestrator_config values (@tipoConfig, @word, 1, getdate())
+	ELSE
+		UPDATE orchestrator_config set habilitado = 1, actualizado = getdate() WHERE palabra_ignorar=@word and tipo_config=@tipoConfig
+end
+go
+
+---------------------------------------------------------------------------------------------- Deshabilitar configuraciones
+drop procedure disableOrchConfig
+GO
+
+create or alter procedure disableOrchConfig
+AS
+begin
+	UPDATE orchestrator_config set habilitado = 0
+	WHERE DATEDIFF(minute,actualizado, getdate()) >= 1
+end
+go
+
+---------------------------------------------------------------------------------------------- Obtener configuraciones
+drop procedure getOrchConfig
+GO
+
+create or alter procedure getOrchConfig
+AS
+begin
+	SELECT * FROM orchestrator_config WHERE habilitado = 1
+end
+go

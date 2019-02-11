@@ -93,4 +93,28 @@ $(document).ready(function() {
 		
 		return false;
 	 })
+	 $("#addGlobalConfig").on("submit", function(e){
+		e.preventDefault();
+		
+		var data = $( "#addGlobalConfig" ).serialize();
+		var actionSuccessStr = "successfullyEditConfig";
+		var actionErrorStr = "errorEditConfig";
+		
+		$.ajax({
+          url: "/Maceo/admin/AddConfiguracion.do",
+          type: "post",
+          data: data,
+          dataType: "html",
+          error: function(hr){
+              jUtils.showing("error", hr.error);
+              showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop(actionErrorStr), '/Maceo/admin/Home.do', 'error');
+          },
+          success: function(res) {        	 
+        	  console.log(res);
+        	  showSwal('agregado-correcto', 'success', $.i18n.prop('success'), $.i18n.prop(actionSuccessStr), '/Maceo/admin/Home.do', 'success');
+          }
+      });
+		
+		return false;
+	 })
 });
