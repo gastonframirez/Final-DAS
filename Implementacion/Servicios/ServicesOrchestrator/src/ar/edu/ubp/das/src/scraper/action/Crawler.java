@@ -18,7 +18,8 @@ public class Crawler {
 			final Document document = Jsoup.connect(url).get();
 			
 			for(String cls : cssClass.keySet()) {
-				results.put(cls, document.select(cssClass.get(cls)));
+				if(cssClass.get(cls).length()>1)
+					results.put(cls, document.select(cssClass.get(cls)));
 			}
 			
 		}catch (Exception ex) {

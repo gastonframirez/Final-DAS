@@ -49,23 +49,26 @@ public class ScraperAction {
 			ComercioForm comF = (ComercioForm)com;
 			
 			productos.addAll(scraper.scrap(comF));
-		}
-		
-		
-		if(productos.size()>0) {
-			System.out.println("Guardando prods");
-			Dao daoProductos = DaoFactory.getDao( "Products", "ar.edu.ubp.das.src.orchestrator" );
-			for(ProductForm producto : productos) {
-				try {
-					daoProductos.insert(producto);
-				}catch(Exception e) {
-					form.setItem("logStr", "Error al intentar guardar el producto:" + producto.getNombre() + 
-							"en la DB.");
-					daoLogs.insert(form);
-				}
-			}
 			
+			if(productos.size()>0) {
+				System.out.println("Guardando prods");
+				Dao daoProductos = DaoFactory.getDao( "Products", "ar.edu.ubp.das.src.orchestrator" );
+				for(ProductForm producto : productos) {
+					try {
+						daoProductos.insert(producto);
+					}catch(Exception e) {
+						form.setItem("logStr", "Error al intentar guardar el producto:" + producto.getNombre() + 
+								"en la DB.");
+						daoLogs.insert(form);
+					}
+				}
+				
+			}
+			productos = new LinkedList<ProductForm>();
 		}
+		
+		
+
 		
 		
 	}

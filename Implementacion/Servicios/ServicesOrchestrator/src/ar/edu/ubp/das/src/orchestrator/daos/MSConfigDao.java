@@ -50,11 +50,11 @@ public class MSConfigDao extends DaoImpl {
     	
         while(result.next()) {
         	if(result.getInt("tipo_config") == 1) {
-        		regex.add(result.getString("palabra_ignorar"));
+        		regex.add(result.getString("palabra_ignorar").split("\n")[0].split("\r")[0]);
         	}else if (result.getInt("tipo_config") == 2) {
-        		words.add(result.getString("palabra_ignorar"));
+        		words.add(result.getString("palabra_ignorar").split("\n")[0].split("\r")[0]);
         	}else {
-        		cssClasses.add(result.getString("palabra_ignorar"));
+        		cssClasses.add(result.getString("palabra_ignorar").split("\n")[0].split("\r")[0]);
         	}
         	
         } 	

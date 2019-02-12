@@ -51,7 +51,7 @@ public class Main {
 			}	    
 		};	    	    
 		ScheduledExecutorService serviceScraper = Executors.newSingleThreadScheduledExecutor();	    
-//		serviceScraper.scheduleAtFixedRate(runnableScraper, 0, 12, TimeUnit.HOURS);
+		serviceScraper.scheduleAtFixedRate(runnableScraper, 0, 12, TimeUnit.HOURS);
 
 		
 		Runnable runnableOffers = new Runnable() {	      
@@ -82,7 +82,7 @@ public class Main {
 			}	    
 		};	 
 		ScheduledExecutorService serviceOffers = Executors.newSingleThreadScheduledExecutor();	    
-		serviceOffers.scheduleAtFixedRate(runnableOffers, 0, 30, TimeUnit.MINUTES);
+//		serviceOffers.scheduleAtFixedRate(runnableOffers, 0, 30, TimeUnit.MINUTES);
 		
 		
 		Runnable runnablePending = new Runnable() {	      

@@ -11,6 +11,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.db.Dao;
@@ -26,9 +29,9 @@ public class Scraper {
 	
 		for(String mapUrl : categories.keySet()) {
 			System.out.println(categories.get(mapUrl));
-//			System.out.println(mapUrl);
-			if(!categories.get(mapUrl).equals("-"))
-				productos = this.scrap(comercio, Integer.valueOf(mapUrl), categories.get(mapUrl), 1);
+
+			if(categories.get(mapUrl)!=null)
+				productos.addAll(this.scrap(comercio, Integer.valueOf(mapUrl), categories.get(mapUrl), 1));
 		}
 		
 //		for(ProductForm producto : productos) {
@@ -51,17 +54,46 @@ public class Scraper {
 
 		ProductForm producto;
 		try {
-			final Document document = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6").get();
-//			System.out.println(document);
+			Dao daoConfigs = DaoFactory.getDao( "Config", "ar.edu.ubp.das.src.orchestrator" );
+			
+			List<DynaActionForm> configsList = daoConfigs.select(new DynaActionForm());
+			ConfigsForm configs = (ConfigsForm)configsList.get(0);
+			
+			List<String> excludeList = new ArrayList<>();
+		    excludeList.addAll(configs.getWords());
+//		    System.out.println(excludeList);
+		    List<String> regexList = new ArrayList<>();
+		    regexList.addAll(configs.getRegex());
+//		    System.out.println(regexList);
+		    
+		    Document document = null;
+		    
+		    if(comercio.getTotalCrawl()) {
+		    	System.setProperty("webdriver.chrome.driver", "/Users/gframirez/Documents/UBP/Q10/DAS/Final-DAS/Implementacion/tools/chromedriver");
+				ChromeOptions options = new ChromeOptions();
+				options.setHeadless(true);
+				
+				WebDriver browser = new ChromeDriver(options);
+		        browser.get(url);
+//		        System.out.println(browser.getPageSource());
+		        document = Jsoup.parse(browser.getPageSource());
+		        browser.close();       
+		    }else {
+				document = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6").get();
 
+		    }
+//			System.out.println(document);
+			
+			
+		    
 			for(Element prod : document.select(comercio.getCssIterator())) {
-				if(!prod.hasClass("helperComplement") || !prod.select(comercio.getCssNombre()).text().contains("combo")) {
+				if(!prod.hasClass("helperComplement") || !prod.select(comercio.getCssNombre()).text().toLowerCase().contains("combo")) {
 					producto = new ProductForm();
 					producto.setIdCategoria(idCat);
 					producto.setIdComercio(comercio.getIdComercio());
 					producto.setNombre(prod.select(comercio.getCssNombre()).text());
 					producto.setProdURL(prod.select(comercio.getCssProdURL()).first().absUrl("href"));
-					producto.setPrecio(Float.valueOf(prod.select(comercio.getCssPrecio()).text().replaceAll(",00", "").replace("$", "").replace(".", "")));
+					producto.setPrecio(Float.valueOf(prod.select(comercio.getCssPrecio()).first().text().replaceAll(",00", "").replace("$", "").replace(".", "").replace("contado", "").replace(" ", "")));
 					
 					Boolean needsCrawl = comercio.getNeedsCrawl().get("brand")!=null || comercio.getNeedsCrawl().get("model")!=null || comercio.getNeedsCrawl().get("imgURL")!=null;
 					
@@ -113,65 +145,24 @@ public class Scraper {
 
 					if(searchInName) {
 						
-						Dao daoConfigs = DaoFactory.getDao( "Config", "ar.edu.ubp.das.src.orchestrator" );
+				
 						
-						List<DynaActionForm> configsList = daoConfigs.select(new DynaActionForm());
-						ConfigsForm configs = (ConfigsForm)configsList.get(0);
-						
-						List<String> excludeList = new ArrayList<>();
-					    excludeList.addAll(configs.getWords());
 					    excludeList.add(producto.getMarca());
-					    
-//					    excludeList.add("plateado");
-//					    excludeList.add("plateada");
-//					    excludeList.add("platinum");
-//					    excludeList.add("plata");
-//					    excludeList.add("inoxidable");
-//					    excludeList.add("inox.");
-//					    excludeList.add("inox");
-//					    excludeList.add("acero");
-//					    excludeList.add("negro");
-//					    excludeList.add("negra");
-//					    excludeList.add("blanca");
-//					    excludeList.add("blanco");
-//					    excludeList.add("azul");
-//					    excludeList.add("rojo");
-//					    excludeList.add("roja");
-//					    
-//					    excludeList.add("full");
-//					    
-//					    excludeList.add("uhd");
-//					    excludeList.add("hd");
-//					    excludeList.add("4k");
-//					    excludeList.add("ultra");
-//					    excludeList.add("gris");
-//					    excludeList.add("silver");
-//					    excludeList.add("frost");
-//					    excludeList.add("no");
-//					    excludeList.add("ap");
-//					    excludeList.add("ab");
-//					    excludeList.add(".");
-					    
-					    List<String> regexList = new ArrayList<>();
-					    regexList.addAll(configs.getRegex());
-//					    regexList.add("\\s([0-9])+\\s?(lts)(.)?");
-//					    regexList.add("\\s(con)*\\s*(grill)");
-//					    regexList.add("\\s(para)\\s[0-9]+\\s(botellas)");
-//					    regexList.add("\\s[0-9]+\\s(botellas)");
-//					    regexList.add("\\s[0-9]+\\s(bts)");
-//					    regexList.add("\\s(ultra)\\s(hd)");
-					    
+
 					    String titleAux = producto.getNombre().toLowerCase();
 				        
 				        for(String rgx : regexList) {
+//				        	System.out.println(rgx);
 				        	titleAux = titleAux.replaceAll(rgx, "");
 				        }
 				        for(String excl : excludeList) {
+//				        	System.out.println(excl);
 				        	titleAux = titleAux.replace(excl, "");
 				        }
 				        String[] titleParts = titleAux.split(" ");
 				        String model = titleParts[titleParts.length-1];
-
+				        
+//				        System.out.println(model);
 				        producto.setNativeModelo(model);
 
 						producto.setModelo(producto.getNativeModelo().replace("-", "").replace("/", ""));

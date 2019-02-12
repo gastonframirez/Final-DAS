@@ -20,7 +20,6 @@ public class MSProductsDao extends DaoImpl {
 	public void insert(DynaActionForm form) throws SQLException {
 		// TODO Auto-generated method stub
 		try {
-			System.out.println("AAAA");
         	this.connectWAutoFalse();
     		this.setProcedure("dbo.saveProducto(?,?,?,?,?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 //    		@nombre            	varchar(255),
@@ -32,7 +31,19 @@ public class MSProductsDao extends DaoImpl {
 //    		@precio				float,
 //    		@urlProducto		varchar (500),
 //    		@imageUrl           varchar (500)
+    		
+    		
     		ProductForm producto = (ProductForm)form;
+//    		
+//			System.out.println("Nuevo producto");
+//			System.out.println(producto.getNombre());
+//			System.out.println(producto.getMarca());
+//			System.out.println(producto.getNativeModelo());
+//			System.out.println(producto.getModelo());
+//			System.out.println(producto.getPrecio());
+//			System.out.println(producto.getImgURL());
+//			System.out.println(producto.getProdURL());
+    		
     		this.setParameter(1, producto.getNombre());
     		this.setParameter(2, producto.getMarca());
     		this.setParameter(3, producto.getModelo());

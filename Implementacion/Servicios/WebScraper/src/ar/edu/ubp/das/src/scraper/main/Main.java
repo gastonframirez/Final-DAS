@@ -11,6 +11,16 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.request.GetRequest;
+import com.mashape.unirest.request.HttpRequestWithBody;
+import com.mashape.unirest.request.body.Body;
 
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.db.*;
@@ -25,92 +35,54 @@ public class Main {
 		System.out.println( ">> Iniciando Scrapping de Webs - " + new Date().toString() );
 		
 		try {
-			DynaActionForm form = new DynaActionForm();
-			
-			Dao categoriasDao = DaoFactory.getDao("Categorias", "ar.edu.ubp.das.src.scraper");
-			List<DynaActionForm> categorias = categoriasDao.select(form);
-			
-			
-			Dao comerciosDao = DaoFactory.getDao("Comercios", "ar.edu.ubp.das.src.scraper");
-			List<DynaActionForm> comercios = comerciosDao.select(form);
-			for(DynaActionForm com : comercios) {
-				ComercioForm comF = (ComercioForm)com;
+//			DynaActionForm form = new DynaActionForm();
+//			
+//			Dao categoriasDao = DaoFactory.getDao("Categorias", "ar.edu.ubp.das.src.scraper");
+//			List<DynaActionForm> categorias = categoriasDao.select(form);
+//			
+//			
+//			Dao comerciosDao = DaoFactory.getDao("Comercios", "ar.edu.ubp.das.src.scraper");
+//			List<DynaActionForm> comercios = comerciosDao.select(form);
+//			for(DynaActionForm com : comercios) {
+//				ComercioForm comF = (ComercioForm)com;
+//
+//				Map<String, String> categories = comF.getCategoriaURLs();
+//				
+//				for(String mapUrl : categories.keySet()) {
+//					System.out.println(mapUrl + ": " + categories.get(mapUrl));
+//					try {
+						System.setProperty("webdriver.chrome.driver", "/Users/gframirez/Documents/UBP/Q10/DAS/Final-DAS/Implementacion/tools/chromedriver");
+						  ChromeOptions options = new ChromeOptions();
+						    // setting headless mode to true.. so there isn't any ui
+						    options.setHeadless(true);
+						WebDriver browser = new ChromeDriver(options);
+				        browser.get("https://www.falabella.com.ar/falabella-ar/category/cat10178/TV-LED-y-Smart-TV?gridView=1");
+				        System.out.println(browser.getPageSource());
+				        final Document document = Jsoup.parse(browser.getPageSource());
+				        browser.close();       
 
-				Map<String, String> categories = comF.getCategoriaURLs();
-				
-				for(String mapUrl : categories.keySet()) {
-					System.out.println(mapUrl + ": " + categories.get(mapUrl));
-					try {
-						final Document document = Jsoup.connect(categories.get(mapUrl)).get();
-						
-						for(Element prod : document.select(comF.getCssIterator())) {
+				        //						final Document document = Jsoup.connect("https://www.falabella.com.ar/falabella-ar/category/cat10178/TV-LED-y-Smart-TV?gridView=1").get();
+//						System.out.println(document);
+						for(Element prod : document.select(".pod-item")) {
 							
-							String title = prod.select(comF.getCssNombre()).text();
+							String title = prod.select(".section__pod-top-title").text();
+							System.out.println("\n\nNuevo producto\n");
 							System.out.println(title);
 							
-							String link = prod.select(comF.getCssProdURL()).first().absUrl("href");
+							String link = prod.select(".section__pod-top").first().absUrl("href");
 							System.out.println(link);
 						
-							String price = prod.select(comF.getCssPrecio()).text();
+							String price = prod.select(".fb-price").first().text().replace("contado","");
 							System.out.println(price);
 							
-							String brand = "";
+							String brand = prod.select(".section__pod-top-brand").first().text().replace("contado","");
+							System.out.println(brand);
+							
+//							String brand = "";
 							String model = "";
 							String imgURL = "";
 							
-							Boolean needsCrawl = comF.getNeedsCrawl().get("brand")!=null || comF.getNeedsCrawl().get("model")!=null || comF.getNeedsCrawl().get("imgURL")!=null;
-							
-							if(needsCrawl) {
-								Map<String, Elements> results = new HashMap<String, Elements>();
-								HashMap<String, String> classes = new HashMap<String, String>();
-								
-								for(String key : comF.getNeedsCrawl().keySet()) {
-									String classStr = "";
-									switch (key) {
-										case "brand":
-											classStr = comF.getCssMarca();
-											break;
-										case "model":
-											classStr = comF.getCssModelo();
-											break;
-										case "imgURL":
-											classStr = comF.getCssImgURL();
-											break;
-										default:
-											break;
-									};
-									classes.put(key, classStr);
-//									System.out.println(key+": "+classStr);
-								}
-							
-								Scraper scrap = new Scraper();
-								results = scrap.getLoopedInfo(link, classes);
-								for(String str : results.keySet()) {
-									
-									switch (str) {
-										case "brand":
-											brand = results.get(str).text();
-											System.out.println(results.get(str).text());
-											break;
-										case "model":
-											model = results.get(str).text();
-											System.out.println(results.get(str).text());
-											break;
-										case "imgURL":
-											imgURL = results.get(str).attr("src").replace(".webp_500", ".jpg");
-											System.out.println(results.get(str).attr("src").replace(".webp_500", ".jpg"));
-											break;
-										default:
-											break;
-									};
-								}
-							}
 						
-							Boolean searchInName = comF.getSearchInName().get("brand")!=null || comF.getSearchInName().get("model")!=null || comF.getSearchInName().get("imgURL")!=null;
-
-							if(searchInName) {
-							
-								
 								List<String> excludeList = new ArrayList<>();
 							    
 							    excludeList.add("plateado");
@@ -172,33 +144,25 @@ public class Main {
 								
 							}
 
-			
-							
-							// Correr scrapper para todos los comercios.
-							// Al final ver la fecha de actualizacion de todos los comercios y si algun producto
-							// no se actualizo en ningun comercio, deshabilitarlo.
-							// Si un producto estaba deshabilitado pero aparecio nuevamente, update y habilitarlo
-							
-							System.out.println("\n");
-						}
+		
 					}catch (Exception ex) {
 						ex.printStackTrace();
 					}
-				}
+//				}
 				
 
-				
-				
-				
-			}
+//				
+//				
+//				
+//			}
 			
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
+//			
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		
 //		try {
 //			final Document document = Jsoup.connect(url).get();
 ////			System.out.println(document.outerHtml());

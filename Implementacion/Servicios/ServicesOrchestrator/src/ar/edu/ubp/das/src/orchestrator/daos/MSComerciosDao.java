@@ -55,7 +55,7 @@ public class MSComerciosDao extends DaoImpl {
         	comercio = new ComercioForm();
         	comercio.setIdComercio(Integer.valueOf(result.getString("id_comercio")));
         	comercio.setNombre(result.getString("nombre_publico"));
-        	
+        	comercio.setTotalCrawl(result.getBoolean("totalCrawl"));
 
         	//Obteniendo Datos para services
         	this.setProcedure("dbo.getServices(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
@@ -78,6 +78,7 @@ public class MSComerciosDao extends DaoImpl {
              	comercio.setTecnologiaID(Integer.parseInt(resultServices.getString("id_tecnologia")));
              	comercio.setAuthToken(resultServices.getString("auth_token"));
              	comercio.setJavaClass(resultServices.getString("javaClass"));
+             	
              }
              comercio.setBaseURL(bases);
              comercio.setFuncion(funciones);

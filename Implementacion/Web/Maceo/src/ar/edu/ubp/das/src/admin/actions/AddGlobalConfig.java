@@ -29,7 +29,7 @@ public class AddGlobalConfig implements Action{
 				for(String rgx : regex.split("\\n")) {
 					form = new DynaActionForm();
 					form.setItem("tipo", "1");
-					form.setItem("word", rgx);
+					form.setItem("word", rgx.split("\n")[0].split("\r")[0]);
 					daoConfig.insert(form);
 				}
 			}
@@ -37,7 +37,7 @@ public class AddGlobalConfig implements Action{
 				for(String wrd : words.split("\\n")) {
 					form = new DynaActionForm();
 					form.setItem("tipo", "2");
-					form.setItem("word", wrd);
+					form.setItem("word", wrd.split("\n")[0].split("\r")[0]);
 					daoConfig.insert(form);
 				}
 			}
@@ -45,7 +45,7 @@ public class AddGlobalConfig implements Action{
 				for(String css : cssClasses.split("\\n")) {
 					form = new DynaActionForm();
 					form.setItem("tipo", "3");
-					form.setItem("word", css);
+					form.setItem("word", css.split("\n")[0].split("\r")[0]);
 					daoConfig.insert(form);
 				}
 			}

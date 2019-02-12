@@ -75,6 +75,7 @@ public class MSProductoDao extends DaoImpl {
 
         	modelo = result.getString("modelo");
         	result.next();
+        	boolean alternative = false;
         	while(result.getRow() > 0 && modelo.equals(result.getString("modelo"))) {
         		productoAux = new ProductoForm();
         		productoAux.setIdProducto(result.getInt("id_producto"));
@@ -87,12 +88,13 @@ public class MSProductoDao extends DaoImpl {
         		productoAux.setIdComercio(result.getInt("id_comercio"));
         		
             	productosAlternativos.add(productoAux);
-            	
+            	alternative = true;
         		result.next();
             }
             producto.setProductosAlternativos(productosAlternativos);
             productos.add(producto);
-            result.next();
+//            if(alternative)
+//            result.next();
         }
         
 		this.disconnect();
