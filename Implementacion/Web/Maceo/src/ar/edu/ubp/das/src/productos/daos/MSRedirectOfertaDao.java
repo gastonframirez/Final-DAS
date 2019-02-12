@@ -58,6 +58,7 @@ public class MSRedirectOfertaDao extends DaoImpl {
         	oferta = new RedirectOfertaForm();
         	oferta.setComercioNombre(result.getString("nombre_publico"));
         	oferta.setLogoComercio(result.getString("logo_url"));
+        	oferta.setUrl(result.getString("url_oferta"));
         	ofertas.add(oferta);
 
             result.next();

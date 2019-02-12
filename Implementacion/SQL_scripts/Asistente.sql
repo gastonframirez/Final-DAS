@@ -1336,7 +1336,6 @@ BEGIN
 END
 go
 
-
 -- exec saveProducto @nombre = 'Producto de prueba',
 --     @marca = 'Prueba',
 --     @modelo =  '1P2R3UEB4A',
@@ -1379,7 +1378,7 @@ create procedure getOferta
 )
 as
 begin
-    SELECT nombre_publico, logo_url from ofertas offers
+    SELECT nombre_publico, logo_url, url_oferta from ofertas offers
 	JOIN comercios co
 		ON offers.id_comercio = co.id_comercio
 	WHERE offers.id_comercio = @idComercio
