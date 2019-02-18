@@ -43,17 +43,18 @@ public class RegistrarAction implements Action{
 						form.setItem("userID", request.getParameter("userID"));
 						
 						if(request.getParameter("password1")!=null && request.getParameter("password1").length()>0) {
-							
 							form.setItem("password", request.getParameter("password1"));
 						}else {
 							form.removeItem("password");
 						}
 						
 						daoUser.update(form);
+						
 						user.setApellido(request.getParameter("apellido"));
 						user.setNombre(request.getParameter("nombre"));
 						user.setEmail(request.getParameter("email"));
 						user.setDni(Integer.valueOf(request.getParameter("dni")));
+						
 						System.out.println("UPDATING");
 						
 						request.getSession(true).setAttribute("userData", user);
@@ -74,8 +75,20 @@ public class RegistrarAction implements Action{
 			
 		} catch (SQLException ex) {
 //			throw ex;
-			//VER COMO RESOLVER EL TEMA DE DUPLICATE KEYS PARA DAR MENSAJES CORRECTOS
-			ex.printStackTrace();
+			String excStr = ex.getMessage();
+//			ex.printStackTrace();
+			response.setStatus(400);
+		    if(excStr.contains("uq__usuario_1__end")) {
+		    	System.out.println("User duplicado");
+		    	request.setAttribute("registerResponse", "dupU");
+		    }else if(excStr.contains("uq__usuario_2__end")) {
+		    	System.out.println("DNI duplicado");
+		    	request.setAttribute("registerResponse", "dupD");
+		    }else if(excStr.contains("uq__usuario_3__end")) {
+		    	System.out.println("Email duplicado");
+		    	request.setAttribute("registerResponse", "dupE");
+		    }
+			
 		}
 		
 		Dao daoUserVal = DaoFactory.getDao( "User", "users" );
@@ -85,7 +98,10 @@ public class RegistrarAction implements Action{
 		form.setItem("password", request.getParameter("password1"));
 	
 		UserForm user = (UserForm) daoUserVal.valid(form);
-		request.getSession(true).setAttribute("userData", user);
+		if(user!=null) {
+			request.getSession(true).setAttribute("userData", user);
+		}
+		
 
 		return mapping.getForwardByName("success");
 	}

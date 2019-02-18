@@ -147,11 +147,18 @@ public class AddComercioAction implements Action{
 				daoComercio.insert(form);
 			}
 		}catch (SQLException ex){
-			System.out.println(ex.getMessage());
+			String excStr = ex.getMessage();
+			System.out.println(excStr);
 			DynaActionForm formLogs = new DynaActionForm();
 			Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
 			formLogs.setItem("logStr", "Error al intentar agregrar un comercio");
 			daoLogs.insert(formLogs);
+			response.setStatus(400);
+			if(excStr.contains("uq__comercio__1__end")) {
+		    	request.setAttribute("errComercio", "dupR");
+		    }else if(excStr.contains("uq__comercio__2__end")) {
+		    	request.setAttribute("errComercio", "dupC");
+		    }
 		}
 		
 		

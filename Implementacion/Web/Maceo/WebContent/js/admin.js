@@ -107,75 +107,285 @@ $(document).ready(function() {
 	      });
 	});
 	
+	$.validator.addMethod('cssClass', function(value) {
+
+        return value.match(/^([.#]([\w.-]+))$/);
 	
+	});
+	$.validator.addMethod('urlLocal', function(value) {
+        return value.match(/^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?(\/[.\w]*)*(\?)*(\w+)*(:[0-9]+)*$/);
+	});
+	
+	$("#cssModelInTitle").on("change", function(){
+		if($(this).is(':checked')) {
+		    $("#cssModel").prop('disabled', true);
+		    $("#cssModelNeedsCrawl").prop('disabled', true);
+		    
+		} else {
+			$("#cssModel").prop('disabled', false);
+			$("#cssModelNeedsCrawl").prop('disabled', false);
+		}
+	})
+	
+	$("#cssBrandInTitle").on("change", function(){
+		if($(this).is(':checked')) {
+		    $("#cssBrand").prop('disabled', true);
+		    $("#cssBrandNeedsCrawl").prop('disabled', true);
+		    
+		} else {
+			$("#cssBrand").prop('disabled', false);
+			$("#cssBrandNeedsCrawl").prop('disabled', false);
+		}
+	})
+	$("#addComercioForm").validate({
+		 rules: {
+		    publicName:"required",
+			companyName:"required",
+			CUIT:{
+				required:true,
+				number: true,
+				minlength:11,
+				maxlength:11
+			},
+			address:"required",
+			zipCode:{
+				required:true,
+				number:true
+			},
+			phone:{
+				required: true,
+				number: true
+			},
+			logoURL:{
+				required:true,
+				url:true
+			},
+			authToken:"required",
+			baseURL:{
+				required:true,
+				urlLocal:true
+			},
+			port:{
+				required:true,
+				number:true
+			},
+			"#baseURLtransacciones":{
+				required:true,
+				urlLocal:true
+			},
+			ppProd:{
+				required:true,
+				number:true
+			},
+			ppOffer:{
+				required:true,
+				number:true
+			},
+			urlCategorias:{
+				url:true
+			},
+			cssIterator:{
+				required:true,
+			},
+			cssIterator:{
+				required:true,
+			},
+			cssNombre:{
+				required:true,
+			},
+			cssModel:{
+				required:true,
+			},
+			cssBrand:{
+				required:true,
+			},
+			cssPrice:{
+				required:true,
+			},
+			cssImgURL:{
+				required:true,
+			},
+			cssProductURL:{
+				required:true,
+			},
+			paginationNextv:{
+				required:true,
+			},
+			function:"required",
+			paginationParam:"required"
+	      },
+	      messages: {
+	    	  publicName: $.i18n.prop('publicNameVal'),
+				companyName: $.i18n.prop('companyName'),
+				CUIT:{
+					required: $.i18n.prop('CUITVal'),
+					number: $.i18n.prop('CUITLenVal'),
+					minlength: $.i18n.prop('CUITLenVal'),
+					maxlength: $.i18n.prop('CUITLenVal')
+				},
+				address: $.i18n.prop('addressVal'),
+				zipCode: $.i18n.prop('zipCodeVal'),
+				port: $.i18n.prop('portVal'),
+				function: $.i18n.prop('functionVal'),
+				phone: $.i18n.prop('phoneVal'),
+				logoURL:{
+					required: $.i18n.prop('logoURLVal'),
+					url: $.i18n.prop('logoFormVal')
+				},
+				authToken: $.i18n.prop('authTokenVal'),
+				baseURL:{
+					required: $.i18n.prop('baseURLVal'),
+					urlLocal: $.i18n.prop('baseURLFormVal')
+				},
+				ppProd: $.i18n.prop('ppProdVal'),
+				ppOffer: $.i18n.prop('ppOfferVal'),
+				urlCategorias:{
+					required: $.i18n.prop('urlCategoriasVal'),
+					url: $.i18n.prop('urlCategoriasFormVal')
+				},
+				cssIterator:{
+					required: $.i18n.prop('cssIteratorVal'),
+				},
+				cssNombre:{
+					required: $.i18n.prop('cssNombreVal'),
+				},
+				cssModel:{
+					required: $.i18n.prop('cssModelVal'),
+				},
+				cssBrand:{
+					required: $.i18n.prop('cssBrandVal'),
+				},
+				cssPrice:{
+					required: $.i18n.prop('cssPriceVal'),
+				},
+				cssImgURL:{
+					required: $.i18n.prop('cssImgURLVal'),
+				},
+				cssProductURL:{
+					required: $.i18n.prop('cssProductURLVal'),
+				},
+				paginationNextv:{
+					required: $.i18n.prop('paginationNextvVal'),
+				},
+				paginationParam: $.i18n.prop('paginationParamVal')
+	      },
+	      errorPlacement: function(label, element) {
+	        label.addClass('mt-2 text-danger');
+	        label.insertAfter(element);
+	      },
+	      highlight: function(element, errorClass) {
+	        $(element).parent().addClass('has-danger')
+	        $(element).addClass('form-control-danger')
+	      }
+	 });
 	 $("#addComercioForm").on("submit", function(e){
 		e.preventDefault();
-		
-		var data = $( "#addComercioForm" ).serialize();
-		var actionSuccessStr = "";
-		var actionErrorStr = "";
-		
-		if($("#addComercioForm").hasClass("editForm")){
-			actionSuccessStr = "successfullyEditStore";
-			actionErrorStr = "errorEditStore"
-		}else{
-			actionSuccessStr = "successfullyAddingStore";
-			actionErrorStr = "errorAddingStore"
-		}
-		$.when(testConnection()).then(function(res){
-			if(res==1){
-				$.ajax({
-			          url: "/Maceo/admin/AddComercio.do",
-			          type: "post",
-			          data: data,
-			          dataType: "html",
-			          error: function(hr){
-			              jUtils.showing("error", hr.error);
-			              showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop(actionErrorStr), '/Maceo/admin/Home.do', 'error');
-			          },
-			          success: function(res) {        	 
-			        	  console.log(res);
-			        	  showSwal('agregado-correcto', 'success', $.i18n.prop('success'), $.i18n.prop(actionSuccessStr), '/Maceo/admin/Home.do', 'success');
-			          }
-			      });
+		var isvalid = $("#addComercioForm").valid();
+        if (isvalid) {
+			var data = $( "#addComercioForm" ).serialize();
+			var actionSuccessStr = "";
+			var actionErrorStr = "";
+			
+			if($("#addComercioForm").hasClass("editForm")){
+				actionSuccessStr = "successfullyEditStore";
+				actionErrorStr = "errorEditStore"
 			}else{
-		  		  showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop("errorConnection"), '', 'error');
+				actionSuccessStr = "successfullyAddingStore";
+				actionErrorStr = "errorAddingStore"
 			}
-		});
-		
+			$.when(testConnection()).then(function(res){
+				if(res==1){
+					$.ajax({
+				          url: "/Maceo/admin/AddComercio.do",
+				          type: "post",
+				          data: data,
+				          dataType: "html",
+				          error: function(hr){
+//				              jUtils.showing("error", hr.error);
+				        	  console.log(hr);
+			                  console.log(JSON.parse(hr.responseText));
+			                  var error = JSON.parse(hr.responseText);
+			                  if(error.error!=undefined){
+			                	  showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop(error.error), '/Maceo', 'error');
+			                  }else{
+			                	  showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop(actionErrorStr), '/Maceo', 'error');
+			                  }
+//				              showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop(actionErrorStr), '/Maceo/admin/Home.do', 'error');
+				          },
+				          success: function(res) {        	 
+				        	  console.log(res);
+				        	  showSwal('agregado-correcto', 'success', $.i18n.prop('success'), $.i18n.prop(actionSuccessStr), '/Maceo/admin/Home.do', 'success');
+				          }
+				      });
+				}else{
+			  		  showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop("errorConnection"), '', 'error');
+				}
+			});
+        }
 		return false;
 	 })
 	 
+	 
+	 
+	 $("#addCategoriaForm").validate({
+	      rules: {
+	    	spanish: "required",
+	    	english: "required",
+	    	imageURL: {
+	        	required: true,
+		        url: true
+		    },
+	      },
+	      messages: {
+	    	spanish:  $.i18n.prop('spanishVal'),
+			english:  $.i18n.prop('englishVal'),
+			imageURL: {
+				required:  $.i18n.prop('imageVal'),
+				url: $.i18n.prop('imageURLVal'),
+			},
+	      },
+	      errorPlacement: function(label, element) {
+	        label.addClass('mt-2 text-danger');
+	        label.insertAfter(element);
+	      },
+	      highlight: function(element, errorClass) {
+	        $(element).parent().addClass('has-danger')
+	        $(element).addClass('form-control-danger')
+	      }
+	 });
+	 
 	 $("#addCategoriaForm").on("submit", function(e){
+		 
 		e.preventDefault();
-		
-		var data = $( "#addCategoriaForm" ).serialize();
-		var actionSuccessStr = "";
-		var actionErrorStr = "";
-		
-		console.log($("#addCategoriaForm").hasClass("editForm"));
-		if($("#addCategoriaForm").hasClass("editForm")){
-			actionSuccessStr = "successfullyEditCategory";
-			actionErrorStr = "errorEditCategory"
-		}else{
-			actionSuccessStr = "successfullyAddingCategory";
-			actionErrorStr = "errorAddingCategory"
-		}
-		$.ajax({
-          url: "/Maceo/admin/AddCategoria.do",
-          type: "post",
-          data: data,
-          dataType: "html",
-          error: function(hr){
-              jUtils.showing("error", hr.error);
-              showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop(actionErrorStr), '/Maceo/admin/Home.do', 'error');
-          },
-          success: function(res) {        	 
-        	  console.log(res);
-        	  showSwal('agregado-correcto', 'success', $.i18n.prop('success'), $.i18n.prop(actionSuccessStr), '/Maceo/admin/Home.do', 'success');
-          }
-      });
-		
+		var isvalid = $("#addCategoriaForm").valid();
+        if (isvalid) {
+			var data = $( "#addCategoriaForm" ).serialize();
+			var actionSuccessStr = "";
+			var actionErrorStr = "";
+			
+			console.log($("#addCategoriaForm").hasClass("editForm"));
+			if($("#addCategoriaForm").hasClass("editForm")){
+				actionSuccessStr = "successfullyEditCategory";
+				actionErrorStr = "errorEditCategory"
+			}else{
+				actionSuccessStr = "successfullyAddingCategory";
+				actionErrorStr = "errorAddingCategory"
+			}
+			$.ajax({
+	          url: "/Maceo/admin/AddCategoria.do",
+	          type: "post",
+	          data: data,
+	          dataType: "html",
+	          error: function(hr){
+	              jUtils.showing("error", hr.error);
+	              showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop(actionErrorStr), '/Maceo/admin/Home.do', 'error');
+	          },
+	          success: function(res) {        	 
+	        	  console.log(res);
+	        	  showSwal('agregado-correcto', 'success', $.i18n.prop('success'), $.i18n.prop(actionSuccessStr), '/Maceo/admin/Home.do', 'success');
+	          }
+	      });
+        }
 		return false;
 	 })
 	 $("#addGlobalConfig").on("submit", function(e){
