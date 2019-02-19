@@ -26,12 +26,13 @@ public class Main {
 		Runnable runnableScraper = new Runnable() {	      
 			public void run() {	        
 				// Crear thread para Scraper        
-				System.out.println( "Checkeando si necesario obtener productos con scraper - " + new Date().toString() );	  
+				System.out.println( "Es tiempo para hacer scrap: - " + new Date().toString() );	  
 				ScraperAction scraper = new ScraperAction();
 				try {
 					scraper.init();
 					
 					//Deshabilito productos que no se encuentras disponibles en ninguno de los comercios
+					System.out.println( "Deshabilitando productos inactivos." );	
 					scraper.unableUnavailableProducts();
 					
 				}catch(Exception ex) {
@@ -64,6 +65,7 @@ public class Main {
 					offers.init();
 					
 					//Deshabilito ofertas que deben ser deshabilitadas por fecha o por que no estan mas disponibles
+					System.out.println( "Deshabilitando ofertas inactivas." );	
 					offers.unableUnavailableOffers();
 					
 				}catch(Exception ex) {
@@ -82,18 +84,18 @@ public class Main {
 			}	    
 		};	 
 		ScheduledExecutorService serviceOffers = Executors.newSingleThreadScheduledExecutor();	    
-//		serviceOffers.scheduleAtFixedRate(runnableOffers, 0, 30, TimeUnit.MINUTES);
+		serviceOffers.scheduleAtFixedRate(runnableOffers, 0, 30, TimeUnit.MINUTES);
 		
 		
 		Runnable runnablePending = new Runnable() {	      
 			public void run() {	        
 				// Crear thread para Enviar pending transaccionnes
-				System.out.println( "Checkeando si hay transacciones pendientes de envío - " + new Date().toString() );	 
+				System.out.println( "Comprobando si hay transacciones pendientes de envio - " + new Date().toString() );	 
 				
 				TransaccionesAction transacciones = new TransaccionesAction();
 				try {
 					transacciones.init();
-					
+					System.out.println("Las transacciones pendientes han sido enviadas.");	 
 				}catch(Exception ex) {
 					//Loguear error
 					ex.printStackTrace();
@@ -126,12 +128,11 @@ public class Main {
 					}
 					
 				}
-				//USAR ESTE PARA DESBLOQUEAR USUARIOS.
 			}	    
 		};	 
 		
 		ScheduledExecutorService servicePending = Executors.newSingleThreadScheduledExecutor();	    
-//		servicePending.scheduleAtFixedRate(runnablePending, 0, 15, TimeUnit.MINUTES);
+		servicePending.scheduleAtFixedRate(runnablePending, 0, 15, TimeUnit.MINUTES);
 	}
 	
 

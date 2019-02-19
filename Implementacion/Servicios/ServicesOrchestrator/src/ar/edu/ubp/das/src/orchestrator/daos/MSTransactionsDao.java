@@ -41,12 +41,9 @@ public class MSTransactionsDao extends DaoImpl {
 
 		try {
         	this.connectWAutoFalse();
-
-        	System.out.println("Guardando transaccion..");
-    		this.setProcedure("dbo.releasePendingTransaction(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        	
+        	this.setProcedure("dbo.releasePendingTransaction(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
     		this.setParameter(1, form.getItem("idTransaccion"));
-
-    		System.out.println("Parametros seteados. Ejecutando statement..");
     		
     		this.getStatement().execute();		
      	

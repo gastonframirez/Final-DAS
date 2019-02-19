@@ -23,7 +23,9 @@ public class OfertasAction {
 		List<DynaActionForm> comercios = daoComercios.select(form);
 
 		Dao daoLogs =  DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.orchestrator" );
-		
+		if(comercios.size()==0) {
+			System.out.println("No existe ningun comercio habilitado al momento de buscar nuevas ofertas.");
+		}
 		for(DynaActionForm cf : comercios) {
 			ComercioForm comercio = (ComercioForm)cf;
 

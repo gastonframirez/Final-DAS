@@ -73,7 +73,6 @@ public class MSOffersDao extends DaoImpl {
     		this.getStatement().close();
     		
 			this.commit();
-			System.out.println("Ofertas deshabilitadas");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			this.rollback();

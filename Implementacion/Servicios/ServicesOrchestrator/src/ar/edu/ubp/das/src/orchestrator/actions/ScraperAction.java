@@ -51,7 +51,7 @@ public class ScraperAction {
 			productos.addAll(scraper.scrap(comF));
 			
 			if(productos.size()>0) {
-				System.out.println("Guardando prods");
+				System.out.println("Guardando productos");
 				Dao daoProductos = DaoFactory.getDao( "Products", "ar.edu.ubp.das.src.orchestrator" );
 				for(ProductForm producto : productos) {
 					try {
@@ -66,10 +66,9 @@ public class ScraperAction {
 			}
 			productos = new LinkedList<ProductForm>();
 		}
-		
-		
-
-		
+		if(comercios.size()==0) {
+			System.out.println("No existe ningun comercio habilitado al momento de buscar nuevos productos.");
+		}
 		
 	}
 	public void unableUnavailableProducts() throws SQLException {

@@ -22,7 +22,9 @@ public class TransaccionesAction {
 		
 		List<DynaActionForm> comercios = daoComercios.select(form);
 		Dao daoLogs =  DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.orchestrator" );
-		
+		if(comercios.size()==0) {
+			System.out.println("No existe ningun comercio habilitado al momento de enviar transacciones pendientes.");
+		}
 		for(DynaActionForm cf : comercios) {
 			ComercioForm comercio = (ComercioForm)cf;
 
@@ -31,7 +33,6 @@ public class TransaccionesAction {
 			
 			// Conectarse a client
 			try {
-				System.out.println("Seteando transacciones en el comercio");
 
 				Dao daoTransacciones = DaoFactory.getDao( "Transactions", "ar.edu.ubp.das.src.orchestrator" );
 				form.setItem("idComercio", comercio.getIdComercio().toString());

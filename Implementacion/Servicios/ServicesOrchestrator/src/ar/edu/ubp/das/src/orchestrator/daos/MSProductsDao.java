@@ -84,9 +84,7 @@ public class MSProductsDao extends DaoImpl {
     		this.getStatement().close();
     		
 			this.commit();
-			
-			System.out.println("Productos deshabilitados");
-			
+						
 		} catch (SQLException e) {
 			e.printStackTrace();
 			this.rollback();
