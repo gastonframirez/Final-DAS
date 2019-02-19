@@ -34,7 +34,6 @@ public class AddComercioAction implements Action{
 			form.setItem("logoURL", request.getParameter("logoURL"));
 		
 			if(request.getParameter("totalCrawl")!=null) {
-				System.out.println("Tiene total");
 				form.setItem("totalCrawl", "1");
 			}
 			
@@ -46,8 +45,16 @@ public class AddComercioAction implements Action{
 			Map<String, String> classes = new HashMap<String, String>();
 			classes.put("iterator", request.getParameter("cssIterator"));
 			classes.put("name", request.getParameter("cssNombre"));
-			classes.put("model", request.getParameter("cssModel"));
-			classes.put("brand", request.getParameter("cssBrand"));
+			if(request.getParameter("cssModel")!=null) {
+				classes.put("model", request.getParameter("cssModel"));
+			}else {
+				classes.put("model", null);
+			}
+			if(request.getParameter("cssBrand")!=null) {
+				classes.put("brand", request.getParameter("cssBrand"));
+			}else{
+				classes.put("brand", null);
+			}
 			classes.put("price", request.getParameter("cssPrice"));
 			classes.put("imgURL", request.getParameter("cssImgURL"));
 			classes.put("prodURL", request.getParameter("cssProductURL"));
@@ -71,7 +78,7 @@ public class AddComercioAction implements Action{
 			}
 
 			Map<String, DynaActionForm> services = new HashMap<String, DynaActionForm>();
-			System.out.println(request.getParameterValues("baseURL").length);
+//			System.out.println(request.getParameterValues("baseURL").length);
 			if(request.getParameterValues("baseURL")!=null) {
 				String[] baseURL = request.getParameterValues("baseURL");
 				String[] servTipo = request.getParameterValues("servTipo");
@@ -140,10 +147,10 @@ public class AddComercioAction implements Action{
 			
 			
 			if(request.getParameter("idComercio")!=null) {
-				System.out.println("Updating");
+//				System.out.println("Updating");
 				daoComercio.update(form);
 			}else {
-				System.out.println("Adding");
+//				System.out.println("Adding");
 				daoComercio.insert(form);
 			}
 		}catch (SQLException ex){

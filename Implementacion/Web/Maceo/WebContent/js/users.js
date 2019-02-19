@@ -62,12 +62,10 @@ $(document).ready(function() {
 	    });
 	
 	$("#userRegister").on("submit", function(e){
-		
+		e.preventDefault();
 		var isvalid = $("#userRegister").valid();
         if (isvalid) {
-        	e.preventDefault();
-        	
-        	console.log("form is valid");
+        	$("body").addClass("loaderActive");
         	
     		var data = $( "#userRegister" ).serialize();
     		
@@ -81,14 +79,17 @@ $(document).ready(function() {
                   console.log(JSON.parse(hr.responseText));
                   var error = JSON.parse(hr.responseText);
                   if(error.error!=undefined){
+                	  $("body").removeClass("loaderActive");
                 	  showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop(error.error), '/Maceo', 'error');
                   }else{
+                	  $("body").removeClass("loaderActive");
                 	  showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop('errorRegisty'), '/Maceo', 'error');
                   }
                   
               },
               success: function(res) {        	 
             	  console.log(res);
+            	  $("body").removeClass("loaderActive");
             	  showSwal('redirect', 'success', $.i18n.prop('success'), $.i18n.prop('successfulRegistry'), '/Maceo', 'success');
               }
           });
@@ -99,7 +100,7 @@ $(document).ready(function() {
 	 
 	 $("#loginForm").on("submit", function(e){
 		e.preventDefault();
-		
+		$("body").addClass("loaderActive");
 		var data = $( "#loginForm" ).serialize();
 		
 		$.ajax({
@@ -110,7 +111,9 @@ $(document).ready(function() {
           error: function(hr){
         	  console.log(hr.responseJSON.error);
               jUtils.showing("error", hr.responseJSON.error);
+              $("body").removeClass("loaderActive");
               showSwal('error', 'danger', $.i18n.prop('error'), hr.responseJSON.error, '', 'error');
+              
           },
           success: function(res) {        	 
         	  window.location.href="/Maceo";
@@ -186,6 +189,7 @@ $(document).ready(function() {
 		e.preventDefault();
 		var isvalid = $("#updateUserForm").valid();
         if (isvalid) {
+        	$("body").addClass("loaderActive");
 			var data = $( "#updateUserForm" ).serialize();
 			
 			$.ajax({
@@ -195,10 +199,12 @@ $(document).ready(function() {
 	          dataType: "html",
 	          error: function(hr){
 	              jUtils.showing("error", hr.error);
+	              $("body").removeClass("loaderActive");
 	              showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop('errorEditProfile'), '/Maceo', 'error');
 	          },
 	          success: function(res) {        	 
 	        	  console.log(res);
+	        	  $("body").removeClass("loaderActive");
 	        	  showSwal('agregado-correcto', 'success', $.i18n.prop('success'), $.i18n.prop('successfullyEditProfile'), '/Maceo', 'success');
 	          }
 	      });
@@ -269,9 +275,10 @@ $(document).ready(function() {
 	 
 	 $("#updateUserNormalForm").on("submit", function(e){
 		e.preventDefault();
-		var isvalid = $("#updateUserForm").valid();
+		var isvalid = $("#updateUserNormalForm").valid();
         if (isvalid) {
-			var data = $( "#updateUserForm" ).serialize();
+        	$("body").addClass("loaderActive");
+			var data = $( "#updateUserNormalForm" ).serialize();
 			
 			$.ajax({
 			  url: "/Maceo/users/Registrar.do",
@@ -280,10 +287,12 @@ $(document).ready(function() {
 	          dataType: "html",
 	          error: function(hr){
 	              jUtils.showing("error", hr.error);
+	              $("body").removeClass("loaderActive");
 	              showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop('errorEditProfile'), '/Maceo', 'error');
 	          },
 	          success: function(res) {        	 
 	        	  console.log(res);
+	        	  $("body").removeClass("loaderActive");
 	        	  showSwal('agregado-correcto', 'success', $.i18n.prop('success'), $.i18n.prop('successfullyEditProfile'), '/Maceo', 'success');
 	          }
 	      });

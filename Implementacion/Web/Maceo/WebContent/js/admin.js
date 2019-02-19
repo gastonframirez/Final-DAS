@@ -2,7 +2,6 @@ $(document).ready(function() {
 
 	function testConnection(){
 		var dfd = $.Deferred();
-		
 		var data =  {
 				  "name":"tecnologia","tecnologia":$("#techID").val(), 
 				  "authToken": $("#authToken").val(),
@@ -17,6 +16,7 @@ $(document).ready(function() {
           dataType: "html",
           error: function(hr){
               jUtils.showing("error", hr.error);
+              $("body").removeClass("loaderActive");
               showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop(actionErrorStr), '', 'error');
           },
           success: function(res) {
@@ -36,6 +36,7 @@ $(document).ready(function() {
 	                  dataType: "html",
 	                  error: function(hr){
 	                      jUtils.showing("error", hr.error);
+	                      $("body").removeClass("loaderActive");
 	                      showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop(actionErrorStr), '', 'error');
 	                  },
 	                  success: function(res) {
@@ -59,7 +60,7 @@ $(document).ready(function() {
 	}
 	
 	$("#enabled").on("change", function(e){
-		
+		$("body").addClass("loaderActive");
 		var enable = "";
 		var url = "";
 		var data = "";
@@ -96,11 +97,13 @@ $(document).ready(function() {
 	          dataType: "html",
 	          error: function(hr){
 	              jUtils.showing("error", hr.error);
+	              $("body").removeClass("loaderActive");
 	              showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop(error1) + " " + $.i18n.prop(enable) + 
 	            		  " " + $.i18n.prop(error2) , '', 'error');
 	          },
 	          success: function(res) {        	 
 	        	  console.log(res);
+	        	  $("body").removeClass("loaderActive");
 	        	  showSwal('error', 'success', $.i18n.prop('success'),  $.i18n.prop(success1) + " " + $.i18n.prop(enable) + 
 	            		  " " + $.i18n.prop(success2), '', 'success');
 	          }
@@ -286,6 +289,8 @@ $(document).ready(function() {
 			var actionSuccessStr = "";
 			var actionErrorStr = "";
 			
+			$("body").addClass("loaderActive");
+			
 			if($("#addComercioForm").hasClass("editForm")){
 				actionSuccessStr = "successfullyEditStore";
 				actionErrorStr = "errorEditStore"
@@ -306,19 +311,22 @@ $(document).ready(function() {
 			                  console.log(JSON.parse(hr.responseText));
 			                  var error = JSON.parse(hr.responseText);
 			                  if(error.error!=undefined){
+			                	  $("body").removeClass("loaderActive");
 			                	  showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop(error.error), '/Maceo', 'error');
 			                  }else{
+			                	  $("body").removeClass("loaderActive");
 			                	  showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop(actionErrorStr), '/Maceo', 'error');
 			                  }
-//				              showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop(actionErrorStr), '/Maceo/admin/Home.do', 'error');
 				          },
 				          success: function(res) {        	 
 				        	  console.log(res);
+				        	  $("body").removeClass("loaderActive");
 				        	  showSwal('agregado-correcto', 'success', $.i18n.prop('success'), $.i18n.prop(actionSuccessStr), '/Maceo/admin/Home.do', 'success');
 				          }
 				      });
 				}else{
-			  		  showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop("errorConnection"), '', 'error');
+					$("body").removeClass("loaderActive");
+			  		showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop("errorConnection"), '', 'error');
 				}
 			});
         }
@@ -362,7 +370,7 @@ $(document).ready(function() {
 			var data = $( "#addCategoriaForm" ).serialize();
 			var actionSuccessStr = "";
 			var actionErrorStr = "";
-			
+			$("body").addClass("loaderActive");
 			console.log($("#addCategoriaForm").hasClass("editForm"));
 			if($("#addCategoriaForm").hasClass("editForm")){
 				actionSuccessStr = "successfullyEditCategory";
@@ -378,10 +386,12 @@ $(document).ready(function() {
 	          dataType: "html",
 	          error: function(hr){
 	              jUtils.showing("error", hr.error);
+	              $("body").removeClass("loaderActive");
 	              showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop(actionErrorStr), '/Maceo/admin/Home.do', 'error');
 	          },
 	          success: function(res) {        	 
 	        	  console.log(res);
+	        	  $("body").removeClass("loaderActive");
 	        	  showSwal('agregado-correcto', 'success', $.i18n.prop('success'), $.i18n.prop(actionSuccessStr), '/Maceo/admin/Home.do', 'success');
 	          }
 	      });
@@ -394,7 +404,7 @@ $(document).ready(function() {
 		var data = $( "#addGlobalConfig" ).serialize();
 		var actionSuccessStr = "successfullyEditConfig";
 		var actionErrorStr = "errorEditConfig";
-		
+		$("body").addClass("loaderActive");
 		$.ajax({
           url: "/Maceo/admin/AddConfiguracion.do",
           type: "post",
@@ -402,10 +412,12 @@ $(document).ready(function() {
           dataType: "html",
           error: function(hr){
               jUtils.showing("error", hr.error);
+              $("body").addClass("removeActive");
               showSwal('agregado-correcto', 'danger', $.i18n.prop('error'), $.i18n.prop(actionErrorStr), '/Maceo/admin/Home.do', 'error');
           },
           success: function(res) {        	 
         	  console.log(res);
+        	  $("body").addClass("removeActive");
         	  showSwal('agregado-correcto', 'success', $.i18n.prop('success'), $.i18n.prop(actionSuccessStr), '/Maceo/admin/Home.do', 'success');
           }
       });
@@ -417,11 +429,14 @@ $(document).ready(function() {
 		e.preventDefault();
 		var actionSuccessStr = "successfulConnection";
 		var actionErrorStr = "errorConnection";
+		$("body").addClass("loaderActive");
 		$.when(testConnection()).then(function(res){
 			console.log(res);
 			if(res==1){
+				$("body").removeClass("loaderActive");
 		       showSwal('error', 'success', $.i18n.prop('success'), $.i18n.prop(actionSuccessStr), '', 'success');
 			 }else{
+				 $("body").removeClass("loaderActive");
 				 showSwal('error', 'danger', $.i18n.prop('error'), $.i18n.prop(actionErrorStr), '', 'error');
 			 }
 		});

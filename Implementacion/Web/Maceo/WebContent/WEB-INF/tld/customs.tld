@@ -47,6 +47,11 @@
 		<body-content>empty</body-content>
 	</tag>	
 	<tag>
+		<name>loader</name>
+		<tag-class>ar.edu.ubp.das.src.tags.LoaderTagHandler</tag-class>
+		<body-content>empty</body-content>
+	</tag>	
+	<tag>
 		<name>sideNavBar</name>
 		<tag-class>ar.edu.ubp.das.src.tags.SideNavBarTagHandler</tag-class>
 		<body-content>empty</body-content>

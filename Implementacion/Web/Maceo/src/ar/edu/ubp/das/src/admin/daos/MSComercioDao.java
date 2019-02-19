@@ -151,7 +151,12 @@ public class MSComercioDao extends DaoImpl {
 				for(String kClass : classes.keySet()) {
 					this.setProcedure("dbo.saveScraperConfigComercio(?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 					this.setParameter(1, idComercio);
-		    		this.setParameter(2, classes.get(kClass).toString());
+					if(classes.get(kClass)!=null) {
+						this.setNull(2, Types.VARCHAR);
+					}else {
+						this.setParameter(2, classes.get(kClass).toString());
+					}
+		    		
 		    		if(needsCrawl!=null && needsCrawl.get(kClass) != null) {
 		    			this.setParameter(3, 1);
 		    		}else {
@@ -256,7 +261,6 @@ public class MSComercioDao extends DaoImpl {
 				}
 
 	         	
-//				this.commit();
 				
 				this.getStatement().close();
 				
@@ -268,8 +272,6 @@ public class MSComercioDao extends DaoImpl {
 	    		this.setParameter(3, form.getItem("ppProd"));
 				
 	    		this.getStatement().execute();		
-	         	
-//				this.commit();
 				
 				this.getStatement().close();
 //				
@@ -282,7 +284,6 @@ public class MSComercioDao extends DaoImpl {
 						for(String kClass : catIds.keySet()) {
 							if(catIds!=null && catIds.get(kClass) != null) {
 				    			this.setProcedure("dbo.updateScraperURLComercio(?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-								System.out.println("Sin error 0: "+kClass);
 								
 				    			this.setParameter(1, idComercio);
 					    		this.setParameter(2, kClass);
@@ -317,7 +318,11 @@ public class MSComercioDao extends DaoImpl {
 					this.setProcedure("dbo.updateScraperConfigComercio(?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 
 					this.setParameter(1, idComercio);
-		    		this.setParameter(2, classes.get(kClass).toString());
+					if(classes.get(kClass)==null) {
+						this.setNull(2, Types.VARCHAR);
+					}else {
+						this.setParameter(2, classes.get(kClass).toString());
+					}
 		    		if(needsCrawl!=null && needsCrawl.get(kClass) != null) {
 		    			this.setParameter(3, 1);
 		    		}else {
