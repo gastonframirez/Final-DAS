@@ -21900,14 +21900,59 @@ dl li {
   	bottom: 0;
   	z-index: 1031;
   	background: rgba(0,0,0,0.8);
-  	align-items: center;
 }
 
 body.loaderActive .loader-overlay{
 	display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
   
 body.loaderActive .container-scroller{
     filter: blur(5px);
 }
-  
+
+.searchForm{
+	width: 80%;
+    display: inline-flex;
+}
+.searchInput{
+	background: rgba(255,255,255, 0.5);
+    border: none;
+    padding: 10px;
+    width: 100%;
+    font-size: 2em;
+    color: #FFF;
+    text-align: center;
+}
+.searchIcon{
+    width: 33px;
+    margin-left: 10px;
+    font-size: 2em;
+    display: flex;
+    align-items: center;
+    color: #FFF;
+    transition: all 0.5s ease-in-out;
+}
+.searchText{
+	font-size: 1.5em;
+    color: #FFF;
+}
+
+.closeSearch{
+	position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #FFF;
+    font-size: 3em;
+    transition: all 0.5s ease-in-out;
+}
+.closeSearch:hover,
+.searchIcon:hover{
+	color: #999;
+	cursor:pointer;
+  	transition: all 0.5s ease-in-out;
+
+	
+}

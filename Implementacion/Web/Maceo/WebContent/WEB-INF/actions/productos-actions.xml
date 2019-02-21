@@ -10,8 +10,12 @@
         <action path="/Productos.do" type="ProductosAction">
             <forward name="success" path="/productos/categoria.jsp"/>
         </action>
+        <action path="/Buscar.do" type="BuscarAction">
+            <forward name="success" path="/productos/categoria.jsp"/>
+        </action>
         <action path="/Redireccionar.do" type="RedirectingAction">
             <forward name="success" path="/productos/redirecting.jsp"/>
         </action>
+        
     </action-mappings>
 </actions>

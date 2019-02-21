@@ -50,13 +50,25 @@ public class MSProductoDao extends DaoImpl {
 		
 		this.connect();
 		
-		this.setProcedure("dbo.getProductos(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        if(form.getItem("id_categoria").isEmpty()) {
-        	this.setNull(1, Types.TINYINT);
-        }
-        else {
-        	this.setParameter(1, String.valueOf(form.getItem("id_categoria")));
-        }
+		if(form.getItem("search")!=null) {
+			this.setProcedure("dbo.searchProd(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			this.setParameter(1, form.getItem("search"));
+		}else {
+			this.setProcedure("dbo.getProductos(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			if(form.getItem("id_categoria").isEmpty()) {
+	        	this.setNull(1, Types.TINYINT);
+	        }
+	        else {
+	        	this.setParameter(1, form.getItem("id_categoria"));
+	        }
+		}
+//		this.setProcedure("dbo.getProductos(?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+//        if(form.getItem("id_categoria").isEmpty()) {
+//        	this.setNull(1, Types.TINYINT);
+//        }
+//        else {
+//        	this.setParameter(1, String.valueOf(form.getItem("id_categoria")));
+//        }
         
         ResultSet result = this.getStatement().executeQuery();
     	result.next();

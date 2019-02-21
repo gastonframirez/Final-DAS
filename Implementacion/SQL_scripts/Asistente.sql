@@ -1945,4 +1945,28 @@ begin
 end
 go
 
+---------------------------------------------------------------------------------------------- Obtener productos de busqueda
+create or alter procedure searchProd
+(
+	@searchStr varchar(500)
+)
+AS
+begin
+	SELECT prod.id_producto, nombre, modelo, precio, url_producto, fecha_actualizado, image_url, logo_url, prodc.id_comercio
+	FROM productos prod
+	JOIN producto_comercio prodc
+		ON prodc.id_producto = prod.id_producto
+	JOIN comercios co
+		ON prodc.id_comercio = co.id_comercio
+	WHERE co.habilitado = 1
+	AND prodc.habilitado = 1
+	AND prodc.nombre COLLATE Latin1_general_CI_AI  LIKE CONCAT('%', @searchStr, '%') COLLATE Latin1_general_CI_AI
+	ORDER BY prod.id_producto, prodc.precio, prod.modelo
+end
+go
+
+-- exec searchProd @searchStr='pava%marfil'
+-- go
+
+
 
