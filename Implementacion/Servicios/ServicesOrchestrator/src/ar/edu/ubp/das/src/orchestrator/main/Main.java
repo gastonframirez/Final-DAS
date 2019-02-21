@@ -33,7 +33,7 @@ public class Main {
 					
 					//Deshabilito productos que no se encuentras disponibles en ninguno de los comercios
 					System.out.println( "Deshabilitando productos inactivos." );	
-					scraper.unableUnavailableProducts();
+//					scraper.unableUnavailableProducts();
 					
 				}catch(Exception ex) {
 					//Loguear error
@@ -52,7 +52,7 @@ public class Main {
 			}	    
 		};	    	    
 		ScheduledExecutorService serviceScraper = Executors.newSingleThreadScheduledExecutor();	    
-		serviceScraper.scheduleAtFixedRate(runnableScraper, 0, 12, TimeUnit.HOURS);
+		serviceScraper.scheduleAtFixedRate(runnableScraper,0, 12, TimeUnit.HOURS);
 
 		
 		Runnable runnableOffers = new Runnable() {	      
@@ -111,6 +111,17 @@ public class Main {
 					
 				}
 				
+			}	    
+		};	 
+		
+		ScheduledExecutorService servicePending = Executors.newSingleThreadScheduledExecutor();	    
+		servicePending.scheduleAtFixedRate(runnablePending, 0, 15, TimeUnit.MINUTES);
+		
+		Runnable runnableUnlock = new Runnable() {	      
+			public void run() {	        
+				// Crear thread para Enviar pending transaccionnes
+				System.out.println( "Comprobando si hay usuarios administradores pendientes de desbloqueo - " + new Date().toString() );	 
+				
 				try {
 					Dao daoUser = DaoFactory.getDao( "User", "ar.edu.ubp.das.src.orchestrator" );
 					daoUser.update(new DynaActionForm());
@@ -131,8 +142,8 @@ public class Main {
 			}	    
 		};	 
 		
-		ScheduledExecutorService servicePending = Executors.newSingleThreadScheduledExecutor();	    
-		servicePending.scheduleAtFixedRate(runnablePending, 0, 15, TimeUnit.MINUTES);
+		ScheduledExecutorService serviceUnlock = Executors.newSingleThreadScheduledExecutor();	    
+		serviceUnlock.scheduleAtFixedRate(runnableUnlock, 0, 15, TimeUnit.MINUTES);
 	}
 	
 

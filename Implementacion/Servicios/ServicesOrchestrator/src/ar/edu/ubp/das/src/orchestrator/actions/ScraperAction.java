@@ -47,7 +47,7 @@ public class ScraperAction {
 		
 		for(DynaActionForm com : comercios) {
 			ComercioForm comF = (ComercioForm)com;
-			
+			System.out.println("Buscando productos");
 			productos.addAll(scraper.scrap(comF));
 			
 			if(productos.size()>0) {
@@ -57,6 +57,7 @@ public class ScraperAction {
 					try {
 						daoProductos.insert(producto);
 					}catch(Exception e) {
+						e.printStackTrace(); //Eliminar despues
 						form.setItem("logStr", "Error al intentar guardar el producto:" + producto.getNombre() + 
 								"en la DB.");
 						daoLogs.insert(form);

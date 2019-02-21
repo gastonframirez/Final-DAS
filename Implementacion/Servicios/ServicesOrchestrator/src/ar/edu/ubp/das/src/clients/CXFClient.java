@@ -22,6 +22,7 @@ public class CXFClient implements WSClient {
 
 	@Override
 	public List<DynaActionForm> getOfertas(String authToken, String url, String funcion) {
+		System.out.println("En cliente CXF");
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		
 		JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();

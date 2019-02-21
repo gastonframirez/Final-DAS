@@ -151,7 +151,7 @@ public class MSComercioDao extends DaoImpl {
 				for(String kClass : classes.keySet()) {
 					this.setProcedure("dbo.saveScraperConfigComercio(?,?,?,?,?)", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 					this.setParameter(1, idComercio);
-					if(classes.get(kClass)!=null) {
+					if(classes.get(kClass)==null) {
 						this.setNull(2, Types.VARCHAR);
 					}else {
 						this.setParameter(2, classes.get(kClass).toString());

@@ -9,7 +9,7 @@ public class TransaccionForm extends DynaActionForm {
 	private Boolean pending;
 	private String transNombre;
 	private Float valor;
-	private String prodNombre;
+	private String reference;
 	private Float prodPrecio;
 	public Integer getTransaccionID() {
 		return transaccionID;
@@ -47,11 +47,11 @@ public class TransaccionForm extends DynaActionForm {
 	public void setValor(Float valor) {
 		this.valor = valor;
 	}
-	public String getProdNombre() {
-		return prodNombre;
+	public String getReference() {
+		return reference;
 	}
-	public void setProdNombre(String prodNombre) {
-		this.prodNombre = prodNombre;
+	public void setReference(String prodNombre) {
+		this.reference = prodNombre;
 	}
 	public Float getProdPrecio() {
 		return prodPrecio;

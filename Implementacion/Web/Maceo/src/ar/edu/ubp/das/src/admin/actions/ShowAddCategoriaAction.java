@@ -27,7 +27,7 @@ public class ShowAddCategoriaAction implements Action{
 			request.setAttribute("categoria", daoCategorias.select(form).get(0));
 			}catch(SQLException ex) {
 				DynaActionForm formLogs = new DynaActionForm();
-				Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
+				Dao daoLogs = DaoFactory.getDao( "Log", "admin" );
 				formLogs.setItem("logStr", "Error al intentar obtner los datos de la categoria ID:"+request.getParameter("idCategoria"));
 				daoLogs.insert(formLogs);
 			}

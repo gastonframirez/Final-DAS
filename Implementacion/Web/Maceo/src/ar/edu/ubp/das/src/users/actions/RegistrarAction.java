@@ -35,7 +35,8 @@ public class RegistrarAction implements Action{
 		try {
 			if(request.getParameter("userID")!=null) {
 				if(request.getParameter("passwordVer")!=null) {
-
+					
+					System.out.println("AAA:" +request.getParameter("passwordVer"));
 					form.setItem("password", request.getParameter("passwordVer"));
 					UserForm user = (UserForm) daoUser.valid(form);
 					if(user!=null) {
@@ -70,6 +71,18 @@ public class RegistrarAction implements Action{
 				form.setItem("password", request.getParameter("password1"));
 				daoUser.insert(form);
 				request.setAttribute("userValidation", "cr");
+				
+				Dao daoUserVal = DaoFactory.getDao( "User", "users" );
+				
+				System.out.println("Entro en validacion secundaria");
+				//Chequear que vengan todos los parametros
+				form.setItem("nombreUsuario", request.getParameter("username"));
+				form.setItem("password", request.getParameter("password1"));
+			
+				UserForm user = (UserForm) daoUserVal.valid(form);
+				if(user!=null) {
+					request.getSession(true).setAttribute("userData", user);
+				}
 			}
 			
 			
@@ -89,17 +102,6 @@ public class RegistrarAction implements Action{
 		    	request.setAttribute("registerResponse", "dupE");
 		    }
 			
-		}
-		
-		Dao daoUserVal = DaoFactory.getDao( "User", "users" );
-
-		//Chequear que vengan todos los parametros
-		form.setItem("nombreUsuario", request.getParameter("username"));
-		form.setItem("password", request.getParameter("password1"));
-	
-		UserForm user = (UserForm) daoUserVal.valid(form);
-		if(user!=null) {
-			request.getSession(true).setAttribute("userData", user);
 		}
 		
 

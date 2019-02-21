@@ -35,7 +35,7 @@ public class RestClient implements WSClient {
 	@Override
 	public List<DynaActionForm> getOfertas(String authToken, String url, String funcion) {
 		// TODO Auto-generated method stub
-		
+		System.out.println("En cliente REST");
 		HttpClient client = HttpClientBuilder.create().build();
 
 

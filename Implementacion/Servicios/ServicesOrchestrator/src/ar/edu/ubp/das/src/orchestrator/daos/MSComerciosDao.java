@@ -153,7 +153,12 @@ public class MSComerciosDao extends DaoImpl {
 				case "prodURL":
 					comercio.setCssProdURL(className);
 					break;
-							
+				case "pagNext":
+					comercio.setCssPaginacion(className);
+					break;
+				case "pagParam":
+					comercio.setPaginacion(className);
+					break;
 				default:
 					break;
 				}

@@ -34,12 +34,11 @@ public class OfertasAction {
 			
 			// Conectarse a client
 			try {
-				System.out.println(comercio.getJavaClass());
-				
 				WSClient comercioClient = ClientFactory.getClient(comercio.getJavaClass(), "ar.edu.ubp.das.src");
-				
-				System.out.println(comercio.getBaseURL().get("ofertas"));
-				System.out.println(comercio.getFuncion().get("ofertas"));
+//				
+//				System.out.println(comercio.getJavaClass());
+//				System.out.println(comercio.getBaseURL().get("ofertas"));
+//				System.out.println(comercio.getFuncion().get("ofertas"));
 				
 				System.out.println("Pidiendo ofertas al comercio");
 				List<DynaActionForm> ofertas = comercioClient.getOfertas("Token " + comercio.getAuthToken(), 
@@ -50,7 +49,7 @@ public class OfertasAction {
 				//Guardar ofertas por cada comercio
 				for(DynaActionForm oferta : ofertas) {
 					OfferForm offer = (OfferForm) oferta;
-					System.out.println("OFERTA:"+offer.getStatus());
+//					System.out.println("OFERTA:"+offer.getStatus());
 					if(offer.getStatus().equals("200")) {
 						form = new DynaActionForm();
 						form.setItem("idComercio", comercio.getIdComercio().toString());

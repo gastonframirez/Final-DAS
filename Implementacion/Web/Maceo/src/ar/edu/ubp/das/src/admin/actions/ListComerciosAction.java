@@ -23,7 +23,7 @@ public class ListComerciosAction implements Action{
 		request.setAttribute("comercios", daoComercios.select(form));
 		}catch(SQLException ex) {
 			DynaActionForm formLogs = new DynaActionForm();
-			Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
+			Dao daoLogs = DaoFactory.getDao( "Log", "admin" );
 			formLogs.setItem("logStr", "Error al intentar obtener lista de comercios");
 			daoLogs.insert(formLogs);
 		}

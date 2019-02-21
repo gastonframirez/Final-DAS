@@ -141,6 +141,8 @@ public class MSUserDao extends DaoImpl {
 		
 		
 		if(result.next()) {
+			System.out.println("res_pass: "+result.getString("usuario_password"));
+			System.out.println("pass: "+password);
 			if (BCrypt.checkpw(password, result.getString("usuario_password"))) {
 				UserForm user = new UserForm();
 				user.setNombre(result.getString("nombre"));
@@ -158,10 +160,9 @@ public class MSUserDao extends DaoImpl {
 			}
 			else {
 				if(result.getBoolean("isAdmin")) {
-					System.out.println("Es admin");
+					System.out.println("Es admin y contrasena incorrecta");
 					this.delete(form); //Usado para incrementar error en login
 				}
-				//ACA HACER EL INCREMENTO DE ATTEMPTS PARA ADMIN
 				return null;
 			}
 		}

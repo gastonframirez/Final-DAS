@@ -10,8 +10,8 @@ $(function($) {
 	    		    '<input id="dni" name="dni" class="swal2-input" placeholder="'+$.i18n.prop('formDNI')+'" required>' +
 	    		    '<input id="username" name="username" class="swal2-input" placeholder="'+$.i18n.prop('formUser')+'" required>' +
 	    		    '<input id="email" name="email" class="swal2-input" placeholder="'+$.i18n.prop('formEmail')+'" required>' +
-	    		    '<input id="password" type="password1" name="password1" class="swal2-input" placeholder="'+$.i18n.prop('formPass')+'" required>'+
-	    		    '<input id="password" type="password2" name="password2" class="swal2-input" placeholder="'+$.i18n.prop('formPassVer')+'" required></form>',
+	    		    '<input id="password1" type="password" name="password1" class="swal2-input" placeholder="'+$.i18n.prop('formPass')+'" required>'+
+	    		    '<input id="password2" type="password" name="password2" class="swal2-input" placeholder="'+$.i18n.prop('formPassVer')+'" required></form>',
 	    	  showCancelButton: true,
  		  confirmButtonText: $.i18n.prop('register'),
  		  cancelButtonText: $.i18n.prop('cancel'),

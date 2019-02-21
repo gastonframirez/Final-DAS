@@ -157,7 +157,7 @@ public class AddComercioAction implements Action{
 			String excStr = ex.getMessage();
 			System.out.println(excStr);
 			DynaActionForm formLogs = new DynaActionForm();
-			Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
+			Dao daoLogs = DaoFactory.getDao( "Log", "admin" );
 			formLogs.setItem("logStr", "Error al intentar agregrar un comercio");
 			daoLogs.insert(formLogs);
 			response.setStatus(400);

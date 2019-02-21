@@ -1,18 +1,19 @@
 ---------------------------------------------------------------------------------------------- DAS Final
--- create database XXXX
+-- create database garbarino
 -- GO
 
--- use garbarino
--- go
+use garbarino
+go
 
 
 ---------------------------------------------------------------------------------------------- Dropping tables
--- drop table logs
--- drop table transacciones
--- drop table ofertas
--- drop table productos
--- drop table marcas
--- drop table categorias_productos
+drop table logs
+drop table transacciones
+drop table ofertas
+drop table productos
+drop table marcas
+drop table categorias_productos
+drop table tokens
 go
 
 ----------------------------------------------------------------------------------------------
@@ -123,14 +124,11 @@ create table tokens
     constraint uk__tokens_hash__end unique(hash_token)
 )
 go
--- insert into tokens values ('abbb4a0574aab5e145060b12379d88a3', 1)
-
+insert into tokens values ('abbb4a0574aab5e145060b12379d88a3', 1)
+go
 ----------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------- Create procedures
-drop procedure validateToken
-GO
-
-create procedure validateToken
+create or alter procedure validateToken
 (
     @hash       varchar (255)
 )
@@ -162,10 +160,7 @@ go
 
 
 ---------------------------------------------------------------------------------------------- Get Ofertas
-drop procedure getOfertas
-go
-
-create procedure getOfertas
+create or alter procedure getOfertas
 as
 BEGIN
     SELECT id_oferta, fecha_inicio, fecha_fin, url_oferta, image_url 
@@ -175,13 +170,10 @@ BEGIN
 END
 GO
 
-EXECUTE getOfertas
-
+-- EXECUTE getOfertas
+-- go
 ---------------------------------------------------------------------------------------------- Save Transaccion
-drop procedure saveTransaccion
-go
-
-create procedure saveTransaccion
+create or alter procedure saveTransaccion
 (
     @fechaTransaccion   varchar(100),
     @nombreCliente      varchar (200),

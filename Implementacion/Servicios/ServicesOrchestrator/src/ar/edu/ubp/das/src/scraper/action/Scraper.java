@@ -1,5 +1,7 @@
 package ar.edu.ubp.das.src.scraper.action;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,29 +31,30 @@ public class Scraper {
 	
 		for(String mapUrl : categories.keySet()) {
 			System.out.println(categories.get(mapUrl));
-
-			if(categories.get(mapUrl)!=null)
+			if(categories.get(mapUrl)!=null) {
 				productos.addAll(this.scrap(comercio, Integer.valueOf(mapUrl), categories.get(mapUrl), 1));
+			}
+				
 		}
 		
-//		for(ProductForm producto : productos) {
-//			System.out.println("Nuevo producto");
-//			System.out.println(producto.getNombre());
-//			System.out.println(producto.getMarca());
-//			System.out.println(producto.getNativeModelo());
-//			System.out.println(producto.getModelo());
-//			System.out.println(producto.getPrecio());
-//			System.out.println(producto.getImgURL());
-//			System.out.println(producto.getProdURL());
-//			System.out.println("\n");
-//		}
+		for(ProductForm producto : productos) {
+			System.out.println("Nuevo producto");
+			System.out.println(producto.getNombre());
+			System.out.println(producto.getMarca());
+			System.out.println(producto.getNativeModelo());
+			System.out.println(producto.getModelo());
+			System.out.println(producto.getPrecio());
+			System.out.println(producto.getImgURL());
+			System.out.println(producto.getProdURL());
+			System.out.println("\n");
+		}
 		
 		return productos;
 	}
 	
 	private List<ProductForm> scrap(ComercioForm comercio, Integer idCat, String url, Integer index){
 	List<ProductForm> productos = new LinkedList<ProductForm>();
-
+	
 		ProductForm producto;
 		try {
 			Dao daoConfigs = DaoFactory.getDao( "Config", "ar.edu.ubp.das.src.orchestrator" );
@@ -78,6 +81,7 @@ public class Scraper {
 //		        System.out.println(browser.getPageSource());
 		        document = Jsoup.parse(browser.getPageSource());
 		        browser.close();       
+		        browser.quit();
 		    }else {
 				document = Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6").get();
 
@@ -87,14 +91,21 @@ public class Scraper {
 			
 		    
 			for(Element prod : document.select(comercio.getCssIterator())) {
+				System.out.println("Producto");
 				if(!prod.hasClass("helperComplement") || !prod.select(comercio.getCssNombre()).text().toLowerCase().contains("combo")) {
 					producto = new ProductForm();
 					producto.setIdCategoria(idCat);
 					producto.setIdComercio(comercio.getIdComercio());
 					producto.setNombre(prod.select(comercio.getCssNombre()).text());
-					producto.setProdURL(prod.select(comercio.getCssProdURL()).first().absUrl("href"));
-					producto.setPrecio(Float.valueOf(prod.select(comercio.getCssPrecio()).first().text().replaceAll(",00", "").replace("$", "").replace(".", "").replace("contado", "").replace(" ", "")));
 					
+					if(!prod.select(comercio.getCssProdURL()).first().attr("href").contains("http")) {
+						producto.setProdURL(getDomainName(url)+prod.select(comercio.getCssProdURL()).first().attr("href"));
+					}else {
+						producto.setProdURL(prod.select(comercio.getCssProdURL()).first().attr("href"));
+					}
+					
+					producto.setPrecio(Float.valueOf(prod.select(comercio.getCssPrecio()).first().text().replaceAll(",00", "").replace("$", "").replace(".", "").replace("contado", "").replace(" ", "")));
+					System.out.println(producto.getNombre());
 					Boolean needsCrawl = comercio.getNeedsCrawl().get("brand")!=null || comercio.getNeedsCrawl().get("model")!=null || comercio.getNeedsCrawl().get("imgURL")!=null;
 					
 					if(needsCrawl) {
@@ -125,10 +136,26 @@ public class Scraper {
 							
 							switch (str) {
 								case "brand":
-									producto.setMarca(results.get(str).text().split(" ")[0]);
+									if(results.get(str).text().split(" ").length>=2) {
+										String marca="";
+										String marcaStr[] = results.get(str).text().split(" ");
+										for(int i=0; i<marcaStr.length/2; i++) {
+											marca+=marcaStr[i];
+											if(i!=marcaStr.length/2-1)
+												marca+=" ";
+										}
+										producto.setMarca(marca);
+									}else {
+										producto.setMarca(results.get(str).text());
+									}
 									break;
 								case "model":
-									producto.setNativeModelo(results.get(str).text());
+									if(results.get(str).text().split(" ").length>0) {
+										producto.setNativeModelo(results.get(str).text().split(" ")[results.get(str).text().split(" ").length-1]);
+									}else {
+										producto.setNativeModelo(results.get(str).text());
+									}
+									
 									producto.setModelo(producto.getNativeModelo().replace("-", "").replace("/", ""));
 									break;
 								case "imgURL":
@@ -150,19 +177,17 @@ public class Scraper {
 					    excludeList.add(producto.getMarca());
 
 					    String titleAux = producto.getNombre().toLowerCase();
-				        
-				        for(String rgx : regexList) {
-//				        	System.out.println(rgx);
+
+					    for(String rgx : regexList) {
 				        	titleAux = titleAux.replaceAll(rgx, "");
 				        }
 				        for(String excl : excludeList) {
-//				        	System.out.println(excl);
-				        	titleAux = titleAux.replace(excl, "");
+				        	if(excl!=null)
+				        		titleAux = titleAux.replace(excl, "");
 				        }
 				        String[] titleParts = titleAux.split(" ");
 				        String model = titleParts[titleParts.length-1];
 				        
-//				        System.out.println(model);
 				        producto.setNativeModelo(model);
 
 						producto.setModelo(producto.getNativeModelo().replace("-", "").replace("/", ""));
@@ -179,40 +204,51 @@ public class Scraper {
 					if(producto.getMarca()==null) {
 						producto.setMarca(prod.select(comercio.getCssMarca()).text().split(" ")[0]);
 					}
-					
-					productos.add(producto);
+					if(!producto.getModelo().equals("") && producto.getModelo()!=null){
+						productos.add(producto);
+					}
 				}
 			}
 		
 			List<ProductForm> prodCrawler = new LinkedList<ProductForm>();
 			
-			if(index<2) {
-				index = 2;
-				do {
-					String nextPageStr = "";
-					if(url.contains("?")) {
-		//				nextPageStr = "&" + comercio.getNextPage() + "=";
-						nextPageStr = "&page=";
-					}else{
-		//				nextPageStr = "?" + comercio.getNextPage() + "=";
-						nextPageStr = "?page=";
-					}
-					
-					prodCrawler = this.scrap(comercio, idCat, url+nextPageStr+index, index);
-					productos.addAll(prodCrawler);
-					++index;
-				} while (prodCrawler.size()>0);
+			if(index<2 && !comercio.getPaginacion().equals("#") && !url.contains("gridView")) {
+				if(document.select(comercio.getCssPaginacion()) != null) {
+					index = 2;
+					do {
+						String nextPageStr = "";
+						if(url.contains("?")) {
+			//				nextPageStr = "&" + comercio.getNextPage() + "=";
+							nextPageStr = "&"+comercio.getPaginacion()+"=";
+						}else{
+			//				nextPageStr = "?" + comercio.getNextPage() + "=";
+							nextPageStr = "?"+comercio.getPaginacion()+"=";
+						}
+						
+						prodCrawler = this.scrap(comercio, idCat, url+nextPageStr+index, index);
+						productos.addAll(prodCrawler);
+						++index;
+					} while (prodCrawler.size()>0);
+				}
 			}
 			return productos;
 			
 		}catch (HttpStatusException ex) {
-//			System.out.println("No hay mas");
+			System.out.println("No hay mas");
 //			ex.printStackTrace();
 		}
 		catch (Exception ex) {
-//			System.out.println("Otro error");
+			ex.printStackTrace();
+			System.out.println("Otro error");
 		}
 		
 		return productos;
+	}
+	
+	public static String getDomainName(String url) throws URISyntaxException {
+	    URI uri = new URI(url);
+	    String prot = uri.getScheme();
+	    String domain = uri.getHost();
+	    return prot + "://" + domain;
 	}
 }

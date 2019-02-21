@@ -7,9 +7,7 @@ import ar.edu.ubp.das.mvc.action.DynaActionForm;
 public class ComercioForm extends DynaActionForm {
 	private Integer idComercio;
 	private String nombre;
-	private Integer cantOffers;
 	private Boolean habilitado;
-	private Float totComisiones;
 	private Boolean serviceStatus;
 	
 	private String authToken;
@@ -36,6 +34,9 @@ public class ComercioForm extends DynaActionForm {
 	private Map<String, Boolean> needsCrawl;
 	private Map<String, Boolean> searchInName;
 	private Boolean totalCrawl;
+	
+	private String paginacion;
+	private String cssPaginacion;
 
 	
 	
@@ -57,24 +58,13 @@ public class ComercioForm extends DynaActionForm {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-	public Integer getCantOffers() {
-		return cantOffers;
-	}
-	public void setCantOffers(Integer cantOffers) {
-		this.cantOffers = cantOffers;
-	}
-	public Boolean getHabilitado() {
+	Boolean getHabilitado() {
 		return habilitado;
 	}
 	public void setHabilitado(Boolean habilitado) {
 		this.habilitado = habilitado;
 	}
-	public Float getTotComisiones() {
-		return totComisiones;
-	}
-	public void setTotComisiones(Float totComisiones) {
-		this.totComisiones = totComisiones;
-	}
+
 	public Boolean getServiceStatus() {
 		return serviceStatus;
 	}
@@ -188,6 +178,18 @@ public class ComercioForm extends DynaActionForm {
 	}
 	public void setTotalCrawl(Boolean totalCrawl) {
 		this.totalCrawl = totalCrawl;
+	}
+	public String getPaginacion() {
+		return paginacion;
+	}
+	public void setPaginacion(String paginacion) {
+		this.paginacion = paginacion;
+	}
+	public String getCssPaginacion() {
+		return cssPaginacion;
+	}
+	public void setCssPaginacion(String cssPaginacion) {
+		this.cssPaginacion = cssPaginacion;
 	}
 	
 	

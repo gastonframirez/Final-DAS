@@ -42,7 +42,7 @@ public class EstadisticasAction implements Action{
 			}catch(Exception e) {
 				e.printStackTrace();
 				DynaActionForm formLogs = new DynaActionForm();
-				Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
+				Dao daoLogs = DaoFactory.getDao( "Log", "admin" );
 				formLogs.setItem("logStr", "Error al intentar obtener datos de estadistísticas para comercio ID:"+request.getParameter("idComercio"));
 				daoLogs.insert(formLogs);
 			}

@@ -29,7 +29,7 @@ public class DashboardAction implements Action{
 		request.setAttribute("graficos", daoGraficos.select(form));
 		}catch(SQLException ex) {
 			DynaActionForm formLogs = new DynaActionForm();
-			Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
+			Dao daoLogs = DaoFactory.getDao( "Log", "admin" );
 			formLogs.setItem("logStr", "Error al intentar obtener datos para el dashboard de admin.");
 			daoLogs.insert(formLogs);
 		}

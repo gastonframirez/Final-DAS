@@ -18,8 +18,8 @@ import ar.edu.ubp.das.src.orchestrator.forms.TransactionForm;
 public class Axis2Client implements WSClient {
 	@Override
 	public List<DynaActionForm> getOfertas(String authToken, String url, String funcion) {
+		System.out.println("En cliente axis2");
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
 		JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
 		List<DynaActionForm> ofertas = new LinkedList<DynaActionForm>();
 		

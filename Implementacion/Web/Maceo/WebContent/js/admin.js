@@ -116,7 +116,7 @@ $(document).ready(function() {
 	
 	});
 	$.validator.addMethod('urlLocal', function(value) {
-        return value.match(/^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?(\/[.\w]*)*(\?)*(\w+)*(:[0-9]+)*$/);
+        return value.match(/^https?:\/\/\w+(\.\w+)*(:[0-9]+)?\/?(\/[.\w]*)*(\?)*(\w+)+$/);
 	});
 	
 	$("#cssModelInTitle").on("change", function(){

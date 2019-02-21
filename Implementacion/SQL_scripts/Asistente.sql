@@ -1,28 +1,30 @@
 ---------------------------------------------------------------------------------------------- DAS Final
+-- create database maceo
+-- go
 use maceo
 go
-
--- -------------------------------------------------------------------------------------------- Dropping tables
--- drop table logs
--- drop table administradores
--- drop table servicios
--- drop table tecnologias
--- drop table ult_actualizacion
--- drop table comisiones_tipo_transacciones
--- drop table transacciones
--- -- drop table usuarios
--- drop table tipo_transacciones
--- drop table producto_comercio
--- drop table scraper_categoria
--- drop table ofertas
--- drop table productos
--- drop table categorias_productos
--- drop table comercios
--- drop table idiomas
--- drop table categorias_idiomas
--- drop table idiomas_idiomas
--- drop table scraper_config
--- go
+-------------------------------------------------------------------------------------------- Dropping tables
+drop table logs
+drop table administradores
+drop table servicios
+drop table tecnologias
+drop table comisiones_tipo_transacciones
+drop table transacciones
+drop table usuarios
+drop table tipo_transacciones
+drop table producto_comercio
+drop table scraper_categoria
+drop table ofertas
+drop table productos
+drop table scraper_config
+drop table categorias_idiomas
+drop table categorias_productos
+drop table idiomas_idiomas
+drop table idiomas
+drop table tipo_servicios
+drop table orchestrator_config
+drop table comercios
+go
 
 ----------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------- Create tables
@@ -51,8 +53,8 @@ create table idiomas_idiomas
         references idiomas (id_idioma)
 )
 go
-insert into idiomas_idiomas values (1, 'EspaÃ±ol')
-insert into idiomas_idiomas values (1, 'InglÃ©s')
+insert into idiomas_idiomas values (1, 'Español')
+insert into idiomas_idiomas values (1, 'Inglés')
 insert into idiomas_idiomas values (2, 'Spanish')
 insert into idiomas_idiomas values (2,'English')
 ----------------------------------------------------------------------------------------------
@@ -76,10 +78,7 @@ create table comercios
     constraint uq__comercio__2__end unique (cuit)
 )
 go
--- insert into comercios values ('Garbarino S.A', '20111121114', 'Blah 1234, cordoba, argentina', 'Garbarino', '1231223', 'https://www.postularse.com/media/pictures/company_1899_profile_200x150.png',
--- 1)
--- insert into comercios values ('Compumundo S.A', '20111111114', 'Blah 1234, cordoba, argentina', 'Compumundo', '1231223', 'https://dj4i04i24axgu.cloudfront.net/normi/statics/0.1.048/compumundo/images/experiencia-compumundo.png',
--- 1)
+
 ----------------------------------------------------------------------------------------------
 create table categorias_productos
 (
@@ -92,11 +91,7 @@ create table categorias_productos
 )
 go
 
--- insert into categorias_productos values ('TVs', 'https://d34zlyc2cp9zm7.cloudfront.net/products/1779250837a13543779bc1f31d5c9b192475d0742a58a898f2b415923137e236.webp_500', 1)
--- insert into categorias_productos values ('Heladeras', 'https://d34zlyc2cp9zm7.cloudfront.net/products/220bf235108326e00d9b634d248ebb295050c9730db9cf05a52ac3b2fc895abb.webp_500', 1)
-
 ----------------------------------------------------------------------------------------------
--- drop table categorias_idiomas
 create table categorias_idiomas
 (
     id_categoria        smallint        not null,
@@ -244,8 +239,10 @@ begin
 	-- end
 end
 go
--- insert into administradores values (1, 0,0)
+-- insert into administradores (id_usuario, intentos_fallidos, bloqueado) values (1, 0,0)
 -- go
+
+
 ----------------------------------------------------------------------------------------------
 
 create table transacciones
@@ -292,19 +289,19 @@ create table comisiones_tipo_transacciones
 )
 go
 
-----------------------------------------------------------------------------------------------
-create table ult_actualizacion
-(
-    id_comercio         SMALLINT        not null,
-    fecha_productos     DATETIME        not null,
-    fecha_ofertas       DATETIME        not NULL,
+-- --------------------------------------------------------------------------------------------
+-- create table ult_actualizacion
+-- (
+--     id_comercio         SMALLINT        not null,
+--     fecha_productos     DATETIME        not null,
+--     fecha_ofertas       DATETIME        not NULL,
 
-    constraint pk__actualizacion__end primary key (id_comercio),
-    constraint fk__actualizacion__end foreign key (id_comercio)
-        references comercios (id_comercio)
+--     constraint pk__actualizacion__end primary key (id_comercio),
+--     constraint fk__actualizacion__end foreign key (id_comercio)
+--         references comercios (id_comercio)
     
-)
-go
+-- )
+-- go
 
 ----------------------------------------------------------------------------------------------
 create table tecnologias
@@ -391,7 +388,7 @@ create table scraper_config
 	id_scrap_config		INTEGER			not null		identity(1,1),
 	id_comercio			SMALLINT		not null,
 	prop_name			varchar (255)	not null,
-	class_name			varchar (255)  	not null,
+	class_name			varchar (255),
 	is_in_title			BIT				not null		default 0,
 	needs_crawl			BIT				not null		default 0,
 
@@ -401,12 +398,11 @@ create table scraper_config
 )
 go
 
-
 ----------------------------------------------------------------------------------------------
-create  table orchestrator_config
+create table orchestrator_config
 (
 	id_config		integer 		not NULL		identity(1,1),
-	tipo_config			INTEGER			not null,
+	tipo_config			INTEGER			not null, --1: Regex, 2: palabra a excluir, 3: clase css a ignorar
 	palabra_ignorar		varchar(500)	not null,
 	habilitado			BIT				not NULL	default(1),
 	actualizado			datetime		not null,
@@ -415,16 +411,92 @@ create  table orchestrator_config
 )
 go
 
-
+insert into orchestrator_config (tipo_config, palabra_ignorar, habilitado, actualizado)
+values (1, '\\s(([0-9])(,||.)*)+\\s?(lts?)(.)?', 1, getdate()),
+(1, '\\s(([0-9])(,||.)*)+\\s?(l?)(.)?', 1, getdate()),
+(1, '\\s([0-9])+\\s?(negro?a?)', 1, getdate()),
+(1, '\\s(con)*\\s*(grill)', 1, getdate()),
+(1, '\\s([0-9])+\\s?"', 1, getdate()),
+(1, '\\s(para)\\s[0-9]+\\s(botellas)', 1, getdate()),
+(1, '\\s[0-9]+\\s(botellas)', 1, getdate()),
+(1, '\\s[0-9]+\\s(bts)(.)?', 1, getdate()),
+(1, '\\s(ultra)\\s(hd)', 1, getdate()),
+(1, '\\s([0-9])+\\s?w', 1, getdate()),
+(2, 'aluminio', 1, getdate()),
+(2, 'vapor', 1, getdate()),
+(2, 'premium', 1, getdate()),
+(2, 'verde', 1, getdate()),
+(2, 'gris', 1, getdate()),
+(2, 'plateado', 1, getdate()),
+(2, 'plateada', 1, getdate()),
+(2, 'platinum', 1, getdate()),
+(2, 'plata', 1, getdate()),
+(2, 'inoxidable', 1, getdate()),
+(2, 'inox.', 1, getdate()),
+(2, 'inox', 1, getdate()),
+(2, 'acero', 1, getdate()),
+(2, 'negra', 1, getdate()),
+(2, 'negro', 1, getdate()),
+(2, 'blanca', 1, getdate()),
+(2, 'blanco', 1, getdate()),
+(2, 'azul', 1, getdate()),
+(2, 'amarillo', 1, getdate()),
+(2, 'amarilla', 1, getdate()),
+(2, 'rojo', 1, getdate()),
+(2, 'roja', 1, getdate()),
+(2, 'full', 1, getdate()),
+(2, 'smart', 1, getdate()),
+(2, 'ultra', 1, getdate()),
+(2, 'uhd', 1, getdate()),
+(2, 'hd', 1, getdate()),
+(2, '4k', 1, getdate()),
+(2, 'tv', 1, getdate()),
+(2, 'qled', 1, getdate()),
+(2, 'led', 1, getdate()),
+(2, 'gris', 1, getdate()),
+(2, 'marfil', 1, getdate()),
+(2, 'mate', 1, getdate()),
+(2, 'celeste', 1, getdate()),
+(2, 'clásica', 1, getdate()),
+(2, 'clasica', 1, getdate()),
+(2, 'silver', 1, getdate()),
+(2, 'metal', 1, getdate()),
+(2, 'bajo', 1, getdate()),
+(2, 'mesada', 1, getdate()),
+(2, 'frio', 1, getdate()),
+(2, 'frío', 1, getdate()),
+(2, 'directo', 1, getdate()),
+(2, 'duo', 1, getdate()),
+(2, 'neo', 1, getdate()),
+(2, 'ciclica', 1, getdate()),
+(2, 'cíclica', 1, getdate()),
+(2, 'inverter', 1, getdate()),
+(2, 'side', 1, getdate()),
+(2, 'frost', 1, getdate()),
+(2, 'no', 1, getdate()),
+(2, 'ap', 1, getdate()),
+(2, 'ab', 1, getdate()),
+(2, 'fh', 1, getdate()),
+(2, 'by', 1, getdate()),
+(2, 'sbs', 1, getdate()),
+(2, 'cooler', 1, getdate()),
+(2, 'beer', 1, getdate()),
+(2, 'netflix', 1, getdate()),
+(2, 'freezers', 1, getdate()),
+(2, 'freezer', 1, getdate()),
+(2, 'verticales', 1, getdate()),
+(2, 'cava', 1, getdate()),
+(2, 'con', 1, getdate()),
+(2, 'sin', 1, getdate()),
+(2, '(*)', 1, getdate()),
+(2, '.', 1, getdate())
+go
 ----------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------- Create procedures
 
 
 ---------------------------------------------------------------------------------------------- Guardar log
-drop procedure saveLog
-go
-
-create procedure saveLog
+create or alter procedure saveLog
 (
     @descripcion    varchar(500)
 )
@@ -438,10 +510,7 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Check Administrador
-drop procedure isAdmin
-go
-
-create procedure isAdmin
+create or alter procedure isAdmin
 (
 	@nombreusuario	varchar (255)
 )
@@ -454,10 +523,7 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Validar User
-drop procedure validateLogin
-go
-
-create procedure validateLogin
+create or alter procedure validateLogin
 (
 	@nombreusuario	varchar (255),
 	@password		varchar (255)
@@ -472,9 +538,6 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Validar User
-drop procedure validateLoginInverse
-go
-
 create or alter procedure validateLoginInverse
 (
 	@nombreusuario	varchar (255)
@@ -491,10 +554,8 @@ begin
 end
 go
 -- execute validateLoginInverse @nombreusuario = 'gastonfra'
+-- go
 ---------------------------------------------------------------------------------------------- Aumentar intentos Adminn
-drop procedure increaseAdminAttempts
-go
-
 create or alter procedure increaseAdminAttempts
 (
 	@nombreusuario	varchar (255)
@@ -512,9 +573,6 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Aumentar intentos Adminn
-drop procedure unlockBlockedAdmins
-go
-
 create or alter procedure unlockBlockedAdmins
 as
 begin
@@ -523,12 +581,10 @@ begin
 end
 go
 
-exec  unlockBlockedAdmins
+-- exec  unlockBlockedAdmins
+-- go
 ---------------------------------------------------------------------------------------------- Registrar User
-drop procedure registerUser
-go
-
-create procedure registerUser
+create or alter procedure registerUser
 (
     @nombreusuario      	varchar (255),
     @nombre             	varchar (200),
@@ -545,10 +601,7 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Registrar User
-drop procedure updateUser
-go
-
-create procedure updateUser
+create or alter procedure updateUser
 (
 	@userID					integer,
     @nombreusuario      	varchar (255),
@@ -571,10 +624,7 @@ begin
 end
 go
 ---------------------------------------------------------------------------------------------- Registrar User para Admin
-drop procedure registerAdminUser
-go
-
-create procedure registerAdminUser
+create or alter procedure registerAdminUser
 (
     @nombreusuario      	varchar (255),
     @nombre             	varchar (200),
@@ -592,40 +642,41 @@ begin
 	SET @id_usuario = (SELECT MAX(id_usuario)
 					  FROM usuarios
 					  WHERE usuario = @nombreusuario);
+	INSERT into administradores (id_usuario, intentos_fallidos, bloqueado)
+	VALUES (@id_usuario, 0, 0)
 end
 go
+
 
 -- SELECT * FROM usuarios us
 -- JOIN administradores ad
 -- ON us.id_usuario = ad.id_usuario
 ---------------------------------------------------------------------------------------------- Registrar Administrador
-drop procedure registerAdminData
-go
+-- create or alter procedure registerAdminData
+-- (
+--     @nombreusuarioAdmin      	varchar (255),
+--     @nombreAdmin             	varchar (200),
+--     @apellidoAdmin           	varchar (200),
+--     @emailAdmin               	varchar (500),
+--     @usuario_passwordAdmin    	varchar (500),
+--     @dniAdmin                 	integer
+-- )
+-- as
+-- begin
+-- 	Declare @tablevar table(id_usuario INTEGER)
+-- 	insert into @tablevar(id_usuario) exec registerAdminUser @nombre = @nombreAdmin, @nombreusuario = @nombreusuarioAdmin, @apellido = @apellidoAdmin,
+-- 		@email = @emailAdmin, @usuario_password = @usuario_passwordAdmin, @dni = @dniAdmin
+-- 	insert into administradores values ((SELECT id_usuario FROM @tablevar), 0, 0, getdate())
+-- end
+-- go
 
-create procedure registerAdminData
-(
-    @nombreusuarioAdmin      	varchar (255),
-    @nombreAdmin             	varchar (200),
-    @apellidoAdmin           	varchar (200),
-    @emailAdmin               	varchar (500),
-    @usuario_passwordAdmin    	varchar (500),
-    @dniAdmin                 	integer
-)
-as
-begin
-	Declare @tablevar table(id_usuario INTEGER)
-	insert into @tablevar(id_usuario) exec registerAdminUser @nombre = @nombreAdmin, @nombreusuario = @nombreusuarioAdmin, @apellido = @apellidoAdmin,
-		@email = @emailAdmin, @usuario_password = @usuario_passwordAdmin, @dni = @dniAdmin
-	insert into administradores values ((SELECT id_usuario FROM @tablevar), 0, 0)
-end
+declare @idUser smallint;
+exec registerAdminUser @nombreusuario='administrator', @nombre='Gaston', @apellido='Ramirez', @email='gastonframirez@gmail.com', 
+	@usuario_password='$2a$10$kHFGIEUvrU6DISWV4MgpmOD6XRAAVE2duQ8dQ5oCzeKt4.JLihfLu', @dni='38503389', @id_usuario=@idUser
 go
-
 
 ---------------------------------------------------------------------------------------------- Obtener Lista de Comercios
-drop procedure getAllComercios
-go
-
-create procedure getAllComercios
+create or alter procedure getAllComercios
 as
 begin
     SELECT * FROM comercios
@@ -635,10 +686,7 @@ go
 -- execute getAllComercios
 
 
-drop procedure getComercios
-go
-
-create procedure getComercios
+create or alter procedure getComercios
 as
 begin
     SELECT * FROM comercios
@@ -649,11 +697,7 @@ go
 -- execute getComercios
 
 ---------------------------------------------------------------------------------------------- Obtener Lista de Comercios con datos extr
-
-drop procedure getComerciosExtra
-go
-
-create procedure getComerciosExtra
+create or alter procedure getComerciosExtra
 (
 	@idComercio integer = null
 )
@@ -697,13 +741,10 @@ begin
 end
 go
 
-execute getComerciosExtra @idComercio = 1
-
+-- execute getComerciosExtra @idComercio = 1
+-- go
 
 ---------------------------------------------------------------------------------------------- Obtener Datos de Comercio
-drop procedure getDatosComercio
-go
-
 create or alter procedure getDatosComercio
 (
 	@idComercio smallint
@@ -711,23 +752,18 @@ create or alter procedure getDatosComercio
 as
 begin
     SELECT co.id_comercio, razon_social, cuit, direccion, nombre_publico, telefono, habilitado, 
-		logo_url, ua.fecha_productos, ua.fecha_ofertas, cp, totalCrawl
+		logo_url, cp, totalCrawl
 	FROM comercios co
-	LEFT JOIN ult_actualizacion ua
-		ON ua.id_comercio = co.id_comercio
 	WHERE co.id_comercio = @idComercio
 end
 go
 
-execute getDatosComercio @idComercio=4
-
+-- execute getDatosComercio @idComercio=4
+-- go
 ---------------------------------------------------------------------------------------------- Obtener Datos de Scraping Comercio
 
 ---------------------------------------------------------------------------------------------- Obtener Datos de Comercio: Precio Comision
-drop procedure getValoresComisionesComercio
-go
-
-create procedure getValoresComisionesComercio
+create or alter procedure getValoresComisionesComercio
 (
 	@idComercio smallint
 )
@@ -746,13 +782,10 @@ begin
 end
 go
 
-EXECUTE getValoresComisionesComercio @idComercio=1
-
+-- EXECUTE getValoresComisionesComercio @idComercio=1
+-- go
 ---------------------------------------------------------------------------------------------- Get Comercio ID
-drop procedure getComercioID
-go
-
-create procedure getComercioID
+create or alter procedure getComercioID
 (
 	@CUIT varchar (12),
 	@nombre	varchar(255)
@@ -767,9 +800,6 @@ end
 GO
 
 ---------------------------------------------------------------------------------------------- Guardar Comercio
-drop procedure saveComercio
-go
-
 create or alter procedure saveComercio
 (
 	@razonSocial varchar (255),
@@ -789,10 +819,7 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Guardar Comercio
-drop procedure saveServicesComercio
-go
-
-create procedure saveServicesComercio
+create or alter procedure saveServicesComercio
 (
 	@idComercio integer,
 	@idTecnologia integer,
@@ -811,10 +838,7 @@ begin
 end
 GO
 ---------------------------------------------------------------------------------------------- Guardar Comercio
-drop procedure saveComisionesComercio
-go
-
-create procedure saveComisionesComercio
+create or alter procedure saveComisionesComercio
 (
 	@idComercio integer,
 	@offerComm float,
@@ -830,10 +854,7 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Guardar Comercio
-drop procedure saveScraperURLComercio
-go
-
-create procedure saveScraperURLComercio
+create or alter procedure saveScraperURLComercio
 (
 	@idComercio integer,
 	@idCategoria integer,
@@ -847,10 +868,7 @@ end
 GO
 
 ---------------------------------------------------------------------------------------------- Editar Comercio
-drop procedure saveScraperConfigComercio
-go
-
-create procedure saveScraperConfigComercio
+create or alter procedure saveScraperConfigComercio
 (
 	@idComercio integer,
 	@cssClass varchar (255),
@@ -865,9 +883,7 @@ begin
 end
 go
 ---------------------------------------------------------------------------------------------- Toggle Categoria
-drop procedure toggleComercio
-go
-create procedure toggleComercio
+create or alter procedure toggleComercio
 
 (
 	@idComercio		integer,
@@ -881,9 +897,6 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Editar Comercio
-drop procedure updateComercio
-go
-
 create or alter procedure updateComercio
 (
 	@idComercio integer,
@@ -905,36 +918,7 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Editar Comercio
--- drop procedure updateServicesComercio
--- go
-
--- create procedure updateServicesComercio
--- (
--- 	@idComercio integer,
--- 	@idTecnologia integer,
--- 	@baseURLOffers varchar (500),
--- 	@portOffers integer,
--- 	@funcionOffers varchar (500),
-	
--- 	@baseURLTransacciones varchar (500),
--- 	@portTransacciones integer,
--- 	@funcionTransacciones varchar (500),
--- 	@authToken		varchar(500)
--- )
--- AS
--- begin
--- 	UPDATE servicios set id_tecnologia = @idTecnologia, service_url_of = @baseURLOffers, puerto_of = @portOffers,
--- 		funcion_of = @funcionOffers, service_url_trans = @baseURLTransacciones, puerto_trans = @portTransacciones,
--- 		funcion_trans = @funcionTransacciones, auth_token = @authToken
--- 	WHERE id_comercio = @idComercio 
--- 	AND id_tipo_servicio = 
--- end
--- GO
-
-drop procedure updateServicesComercio
-go
-
-create procedure updateServicesComercio
+create or alter procedure updateServicesComercio
 (
 	@idComercio integer,
 	@idTecnologia integer,
@@ -956,10 +940,7 @@ end
 GO
 
 ---------------------------------------------------------------------------------------------- Editar Comercio
-drop procedure updateComisionesComercio
-go
-
-create procedure updateComisionesComercio
+create or alter procedure updateComisionesComercio
 (
 	@idComercio integer,
 	@offerComm float,
@@ -974,12 +955,10 @@ begin
 end
 go
 
-SELECT valor FROM comisiones_tipo_transacciones WHERE id_tipo=1 AND id_comercio=4 AND getdate() >= fecha_inicio and getdate()<ISNULL(fecha_fin, CURRENT_TIMESTAMP+1) 
+-- SELECT valor FROM comisiones_tipo_transacciones WHERE id_tipo=1 AND id_comercio=4 AND getdate() >= fecha_inicio and getdate()<ISNULL(fecha_fin, CURRENT_TIMESTAMP+1) 
+-- go
 
 -----TRIGGER
-drop trigger tu_ru_comisiones
-go
-
 CREATE OR ALTER TRIGGER tu_ru_comisiones 
 ON comisiones_tipo_transacciones
 FOR insert
@@ -998,10 +977,7 @@ begin
 end
 go
 ---------------------------------------------------------------------------------------------- Editar Comercio
-drop procedure updateScraperURLComercio
-go
-
-create procedure updateScraperURLComercio
+create or alter procedure updateScraperURLComercio
 (
 	@idComercio integer,
 	@idCategoria integer,
@@ -1021,9 +997,6 @@ end
 GO
 
 ---------------------------------------------------------------------------------------------- Editar Comercio
-drop procedure updateScraperConfigComercio
-go
-
 create or alter procedure updateScraperConfigComercio
 (
 	@idComercio integer,
@@ -1047,10 +1020,7 @@ begin
 END
 go
 ---------------------------------------------------------------------------------------------- Obtener Lista de Categorias
-drop procedure getCategorias
-go
-
-create procedure getCategorias
+create  or alter procedure getCategorias
 (
 	@idCategoria	integer = null
 )
@@ -1064,6 +1034,7 @@ begin
 				ON ci.id_idioma = idi.id_idioma
 			WHERE cp.habilitado = 1
 			AND cp.id_categoria = @idCategoria
+		ORDER BY ci.nombre
 		
 	ELSE
 		SELECT cp.id_categoria, ci.nombre, cp.habilitado, image_url, idi.nombre as lang FROM categorias_productos cp
@@ -1072,15 +1043,13 @@ begin
 			JOIN idiomas idi
 				ON ci.id_idioma = idi.id_idioma
 			WHERE cp.habilitado = 1
+		ORDER BY ci.nombre
 end
 go
-execute getCategorias
-
+-- execute getCategorias
+-- go
 ---------------------------------------------------------------------------------------------- Obtener Lista de Categorias
-drop procedure getCategoriasAdmin
-go
-
-create procedure getCategoriasAdmin
+create or alter procedure getCategoriasAdmin
 (
 	@idCategoria integer = null
 )
@@ -1103,11 +1072,9 @@ begin
 end
 go
 -- execute getCategoriasAdmin @idCategoria=1
+-- go
 
-drop procedure getCategoriasLang
-go
-
-create procedure getCategoriasLang
+create or alter procedure getCategoriasLang
 (
 	@lang 	varchar(4)
 )
@@ -1123,12 +1090,11 @@ begin
 end
 go
 
-execute getCategoriasLang @lang='es'
-
+-- execute getCategoriasLang @lang='es'
+-- go
 ---------------------------------------------------------------------------------------------- Checkear si categoria se puede habilitar
-drop procedure checkHabilitable
-go
-create procedure checkHabilitable
+
+create or alter procedure checkHabilitable
 (
 	@idCategoria integer
 )
@@ -1144,12 +1110,10 @@ begin
 end
 go
 
-execute checkHabilitable @idCategoria=2
-go
+-- execute checkHabilitable @idCategoria=2
+-- go
 
 ---------------------------------------------------------------------------------------------- Guardar Categoria
-drop procedure saveCategoria
-go
 create or alter procedure saveCategoria
 (
 	@esp				varchar (255),
@@ -1175,9 +1139,7 @@ BEGIN
 end
 go
 ---------------------------------------------------------------------------------------------- Guardar Traduccion Categoria
-drop procedure saveTranslationCategoria
-go
-create procedure saveTranslationCategoria
+create  or alter procedure saveTranslationCategoria
 (
 	@idCategoria		smallint,
 	@idIdioma          	smallint,
@@ -1191,9 +1153,7 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Obtener Categoria
-drop procedure getCategoria
-go
-create procedure getCategoria
+create or alter procedure getCategoria
 (
 	@nombre				varchar (255)
 )
@@ -1207,9 +1167,7 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Editar Categoria
-drop procedure toggleCategoria
-go
-create procedure toggleCategoria
+create or alter procedure toggleCategoria
 
 (
 	@idCategoria		integer,
@@ -1223,9 +1181,7 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Editar Categoria
-drop procedure updateCategoria
-go
-create procedure updateCategoria
+create or alter procedure updateCategoria
 (
 	@idCategoria		smallint,
 	@nombre          	varchar (255),
@@ -1238,9 +1194,7 @@ BEGIN
 end
 go
 ---------------------------------------------------------------------------------------------- Editar Traduccion Categoria
-drop procedure updateTranslationCategoria
-go
-create procedure updateTranslationCategoria
+create or alter procedure updateTranslationCategoria
 (
 	@idCategoria		smallint,
 	@nameIdioma			varchar(3),
@@ -1253,10 +1207,7 @@ BEGIN
 end
 go
 ---------------------------------------------------------------------------------------------- Obtener Lista de Productos x categoria
-drop procedure getProductos
-go
-
-create procedure getProductos
+create or alter procedure getProductos
 (
 	@categoria	smallint
 )
@@ -1275,13 +1226,10 @@ begin
 
 end
 go
-execute getProductos @categoria = 1
-go
+-- execute getProductos @categoria = 1
+-- go
 ---------------------------------------------------------------------------------------------- Obtener Producto
-drop procedure getProducto
-go
-
-create procedure getProducto
+create  or alter procedure getProducto
 (
 	@idProducto integer,
 	@idComercio	integer
@@ -1295,14 +1243,11 @@ begin
 	WHERE id_producto = @idProducto
 		AND pc.id_comercio = @idComercio
 end
-
-exec getProducto @idProducto=2, @idComercio=4
----------------------------------------------------------------------------------------------- Guardar Producto
-
-drop procedure saveProducto
 go
-
-create procedure saveProducto
+-- exec getProducto @idProducto=2, @idComercio=4
+-- go
+---------------------------------------------------------------------------------------------- Guardar Producto
+create or alter procedure saveProducto
 (
 	@nombre            	varchar(255),
     @marca            	varchar(255),
@@ -1317,7 +1262,7 @@ create procedure saveProducto
 as
 BEGIN
 -- Insertar producto en productos y luego obtener el id del producto e insertar el resto de la info en producto_comercio. Poner habilitado = 1 en ambas tablas
-	IF NOT EXISTS (SELECT * FROM productos WHERE modelo = @modelo AND id_categoria = @idCategoria)
+	IF NOT EXISTS (SELECT * FROM productos WHERE modelo = @modelo AND id_categoria = @idCategoria AND nombre_marca = @marca)
 		INSERT INTO productos (nombre_marca, modelo, id_categoria) VALUES (@marca, @modelo, @idCategoria);
 
 	declare @idProducto smallint;
@@ -1336,23 +1281,8 @@ BEGIN
 END
 go
 
--- exec saveProducto @nombre = 'Producto de prueba',
---     @marca = 'Prueba',
---     @modelo =  '1P2R3UEB4A',
--- 	@modeloNativo ='1-P2R3EUB/4A',
---     @idCategoria= 1,
--- 	@idComercio= 1,
--- 	@precio= 9000,
--- 	@urlProducto= 'http://producto.com.ar',
--- 	@imageUrl= 'https://gastonframirez.github.io/cdnDAS/logos/garbarino.svg'
----------------------------------------------------------------------------------------------- Update Producto
--- Ver como hacer aca con los productos que tienen que ser deshabilitados..
--- Quizas puedo correr el scrapper, y si el producto no aparece en ninguna pÃ¡gina, lo deshabilito
 ---------------------------------------------------------------------------------------------- Obtener Ofertas
-drop procedure getOfertas
-go
-
-create procedure getOfertas
+create or alter procedure getOfertas
 as
 begin
     SELECT id_oferta, ofe.image_url as oferta_img_url, fecha_fin, fecha_inicio, 
@@ -1360,6 +1290,7 @@ begin
 	FROM ofertas ofe
 	JOIN comercios com
 		ON ofe.id_comercio = com.id_comercio
+		AND com.habilitado = 1
 	WHERE habilitada = 1
 		
 end
@@ -1368,10 +1299,7 @@ go
 -- EXECUTE getOfertas
 -- go
 ---------------------------------------------------------------------------------------------- Obtener Oferta
-drop procedure getOferta
-go
-
-create procedure getOferta
+create or alter procedure getOferta
 (
 	@idOferta integer,
 	@idComercio	integer
@@ -1390,9 +1318,6 @@ go
 -- EXECUTE getOferta @idOferta=2, @idComercio=1
 -- go
 ---------------------------------------------------------------------------------------------- Save Ofertas
-drop procedure saveOferta
-go
-
 create or alter procedure saveOferta
 (
 	@idComercio 		integer,
@@ -1415,9 +1340,6 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Disable Ofertas
-drop procedure disableOfertas
-go
-
 create or alter procedure disableOfertas
 (
 	@idComercio 		integer = null
@@ -1434,14 +1356,12 @@ begin
 end
 go
 
-SELECT * from ofertas where dATEDIFF(minute,actualizada, getdate()) >= 60
+-- SELECT * from ofertas where dATEDIFF(minute,actualizada, getdate()) >= 60
+-- go
 -- execute disableOfertas
 -- go
 
 ---------------------------------------------------------------------------------------------- Disable Productos
-drop procedure disableProducts
-go
-
 create or alter procedure disableProducts
 (
 	@idComercio 		integer = null
@@ -1461,10 +1381,7 @@ go
 -- go
 
 ---------------------------------------------------------------------------------------------- Save Transaccion
-drop procedure saveTransaccion
-go
-
-create procedure saveTransaccion
+create or alter procedure saveTransaccion
 (
     @fechaTransaccion   	varchar(100),
     @idProducto      		integer = null,
@@ -1496,16 +1413,13 @@ BEGIN
 END
 go
 ---------------------------------------------------------------------------------------------- List Pending Transaccion
-drop procedure listPendingTransaction
-go
-
-create procedure listPendingTransaction
+create or alter procedure listPendingTransaction
 (
     @idComercio   		integer
 )
 as
 BEGIN
-	SELECT tr.id_transaccion, tr.fecha, tr.pending, pc.modelo_producto, prod.nombre as prod_name, pc.precio as precio_producto, 
+	SELECT tr.id_transaccion, tr.fecha, tr.pending, pc.modelo_producto, pc.nombre as prod_name, pc.precio as precio_producto, 
 			tt.nombre as nombre_transaction, ctt.valor as commission, offers.id_oferta_comercio,
 			us.nombre as userName, us.apellido, us.email, us.dni FROM transacciones tr
 	LEFT JOIN producto_comercio pc
@@ -1518,7 +1432,7 @@ BEGIN
 	JOIN comisiones_tipo_transacciones ctt
 		ON tr.id_tipo_transaccion = ctt.id_tipo
 		AND tr.id_comercio = ctt.id_comercio
-		AND tr.fecha >= ctt.fecha_inicio and tr.fecha<ISNULL(ctt.fecha_fin, CURRENT_TIMESTAMP) 
+		AND tr.fecha >= ctt.fecha_inicio AT TIME ZONE 'Argentina Standard Time' and tr.fecha<ISNULL(ctt.fecha_fin, CURRENT_TIMESTAMP) 
 	LEFT JOIN ofertas offers
 		ON offers.id_oferta = tr.id_oferta
 	JOIN usuarios us
@@ -1528,12 +1442,10 @@ BEGIN
 END
 go
 
-execute listPendingTransaction @idComercio=1
+-- execute listPendingTransaction @idComercio=1
+-- go
 ---------------------------------------------------------------------------------------------- Release Pending Transaccion
-drop procedure releasePendingTransaction
-go
-
-create procedure releasePendingTransaction
+create or alter procedure releasePendingTransaction
 (
     @idTransaccion   		integer
 )
@@ -1547,11 +1459,7 @@ BEGIN
 END
 go
 ---------------------------------------------------------------------------------------------- Comercios Categorias Scraper
-
-drop procedure getComerciosURLScraper
-go
-
-create procedure getComerciosURLScraper
+create or alter procedure getComerciosURLScraper
 (
 	@idComercio 	INTEGER,
 	@habilitado		BIT = null
@@ -1578,14 +1486,11 @@ begin
 end
 go
 
-EXECUTE getComerciosURLScraper @idComercio=71, @habilitado=1
-
+-- EXECUTE getComerciosURLScraper @idComercio=71, @habilitado=1
+-- go
 ---------------------------------------------------------------------------------------------- Comercios CSS Scraper
 
-drop procedure getComerciosCSSScraper
-go
-
-create procedure getComerciosCSSScraper
+create or alter procedure getComerciosCSSScraper
 (
 	@idComercio 	INTEGER
 )
@@ -1600,17 +1505,13 @@ end
 go
 
 
-EXECUTE getComerciosCSSScraper @idComercio = 4
-go
+-- EXECUTE getComerciosCSSScraper @idComercio = 4
+-- go
 -- insert into scraper_config values(71, 'prodURL', '.itemBox--price .value-item', 0, 0)
-
+-- go
 
 ---------------------------------------------------------------------------------------------- Comercios CSS Scraper
-
-drop procedure getTecnologias
-go
-
-create procedure getTecnologias
+create or alter procedure getTecnologias
 as
 begin
     SELECT *
@@ -1618,13 +1519,10 @@ begin
 end
 go
 
-execute getTecnologias
-
+-- execute getTecnologias
+-- go
 ---------------------------------------------------------------------------------------------- Nuevos Users del mes
-drop procedure newMonthlyUsers
-go
-
-create procedure newMonthlyUsers
+create or alter procedure newMonthlyUsers
 (
 	@date 	DATETIME
 )
@@ -1640,10 +1538,7 @@ go
 
 
 ---------------------------------------------------------------------------------------------- Cant de transacciones mes
-drop procedure monthlyTransactionsCount
-go
-
-create procedure monthlyTransactionsCount
+create or alter procedure monthlyTransactionsCount
 (
 	@date 	DATETIME,
 	@comercioID	integer = null
@@ -1665,12 +1560,9 @@ END
 go
 
 -- execute monthlyTransactionsCount @date='2019-02-20', @comercioID=1
-
+-- go
 
 ----------------------------------------------------------------------------------------------  Transacciones del mes
-drop procedure monthlyTransactionsList
-go
-
 create or alter procedure monthlyTransactionsList
 (
 	@date 	DATETIME,
@@ -1679,7 +1571,7 @@ create or alter procedure monthlyTransactionsList
 AS
 BEGIN
 	IF @comercioID IS NOT NULL AND LEN(@comercioID) > 0
-		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
+		SELECT id_transaccion, fecha, tr.id_oferta, offer.url_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
 			FROM transacciones tr
 		JOIN tipo_transacciones tt
 			ON tt.id_tipo = tr.id_tipo_transaccion
@@ -1692,11 +1584,13 @@ BEGIN
 			AND pc.id_comercio = tr.id_comercio
 		LEFT JOIN productos prod
 			ON tr.id_producto = prod.id_producto
+		LEFT JOIN ofertas offer
+			ON offer.id_oferta = tr.id_oferta
 		WHERE Year(fecha) = Year(@date) 
     		AND Month(fecha) = Month(@date)
 			AND tr.id_comercio = @comercioID
 	ELSE
-		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
+		SELECT id_transaccion, fecha, tr.id_oferta, offer.url_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
 			FROM transacciones tr
 		JOIN tipo_transacciones tt
 			ON tt.id_tipo = tr.id_tipo_transaccion
@@ -1709,16 +1603,15 @@ BEGIN
 			AND pc.id_comercio = tr.id_comercio
 		LEFT JOIN productos prod
 			ON tr.id_producto = prod.id_producto
+		LEFT JOIN ofertas offer
+			ON offer.id_oferta = tr.id_oferta
 		WHERE Year(fecha) = Year(@date) 
 			AND Month(fecha) = Month(@date)
 END
 go
--- execute monthlyTransactionsList @date='2019-02-10', @comercioID=4
-
+-- execute monthlyTransactionsList @date='2019-02-10', @comercioID=1
+-- go
 ----------------------------------------------------------------------------------------------  Transacciones historicas
-drop procedure historicalTransactionsList
-go
-
 create or alter procedure historicalTransactionsList
 (
 	@comercioID	integer = null
@@ -1726,7 +1619,7 @@ create or alter procedure historicalTransactionsList
 AS
 BEGIN
 	IF @comercioID IS NOT NULL AND LEN(@comercioID) > 0
-		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
+		SELECT id_transaccion, fecha, tr.id_oferta, offer.url_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
 			FROM transacciones tr
 		JOIN tipo_transacciones tt
 			ON tt.id_tipo = tr.id_tipo_transaccion
@@ -1739,9 +1632,11 @@ BEGIN
 			AND pc.id_comercio = tr.id_comercio
 		LEFT JOIN productos prod
 			ON tr.id_producto = prod.id_producto
+		LEFT JOIN ofertas offer
+			ON offer.id_oferta = tr.id_oferta
 		WHERE tr.id_comercio = @comercioID
 	ELSE
-		SELECT id_transaccion, fecha, id_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
+		SELECT id_transaccion, fecha, tr.id_oferta, offer.url_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
 			FROM transacciones tr
 		JOIN tipo_transacciones tt
 			ON tt.id_tipo = tr.id_tipo_transaccion
@@ -1754,15 +1649,15 @@ BEGIN
 			AND pc.id_comercio = tr.id_comercio
 		LEFT JOIN productos prod
 			ON tr.id_producto = prod.id_producto
+		LEFT JOIN ofertas offer
+			ON offer.id_oferta = tr.id_oferta
 END
 go
 
--- execute historicalTransactionsList @comercioID=4
+-- execute historicalTransactionsList @comercioID=1
+-- go
 ---------------------------------------------------------------------------------------------- Nuevos Users del mes
-drop procedure activeOffers
-go
-
-create procedure activeOffers
+create or alter procedure activeOffers
 (
 	@idComercio	integer = null
 )
@@ -1781,12 +1676,9 @@ END
 go
 
 --  EXECUTE activeOffers @idComercio = 1
-
+-- go
 ---------------------------------------------------------------------------------------------- Nuevos Users del mes
-drop procedure actionsByType
-go
-
-create procedure actionsByType
+create or alter procedure actionsByType
 (
 	@comercioID	integer = null
 )
@@ -1813,22 +1705,21 @@ END
 go
 -- execute actionsByType
 -- execute actionsByType @comercioID=1
+-- go
+-- drop procedure getTypes
+-- GO
 
-drop procedure getTypes
-GO
-
-create procedure getTypes
+create  or alter procedure getTypes
 AS
 BEGIN
 	SELECT * FROM tipo_transacciones
 end
 go
-exec getTypes
+-- exec getTypes
+-- go
 ---------------------------------------------------------------------------------------------- Cantidad de productos mostrados
-drop procedure cantProductosActivos
-go
 
-create procedure cantProductosActivos
+create or alter procedure cantProductosActivos
 (
 	@idComercio	integer = null
 )
@@ -1848,13 +1739,10 @@ BEGIN
 END
 go
 
-execute cantProductosActivos @idComercio = 71
-
+-- execute cantProductosActivos @idComercio = 71
+-- go
 ---------------------------------------------------------------------------------------------- Transacciones en historial
-drop procedure getCantTransactionsSinceRegistry
-go
-
-create procedure getCantTransactionsSinceRegistry
+create  or alter procedure getCantTransactionsSinceRegistry
 (
 	@comercioID	integer
 )
@@ -1865,12 +1753,12 @@ BEGIN
 END
 go
 -- execute getCantTransactionsSinceRegistry @comercioID=71
-
+-- go
 ---------------------------------------------------------------------------------------------- Usuarios activos del mes (hicieron trans)
-drop procedure getCantActiveUsersInMonth
-go
+-- drop procedure getCantActiveUsersInMonth
+-- go
 
-create procedure getCantActiveUsersInMonth
+create  or alter procedure getCantActiveUsersInMonth
 (
 	@comercioID	integer
 )
@@ -1883,7 +1771,7 @@ BEGIN
 END
 go
 -- execute getCantActiveUsersInMonth @comercioID=71
-
+-- go
 ---------------------------------------------------------------------------------------------- Evolucion de $ por mes
 
 	-- SELECT distinct YEAR(fecha) as year_transaction,
@@ -1899,10 +1787,6 @@ go
 	
 	-- GROUP BY YEAR(fecha), MONTH(fecha), id_tipo
 	-- ORDER BY YEAR(fecha), MONTH(fecha)
-
-drop procedure comissionsEvolution
-go
-
 create or alter procedure comissionsEvolution
 (
 	@comercioID	integer = null
@@ -1932,13 +1816,9 @@ order by YEAR(d.date), MONTH(d.date)
 END
 go
 
-execute comissionsEvolution @comercioID=71
-
-
+-- execute comissionsEvolution @comercioID=1
+-- go
 ---------------------------------------------------------------------------------------------- Obtener Comision Total
-drop procedure getComisiones
-go
-
 create or alter procedure getComisiones
 (
 	@mes	datetime,
@@ -1971,16 +1851,12 @@ begin
 end
 go
 
-declare @dt as datetime = datetimefromparts(2019,2,1,17,0,0,0)
+-- declare @dt as datetime = datetimefromparts(2019,2,1,17,0,0,0)
 
-execute getComisiones @mes=@dt, @comercioID=71
-go
+-- execute getComisiones @mes=@dt, @comercioID=71
+-- go
 
 ---------------------------------------------------------------------------------------------- Obtener Comision Total
-
-drop procedure getComisionesTotal
-go
-
 create or alter procedure getComisionesTotal
 (
 	@mes	datetime,
@@ -2000,10 +1876,10 @@ begin
 end
 go
 
-declare @dt as datetime = datetimefromparts(2019,2,1,17,0,0,0)
+-- declare @dt as datetime = datetimefromparts(2019,2,1,17,0,0,0)
 
-execute getComisionesTotal @mes=@dt, @comercioID=4
-
+-- execute getComisionesTotal @mes=@dt, @comercioID=4
+-- go
 ---------------------------------------------------------------------------------------------- Obtener servicios
 drop procedure getServices
 GO
@@ -2023,42 +1899,21 @@ BEGIN
 		ON serv.id_tecnologia = tech.id_tecnologia
 	WHERE id_comercio = @idComercio
 END
-
-execute getServices @idComercio=4
-
----------------------------------------------------------------------------------------------- Obtener tipos servicios
-drop procedure getServicesTypes
 GO
 
+-- execute getServices @idComercio=4
+-- go
+---------------------------------------------------------------------------------------------- Obtener tipos servicios
 create or alter procedure getServicesTypes
 AS
 BEGIN
 	SELECT * FROM tipo_servicios
 END
-
-exec getServicesTypes
-
----------------------------------------------------------------------------------------------- Guardar configuraciones
-drop procedure saveOrchConfig
-GO
-
-create or alter procedure saveOrchConfig
-(
-	@tipoConfig		integer,
-	@word			varchar(500)
-)
-AS
-begin
-	IF NOT EXISTS (SELECT * FROM orchestrator_config WHERE palabra_ignorar=@word and tipo_config=@tipoConfig)
-		INSERT INTO orchestrator_config values (@tipoConfig, @word)
-	ELSE
-end
 go
 
----------------------------------------------------------------------------------------------- Guardar configuraciones
-drop procedure saveOrchConfig
-GO
+-- exec getServicesTypes
 
+---------------------------------------------------------------------------------------------- Guardar configuraciones
 create or alter procedure saveOrchConfig
 (
 	@tipoConfig		integer,
@@ -2074,9 +1929,6 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Deshabilitar configuraciones
-drop procedure disableOrchConfig
-GO
-
 create or alter procedure disableOrchConfig
 AS
 begin
@@ -2086,9 +1938,6 @@ end
 go
 
 ---------------------------------------------------------------------------------------------- Obtener configuraciones
-drop procedure getOrchConfig
-GO
-
 create or alter procedure getOrchConfig
 AS
 begin

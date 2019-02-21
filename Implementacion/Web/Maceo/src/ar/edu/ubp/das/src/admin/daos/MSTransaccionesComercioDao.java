@@ -59,11 +59,13 @@ public class MSTransaccionesComercioDao extends DaoImpl {
 	        	transaccion.setFecha(result.getString("fecha"));
 	        	if(result.getString("id_oferta") != null) {
 	        		transaccion.setOfertaID(result.getInt("id_oferta"));
+		        	transaccion.setReference(result.getString("url_oferta"));
+	        	}else {
+		        	transaccion.setReference(result.getString("nombre_prod"));
 	        	}
 	        	transaccion.setPending(result.getBoolean("pending"));
 	        	transaccion.setTransNombre(result.getString("nombre_trans"));
 	        	transaccion.setValor(result.getFloat("valor"));
-	        	transaccion.setProdNombre(result.getString("nombre_prod"));
 	        	transaccion.setProdPrecio(result.getFloat("precio"));
 	        	transacciones.add(transaccion);
 	        	System.out.println(transaccion.getTransNombre());

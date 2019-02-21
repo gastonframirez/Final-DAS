@@ -23,7 +23,7 @@ public class ListCategoriasAction implements Action{
 			request.setAttribute("categorias", daoCategorias.select(form));
 		}catch(SQLException ex) {
 			DynaActionForm formLogs = new DynaActionForm();
-			Dao daoLogs = DaoFactory.getDao( "Log", "ar.edu.ubp.das.src.admin" );
+			Dao daoLogs = DaoFactory.getDao( "Log", "admin" );
 			formLogs.setItem("logStr", "Error al intentar obtener lista de categorias");
 			daoLogs.insert(formLogs);
 		}
