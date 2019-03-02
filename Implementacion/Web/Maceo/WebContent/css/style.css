@@ -21956,3 +21956,28 @@ body.loaderActive .container-scroller{
 
 	
 }
+
+.card-msg{
+	position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 50px;
+    opacity: 0.75;
+    transition: all 0.5s ease-in-out;
+}
+
+.card-msg a{
+	color: #FFF;
+}
+
+.card-msg:hover{
+	color: #FFF;
+	opacity: 1;
+	transition: all 0.5s ease-in-out;
+}

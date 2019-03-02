@@ -64,6 +64,7 @@ public class MSTransaccionesHistoricasComercioDao extends DaoImpl {
 	        	transaccion.setTransNombre(result.getString("nombre_trans"));
 	        	transaccion.setValor(result.getFloat("valor"));
 	        	transaccion.setProdPrecio(result.getFloat("precio"));
+	        	transaccion.setUsername(result.getString("usuario"));
 	        	transacciones.add(transaccion);
 	        }
 

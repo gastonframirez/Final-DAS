@@ -16,6 +16,9 @@
         <action path="/Redireccionar.do" type="RedirectingAction">
             <forward name="success" path="/productos/redirecting.jsp"/>
         </action>
+        <action path="/Mensaje.do" type="MessageAction">
+            <forward name="success" path="/productos/mensaje.jsp"/>
+        </action>
         
     </action-mappings>
 </actions>

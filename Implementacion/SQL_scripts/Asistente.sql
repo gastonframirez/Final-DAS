@@ -24,6 +24,7 @@ drop table idiomas
 drop table tipo_servicios
 drop table orchestrator_config
 drop table comercios
+drop table mensajes
 go
 
 ----------------------------------------------------------------------------------------------
@@ -332,6 +333,7 @@ go
 
 insert into tipo_servicios values ('ofertas')
 insert into tipo_servicios values ('transacciones')
+insert into tipo_servicios values ('mensajes')
 
 create table servicios
 (
@@ -356,6 +358,12 @@ create table servicios
 )
 go
 
+-- insert into servicios values (1, 3, 2, 'http://localhost:9090/ApiWSPort?wsdl', 'notifyMessage', 9090, 'dae0987e7384cc70320d224c9ee5647a')
+-- go
+-- insert into servicios values (2, 3, 1, 'http://localhost:8080/ComercioAxis2/services/ApiWS?wsdl', 'message', 8080, '19525d44b1a59b1603958008e2797144')
+-- go
+-- insert into servicios values (3, 3, 3, 'http://localhost:8080/ComercioRest/rest/api', 'message', 8080, '3af0fa601a9ef3eb30163bfc50e04229')
+-- go
 ----------------------------------------------------------------------------------------------
 create table logs
 (
@@ -491,6 +499,27 @@ values (1, '\\s(([0-9])(,||.)*)+\\s?(lts?)(.)?', 1, getdate()),
 (2, '(*)', 1, getdate()),
 (2, '.', 1, getdate())
 go
+
+
+create table mensajes
+(
+    id_mensaje          integer         not null    identity(1,1),
+	id_usuario			integer			not null,
+	id_comercio			smallint		not null,
+	mensaje			varchar(500)	not null,
+	producto			varchar(500)	not null,
+	pendiente			BIT				not NULL	default(1)
+
+
+    constraint pk__mensajes__end primary key (id_mensaje),
+	constraint fk__cliente_mensaje__end FOREIGN key (id_usuario)
+		references usuarios (id_usuario),
+	constraint fk__comercio_mensaje__end FOREIGN key (id_comercio)
+		references comercios (id_comercio)
+)
+go
+
+
 ----------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------- Create procedures
 
@@ -534,6 +563,19 @@ begin
 	FROM usuarios
 	WHERE usuario = @nombreusuario
 	AND usuario_password = @password
+end
+go
+
+---------------------------------------------------------------------------------------------- Data User
+create or alter procedure getUserData
+(
+	@id_usuario integer
+)
+as
+begin
+    SELECT * 
+	FROM usuarios
+	WHERE id_usuario = @id_usuario
 end
 go
 
@@ -1571,7 +1613,7 @@ create or alter procedure monthlyTransactionsList
 AS
 BEGIN
 	IF @comercioID IS NOT NULL AND LEN(@comercioID) > 0
-		SELECT id_transaccion, fecha, tr.id_oferta, offer.url_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
+		SELECT id_transaccion, fecha, tr.id_oferta, offer.url_oferta, pending, tt.nombre as nombre_trans, us.usuario, ctt.valor, pc.nombre as nombre_prod, pc.precio
 			FROM transacciones tr
 		JOIN tipo_transacciones tt
 			ON tt.id_tipo = tr.id_tipo_transaccion
@@ -1586,11 +1628,13 @@ BEGIN
 			ON tr.id_producto = prod.id_producto
 		LEFT JOIN ofertas offer
 			ON offer.id_oferta = tr.id_oferta
+		JOIN usuarios us
+			ON tr.id_usuario = us.id_usuario
 		WHERE Year(fecha) = Year(@date) 
     		AND Month(fecha) = Month(@date)
 			AND tr.id_comercio = @comercioID
 	ELSE
-		SELECT id_transaccion, fecha, tr.id_oferta, offer.url_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
+		SELECT id_transaccion, fecha, tr.id_oferta, offer.url_oferta, pending, tt.nombre as nombre_trans,  us.usuario, ctt.valor, pc.nombre as nombre_prod, pc.precio
 			FROM transacciones tr
 		JOIN tipo_transacciones tt
 			ON tt.id_tipo = tr.id_tipo_transaccion
@@ -1605,6 +1649,8 @@ BEGIN
 			ON tr.id_producto = prod.id_producto
 		LEFT JOIN ofertas offer
 			ON offer.id_oferta = tr.id_oferta
+		JOIN usuarios us
+			ON tr.id_usuario = us.id_usuario
 		WHERE Year(fecha) = Year(@date) 
 			AND Month(fecha) = Month(@date)
 END
@@ -1619,7 +1665,7 @@ create or alter procedure historicalTransactionsList
 AS
 BEGIN
 	IF @comercioID IS NOT NULL AND LEN(@comercioID) > 0
-		SELECT id_transaccion, fecha, tr.id_oferta, offer.url_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
+		SELECT id_transaccion, fecha, tr.id_oferta, offer.url_oferta, pending, tt.nombre as nombre_trans, us.usuario, ctt.valor, pc.nombre as nombre_prod, pc.precio
 			FROM transacciones tr
 		JOIN tipo_transacciones tt
 			ON tt.id_tipo = tr.id_tipo_transaccion
@@ -1634,9 +1680,11 @@ BEGIN
 			ON tr.id_producto = prod.id_producto
 		LEFT JOIN ofertas offer
 			ON offer.id_oferta = tr.id_oferta
+		JOIN usuarios us
+			ON tr.id_usuario = us.id_usuario
 		WHERE tr.id_comercio = @comercioID
 	ELSE
-		SELECT id_transaccion, fecha, tr.id_oferta, offer.url_oferta, pending, tt.nombre as nombre_trans, ctt.valor, pc.nombre as nombre_prod, pc.precio
+		SELECT id_transaccion, fecha, tr.id_oferta, offer.url_oferta, pending, tt.nombre as nombre_trans, us.usuario, ctt.valor, pc.nombre as nombre_prod, pc.precio
 			FROM transacciones tr
 		JOIN tipo_transacciones tt
 			ON tt.id_tipo = tr.id_tipo_transaccion
@@ -1651,6 +1699,8 @@ BEGIN
 			ON tr.id_producto = prod.id_producto
 		LEFT JOIN ofertas offer
 			ON offer.id_oferta = tr.id_oferta
+		JOIN usuarios us
+			ON tr.id_usuario = us.id_usuario
 END
 go
 
@@ -1901,7 +1951,27 @@ BEGIN
 END
 GO
 
--- execute getServices @idComercio=4
+drop procedure getServices
+GO
+
+create or alter procedure getServicesByType
+(
+	@idComercio		integer,
+	@idTipo			integer
+)
+AS
+BEGIN
+	SELECT id_servicio, id_comercio, tech.id_tecnologia, tech.javaClass, 
+	tech.nombre as tech_name, auth_token, puerto, funcion, service_url
+	FROM servicios serv
+	JOIN tecnologias tech
+		ON serv.id_tecnologia = tech.id_tecnologia
+	WHERE id_comercio = @idComercio
+	AND serv.id_tipo_servicio=@idTipo
+END
+GO
+
+-- execute getServicesByType @idComercio=2, @idTipo=3
 -- go
 ---------------------------------------------------------------------------------------------- Obtener tipos servicios
 create or alter procedure getServicesTypes
@@ -1968,5 +2038,36 @@ go
 -- exec searchProd @searchStr='pava%marfil'
 -- go
 
+-------
 
+create or alter procedure saveMensaje
+(
+	@userID			integer,
+	@comercioID		smallint,
+	@mensaje			varchar(500),
+	@product		varchar(500)
+)
+AS
+BEGIN
+	INSERT into mensajes VALUES(@userID, @comercioID, @mensaje, @product, 1)
+END
+go
 
+-------
+
+create or alter procedure disableMesage
+(
+	@userID			integer,
+	@comercioID		smallint,
+	@mensaje			varchar(500),
+	@product		varchar(500)
+)
+AS
+BEGIN
+	UPDATE mensajes SET pendiente=0 
+	where id_usuario=@userID 
+	AND id_comercio=@comercioID 
+	AND mensaje=@mensaje
+	AND producto= @product
+END
+go

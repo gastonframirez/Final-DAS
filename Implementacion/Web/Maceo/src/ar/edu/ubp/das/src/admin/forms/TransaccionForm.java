@@ -11,6 +11,8 @@ public class TransaccionForm extends DynaActionForm {
 	private Float valor;
 	private String reference;
 	private Float prodPrecio;
+	private String username;
+	
 	public Integer getTransaccionID() {
 		return transaccionID;
 	}
@@ -59,6 +61,13 @@ public class TransaccionForm extends DynaActionForm {
 	public void setProdPrecio(Float prodPrecio) {
 		this.prodPrecio = prodPrecio;
 	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
 	
 	
 	

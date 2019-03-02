@@ -12,6 +12,7 @@ import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.db.DaoFactory;
 import ar.edu.ubp.das.src.beans.OfertaResponseBean;
 import ar.edu.ubp.das.src.beans.ResponseBean;
+import ar.edu.ubp.das.src.comercio.daos.MSMensajeDao;
 import ar.edu.ubp.das.src.comercio.daos.MSOfertasDao;
 import ar.edu.ubp.das.src.comercio.daos.MSTransaccionDao;
 
@@ -20,6 +21,8 @@ public class ApiWS {
 	
 	@WebMethod(operationName = "getOfertas", action = "urn:GetOfertas")
 	public List<OfertaResponseBean> getOfertas(@WebParam(name = "arg0") String authToken) {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
 		List<OfertaResponseBean> ofertas = new LinkedList<OfertaResponseBean>();
 		List<DynaActionForm> ofertasDAF = new LinkedList<DynaActionForm>();
 //		System.out.println(authToken);
@@ -53,15 +56,12 @@ public class ApiWS {
 							
 							ofertas.add(oferta);
 						}
-						
-						return ofertas;
 					}else {
 						System.out.println("Token inexistente.");
 						OfertaResponseBean err = new OfertaResponseBean();
 						err.setStatus("401");
 						err.setErrorMsg("Token inexistente.");
 						ofertas.add(err);
-						return ofertas;
 					}
 							
 				} catch ( SQLException e ) {
@@ -70,7 +70,6 @@ public class ApiWS {
 					err.setStatus("400");
 					err.setErrorMsg("Error al obtener datos.");
 					ofertas.add(err);
-					return ofertas;
 					
 				}
 
@@ -83,9 +82,7 @@ public class ApiWS {
 					ofertas.add(err);
 				}catch(Exception e) {
 					e.printStackTrace();
-				}
-				return ofertas;
-				
+				}				
 			}
 		}else {
 			System.out.println("Token no provisto.");
@@ -93,8 +90,9 @@ public class ApiWS {
 			err.setStatus("401");
 			err.setErrorMsg("Token no provisto.");
 			ofertas.add(err);
-			return ofertas;
 		}
+		Thread.currentThread().setContextClassLoader(classLoader);
+		return ofertas;
 	}
 	
 	@WebMethod(operationName = "notifyTransaccion", action = "urn:NotifyTransaccion")
@@ -103,6 +101,7 @@ public class ApiWS {
 			@WebParam(name = "arg5") Integer dniCliente, @WebParam(name = "arg6") String tipoTransaccion, 
 			@WebParam(name = "arg7") String modeloProducto, @WebParam(name = "arg8") Integer idOferta, 
 			@WebParam(name = "arg9") Float precioProducto, @WebParam(name = "arg10") Float comision) {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
 		ResponseBean err = new ResponseBean();
 		
@@ -149,17 +148,17 @@ public class ApiWS {
 								if(comision != null)
 									daf.setItem("comision", comision.toString());
 								
-//								System.out.print(fechaTransaccion+"\n");
-//								System.out.print(nombreCliente+"\n");
-//								System.out.print(apellidoCliente+"\n");
-//								System.out.print(emailCliente+"\n");
-//								System.out.print(dniCliente+"\n");
-//								System.out.print(tipoTransaccion+"\n");
-//								System.out.print(modeloProducto+"\n");
-//								System.out.print(idOferta+"\n");
-//								System.out.print(precioProducto+"\n");
-//								System.out.print(comision+"\n");
-//								
+								System.out.print(fechaTransaccion+"\n");
+								System.out.print(nombreCliente+"\n");
+								System.out.print(apellidoCliente+"\n");
+								System.out.print(emailCliente+"\n");
+								System.out.print(dniCliente+"\n");
+								System.out.print(tipoTransaccion+"\n");
+								System.out.print(modeloProducto+"\n");
+								System.out.print(idOferta+"\n");
+								System.out.print(precioProducto+"\n");
+								System.out.print(comision+"\n");
+								
 								
 								
 								
@@ -169,6 +168,77 @@ public class ApiWS {
 								err.setErrorMsg("OK");
 							}
 						}
+					}else {
+						System.out.println("Token inexistente.");
+						err.setStatus("401");
+						err.setErrorMsg("Token inexistente.");
+					}
+							
+				} catch ( SQLException e ) {
+					e.printStackTrace();
+		    	    err.setStatus("400");
+					err.setErrorMsg("Error al ingresar datos.");
+				}
+
+			}else {
+				System.out.println("Token mal formado.");
+				err.setStatus("401");
+				err.setErrorMsg("Token inexistente.");
+			}
+		}else {
+			System.out.println("Token no provisto.");
+			err.setStatus("401");
+			err.setErrorMsg("Token no provisto.");
+		}
+		
+		return err;
+		
+	}
+	
+
+	@WebMethod(operationName = "notifyMessage", action = "urn:NotifyMessage")
+	public ResponseBean notifyMessage(@WebParam(name = "arg0") String authToken, @WebParam(name = "arg1") String nombreUser, 
+			@WebParam(name = "arg2") String apellidoUser, @WebParam(name = "arg3") String emailUser, 
+			@WebParam(name = "arg4") Integer dniUser, @WebParam(name = "arg5") String modeloProducto, 
+			@WebParam(name = "arg6") String message) {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+		ResponseBean err = new ResponseBean();
+		
+		if(authToken!=null) {
+			if(authToken.indexOf("Token")!=-1 && authToken.split(" ").length==2) {
+				String token = authToken.split(" ")[1];
+	
+				DynaActionForm daf = new DynaActionForm();
+				daf.setItem("hashToken", token);
+				
+				try {
+					MSMensajeDao daoMensaje = (MSMensajeDao)DaoFactory.getDao( "Mensaje", "ar.edu.ubp.das.src.comercio" );
+					
+					if(daoMensaje.valid(daf)){
+						System.out.println("Token valido");
+
+						if(nombreUser == null || apellidoUser == null || emailUser == null || dniUser == null || modeloProducto == null) {
+							err.setStatus("400");
+							err.setErrorMsg("No se aportaron todos los datos requeridos.");
+						}else {
+								System.out.print("Obteniendo datos de mensaje...\n");
+								daf.setItem("nombreCliente", nombreUser);
+								daf.setItem("apellidoCliente", apellidoUser);
+								daf.setItem("emailCliente", emailUser);
+								daf.setItem("dniCliente", dniUser.toString());
+								daf.setItem("modeloProducto", modeloProducto);	
+								daf.setItem("message", message);
+
+
+			
+								
+								daoMensaje.insert(daf);
+								
+								err.setStatus("200");
+								err.setErrorMsg("OK");								
+							}
+						
 					}else {
 						System.out.println("Token inexistente.");
 						err.setStatus("401");

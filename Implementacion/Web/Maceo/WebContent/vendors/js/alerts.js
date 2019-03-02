@@ -182,8 +182,7 @@ $(function($) {
 	    				    });
 	    				  }
 	    				})
-	    }
-	    else if ('redirect'){
+	    }else if ('redirect'){
 	    	Swal.fire({
 				  title: title,
 				  text: textToShow,
@@ -200,4 +199,60 @@ $(function($) {
 	              )
 	    }
   }
+   showSwalMsg = function(type, comID, userID, prodModel) {
+	   Swal.fire({
+ 		  title: '',
+ 		  type: 'question',
+ 		  html:	'<form id="msg">' +
+	    		    '<textarea name="message" rows="4" cols="50" required>'+$.i18n.prop('message')+'</textarea>'+
+	    		    '<input type="hidden" name="comercioID" value="'+comID+'"/>'+
+	    		    '<input type="hidden" name="prodModel" value="'+prodModel+'"/>'+
+	    		    '<input type="hidden" name="userID" value="'+userID+'"/></form>',
+ 		  showCancelButton: true,
+ 		  confirmButtonText: $.i18n.prop('send'),
+ 		  cancelButtonText: $.i18n.prop('cancel'),
+ 		  confirmButtonColor: '#28a745',
+ 		  showLoaderOnConfirm: true,
+ 		  allowOutsideClick: false,
+			  allowEscapeKey: false,
+ 		  preConfirm: () => {
+ 			  var data = $("#msg").serialize();
+ 			  return fetch('/Maceo/productos/Mensaje.do', {
+ 				    method: 'post',
+ 				    headers: {
+ 				      "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+ 				      Accept: 'application/json'
+ 				    },
+ 				    body: data
+ 				  })
+ 				  .then(function(response) {
+						        if (!response.ok) {
+						        	throw response.json();
+						        }
+						        return response;
+						    })
+	    		      .then(response => {
+	    		    	return response.json();
+	    		      }).catch(error => {
+	    		    	  console.log(error);
+	    		    	  error.then(function(err){
+	    		    		  Swal.fire({
+	    	 				      title:  $.i18n.prop(err.error),
+	    	 				      type: 'warning',
+	    	 				    })
+
+	    		    	  })
+	    		      })
+ 			 
+ 		  },
+ 		})
+ 		.then((result) => {
+ 			  if (result.value) {
+ 				    Swal.fire({
+ 				      title:  $.i18n.prop('sentMessage')
+ 				    })
+ 				  }
+ 				})
+ 
+   }
 });

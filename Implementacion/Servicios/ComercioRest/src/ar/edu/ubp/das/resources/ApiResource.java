@@ -22,6 +22,7 @@ import com.google.gson.GsonBuilder;
 import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.db.DaoFactory;
 import ar.edu.ubp.das.src.beans.ResponseBean;
+import ar.edu.ubp.das.src.comercio.daos.MSMensajeDao;
 import ar.edu.ubp.das.src.comercio.daos.MSOfertasDao;
 import ar.edu.ubp.das.src.comercio.daos.MSTransaccionDao;
 import ar.edu.ubp.das.src.comercio.forms.OfertaForm;
@@ -99,6 +100,90 @@ public class ApiResource {
 		
 							
 							daoTransacciones.insert(daf);
+							
+							resp.setStatus("200");
+							resp.setErrorMsg("OK");
+							return Response.status( Response.Status.OK ).entity(gson.toJson(resp)).build();
+							
+						}
+						
+					}else {
+						System.out.println("Token inexistente.");
+						resp.setStatus(String.valueOf(Response.Status.UNAUTHORIZED.getStatusCode()));
+						resp.setErrorMsg("Token inexistente.");
+						return Response.status( Response.Status.UNAUTHORIZED ).entity(gson.toJson(resp)).build();
+					}
+					
+					
+				} catch ( SQLException error ) {
+					resp.setStatus(String.valueOf(Response.Status.BAD_REQUEST.getStatusCode()));
+					resp.setErrorMsg(error.getMessage());
+		    	    return Response.status( Response.Status.BAD_REQUEST ).entity( gson.toJson(resp) ).build();
+				}
+			}else {
+				System.out.println("Token mal formado.");
+				resp.setStatus(String.valueOf(Response.Status.UNAUTHORIZED.getStatusCode()));
+				resp.setErrorMsg("Token mal formado.");
+				return Response.status( Response.Status.UNAUTHORIZED ).entity(gson.toJson(resp)).build();
+			}
+		}else {
+			System.out.println("Token no provisto.");
+			resp.setStatus(String.valueOf(Response.Status.UNAUTHORIZED.getStatusCode()));
+			resp.setErrorMsg("Token no provisto.");
+			return Response.status( Response.Status.UNAUTHORIZED ).entity(gson.toJson(resp)).build();
+		}
+	
+	}
+	
+	@POST
+	@Path("/message")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public Response insertTransaccion(@Context HttpHeaders headers, @FormParam("nombreUser") String nombreCliente,
+			@FormParam("apellidoUser") String apellidoCliente, @FormParam("emailUser") String emailCliente, 
+			@FormParam("dniUser") Integer dniCliente,
+			@FormParam("modeloProducto") String modeloProducto,
+			@FormParam("message") String message) {
+		
+		List<String> authToken = headers.getRequestHeader("Authorization");
+		Gson gson = new GsonBuilder().create();
+		ResponseBean resp = new ResponseBean();
+
+		if(authToken!=null) {
+			if(authToken.get(0).indexOf("Token")!=-1 && authToken.get(0).split(" ").length==2) {
+				try {
+					MSMensajeDao daoMensaje = (MSMensajeDao)DaoFactory.getDao( "Mensaje", "ar.edu.ubp.das.src.comercio" );
+					
+					String token = authToken.get(0).split(" ")[1];
+					
+					DynaActionForm daf = new DynaActionForm();
+					daf.setItem("hashToken", token);
+					
+					if(daoMensaje.valid(daf)){
+						System.out.println("Token valido");
+						if(nombreCliente == null || apellidoCliente == null || emailCliente == null || 
+								dniCliente == null) {
+
+							resp.setStatus(String.valueOf(Response.Status.BAD_REQUEST.getStatusCode()));
+							resp.setErrorMsg("No se aportaron todos los datos requeridos.");
+							return Response.status( Response.Status.BAD_REQUEST ).entity(gson.toJson(resp)).build();
+						}else {
+							System.out.print("Obteniendo datos de mensaje...\n");
+							daf.setItem("nombreCliente", nombreCliente);
+							daf.setItem("apellidoCliente", apellidoCliente);
+							daf.setItem("emailCliente", emailCliente);
+							daf.setItem("dniCliente", dniCliente.toString());
+							daf.setItem("modeloProducto", modeloProducto);	
+							daf.setItem("message", message);
+
+							
+							System.out.print(nombreCliente+"\n");
+							System.out.print(apellidoCliente+"\n");
+							System.out.print(emailCliente+"\n");
+							System.out.print(dniCliente+"\n");
+							
+		
+							
+							daoMensaje.insert(daf);
 							
 							resp.setStatus("200");
 							resp.setErrorMsg("OK");

@@ -127,6 +127,22 @@ create table tokens
 go
 insert into tokens values ('dae0987e7384cc70320d224c9ee5647a', 1)
 go
+
+drop table mensajes
+go
+create table mensajes
+(
+    id_mensaje          integer         not null    identity(1,1),
+    mensaje             varchar(500)    not null,
+    nombre_cliente      VARCHAR(200)    not null,
+    apellido_cliente    varchar (200)   not null,
+    email_cliente       varchar (500)   not null,
+    dni                 integer         not null,
+    producto            varchar(500)    not null
+
+    constraint pk__mensajes__end primary key (id_mensaje)
+)
+go
 ----------------------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------------------- Create procedures
 create or alter procedure validateToken
@@ -219,3 +235,19 @@ BEGIN
             @precioComision)
 END
 GO
+
+
+create or alter procedure saveMensaje
+(
+	@nombreUser			varchar(200),
+    @apellidoUser			varchar(200),
+    @emailUser			varchar(200),
+    @dniUser			varchar(200),
+	@mensaje			varchar(500),
+	@product		varchar(500)
+)
+AS
+BEGIN
+	INSERT into mensajes VALUES(@mensaje, @nombreUser, @apellidoUser, @emailUser, @dniUser, @product)
+END
+go

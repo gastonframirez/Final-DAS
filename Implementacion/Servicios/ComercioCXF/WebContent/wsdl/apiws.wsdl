@@ -1,15 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdl:definitions name="ApiWSService" targetNamespace="http://ws.comercio.src.das.ubp.edu.ar/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ws.comercio.src.das.ubp.edu.ar/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/">
   <wsdl:types>
-    <xs:schema targetNamespace="http://ws.comercio.src.das.ubp.edu.ar/" version="1.0" xmlns:tns="http://ws.comercio.src.das.ubp.edu.ar/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:schema elementFormDefault="unqualified" targetNamespace="http://ws.comercio.src.das.ubp.edu.ar/" version="1.0" xmlns:tns="http://ws.comercio.src.das.ubp.edu.ar/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:element name="getOfertas" type="tns:getOfertas"/>
 
   <xs:element name="getOfertasResponse" type="tns:getOfertasResponse"/>
 
+  <xs:element name="notifyMessage" type="tns:notifyMessage"/>
+
+  <xs:element name="notifyMessageResponse" type="tns:notifyMessageResponse"/>
+
   <xs:element name="notifyTransaccion" type="tns:notifyTransaccion"/>
 
   <xs:element name="notifyTransaccionResponse" type="tns:notifyTransaccionResponse"/>
+
+  <xs:complexType name="notifyMessage">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg1" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg2" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg3" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg4" type="xs:int"/>
+      <xs:element minOccurs="0" name="arg5" type="xs:string"/>
+      <xs:element minOccurs="0" name="arg6" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="notifyMessageResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="tns:responseBean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="responseBean">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="errorMsg" type="xs:string"/>
+      <xs:element minOccurs="0" name="status" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
 
   <xs:complexType name="getOfertas">
     <xs:sequence>
@@ -35,13 +64,6 @@
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>
-
-  <xs:complexType name="responseBean">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="errorMsg" type="xs:string"/>
-      <xs:element minOccurs="0" name="status" type="xs:string"/>
-    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="notifyTransaccion">
@@ -80,11 +102,25 @@
     <wsdl:part name="parameters" element="tns:notifyTransaccion">
     </wsdl:part>
   </wsdl:message>
+  <wsdl:message name="notifyMessage">
+    <wsdl:part name="parameters" element="tns:notifyMessage">
+    </wsdl:part>
+  </wsdl:message>
   <wsdl:message name="notifyTransaccionResponse">
     <wsdl:part name="parameters" element="tns:notifyTransaccionResponse">
     </wsdl:part>
   </wsdl:message>
+  <wsdl:message name="notifyMessageResponse">
+    <wsdl:part name="parameters" element="tns:notifyMessageResponse">
+    </wsdl:part>
+  </wsdl:message>
   <wsdl:portType name="ApiWS">
+    <wsdl:operation name="notifyMessage">
+      <wsdl:input name="notifyMessage" message="tns:notifyMessage">
+    </wsdl:input>
+      <wsdl:output name="notifyMessageResponse" message="tns:notifyMessageResponse">
+    </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="getOfertas">
       <wsdl:input name="getOfertas" message="tns:getOfertas">
     </wsdl:input>
@@ -100,6 +136,15 @@
   </wsdl:portType>
   <wsdl:binding name="ApiWSServiceSoapBinding" type="tns:ApiWS">
     <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="notifyMessage">
+      <soap12:operation soapAction="urn:NotifyMessage" style="document"/>
+      <wsdl:input name="notifyMessage">
+        <soap12:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="notifyMessageResponse">
+        <soap12:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
     <wsdl:operation name="getOfertas">
       <soap12:operation soapAction="urn:GetOfertas" style="document"/>
       <wsdl:input name="getOfertas">

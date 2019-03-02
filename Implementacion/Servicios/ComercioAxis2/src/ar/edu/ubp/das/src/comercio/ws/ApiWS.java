@@ -8,6 +8,7 @@ import ar.edu.ubp.das.mvc.action.DynaActionForm;
 import ar.edu.ubp.das.mvc.db.DaoFactory;
 import ar.edu.ubp.das.src.beans.OfertaResponseBean;
 import ar.edu.ubp.das.src.beans.ResponseBean;
+import ar.edu.ubp.das.src.comercio.daos.MSMensajeDao;
 import ar.edu.ubp.das.src.comercio.daos.MSOfertasDao;
 import ar.edu.ubp.das.src.comercio.daos.MSTransaccionDao;
 
@@ -160,6 +161,76 @@ public class ApiWS {
 								err.setErrorMsg("OK");
 							}
 						}
+					}else {
+						System.out.println("Token inexistente.");
+						err.setStatus("401");
+						err.setErrorMsg("Token inexistente.");
+					}
+							
+				} catch ( SQLException e ) {
+					e.printStackTrace();
+		    	    err.setStatus("400");
+					err.setErrorMsg("Error al ingresar datos.");
+				}
+
+			}else {
+				System.out.println("Token mal formado.");
+				err.setStatus("401");
+				err.setErrorMsg("Token inexistente.");
+			}
+		}else {
+			System.out.println("Token no provisto.");
+			err.setStatus("401");
+			err.setErrorMsg("Token no provisto.");
+		}
+		
+		return err;
+		
+	}
+	
+
+	public ResponseBean notifyMessage(String authToken, String nombreUser, 
+			String apellidoUser, String emailUser, 
+			Integer dniUser, String modeloProducto, 
+			String message) {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+		ResponseBean err = new ResponseBean();
+		
+		if(authToken!=null) {
+			if(authToken.indexOf("Token")!=-1 && authToken.split(" ").length==2) {
+				String token = authToken.split(" ")[1];
+	
+				DynaActionForm daf = new DynaActionForm();
+				daf.setItem("hashToken", token);
+				
+				try {
+					MSMensajeDao daoMensaje = (MSMensajeDao)DaoFactory.getDao( "Mensaje", "ar.edu.ubp.das.src.comercio" );
+					
+					if(daoMensaje.valid(daf)){
+						System.out.println("Token valido");
+
+						if(nombreUser == null || apellidoUser == null || emailUser == null || dniUser == null || modeloProducto == null) {
+							err.setStatus("400");
+							err.setErrorMsg("No se aportaron todos los datos requeridos.");
+						}else {
+								System.out.print("Obteniendo datos de mensaje...\n");
+								daf.setItem("nombreCliente", nombreUser);
+								daf.setItem("apellidoCliente", apellidoUser);
+								daf.setItem("emailCliente", emailUser);
+								daf.setItem("dniCliente", dniUser.toString());
+								daf.setItem("modeloProducto", modeloProducto);	
+								daf.setItem("message", message);
+
+
+			
+								
+								daoMensaje.insert(daf);
+								
+								err.setStatus("200");
+								err.setErrorMsg("OK");								
+							}
+						
 					}else {
 						System.out.println("Token inexistente.");
 						err.setStatus("401");

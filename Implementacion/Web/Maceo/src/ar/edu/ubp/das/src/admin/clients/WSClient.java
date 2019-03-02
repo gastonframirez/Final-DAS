@@ -8,4 +8,6 @@ import ar.edu.ubp.das.mvc.action.DynaActionForm;
 public interface WSClient {
 
 	public Integer testConnection(String authToken, String url, String funcion) throws Exception;
+	public String notificarMensaje(DynaActionForm mensaje, String authToken, String url, String funcion) throws Exception;
+
 }
